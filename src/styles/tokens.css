@@ -1,0 +1,16 @@
+:root {
+  color-scheme: dark;
+  --color-bg: #17191b;
+  --color-surface: #25282b;
+  --color-text: #e8e2d8;
+  --color-muted: #91989a;
+  --color-accent: #c9774d;
+  --color-accent-text: #d1875e;
+  --color-on-accent: #17191b;
+  --color-border: #3b3e40;
+  --color-focus: #eeb58c;
+  --font-body: 'Inter Variable', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --container: 1120px;
+  --radius: 8px;
+}

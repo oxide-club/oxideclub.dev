@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Página não encontrada" noindex>
+  <section class="container page-intro missing">
+    <div class="eyebrow">404 / Caminho não encontrado</div>
+    <h1>
+      Uma pista que
+      <br />
+      não leva a lugar nenhum.
+    </h1>
+    <p>
+      Esta página não existe ou mudou de endereço. Ainda há bastante coisa para
+      investigar por aqui.
+    </p>
+    <div class="actions">
+      <a class="button" href="/">
+        Voltar ao início →
+      </a>
+      <a class="button secondary" href="/desafios">
+        Explorar desafios
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .missing {
+    padding-block: 96px 120px;
+  }
+  .actions {
+    margin-top: 32px;
+  }
+</style>

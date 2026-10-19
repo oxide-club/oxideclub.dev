@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.env*
+playwright-report/
+test-results/
+
+# Local credentials and agent configuration
+.aws
+.codex/
+.agents/

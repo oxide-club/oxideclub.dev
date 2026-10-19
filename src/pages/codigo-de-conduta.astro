@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { links } from '../config/site';
+---
+
+<BaseLayout title="Código de conduta">
+  <div class="container conduct">
+    <header class="page-intro">
+      <div class="eyebrow">Convivência / Oxide Club</div>
+      <h1>
+        Curiosidade exige
+        <br />
+        <span class="accent">respeito.</span>
+      </h1>
+      <p>
+        Um espaço para aprender, perguntar e discordar com cuidado. Estas regras
+        se aplicam aos espaços do clube e às suas atividades.
+      </p>
+    </header>
+    <article class="prose">
+      <h2>Pessoas antes do código</h2>
+      <p>
+        A participação é livre, gratuita e voluntária. Recebemos pessoas de
+        diferentes origens, experiências e identidades. Perguntas de iniciantes
+        e experimentos que não deram certo são bem-vindos.
+      </p>
+      <p>
+        Não toleramos assédio, discriminação, ameaças, intimidação, exposição de
+        informações privadas (doxxing) ou ataques direcionados. Não pratique
+        spam nem divulgação promocional sem relação com a comunidade.
+      </p>
+      <h2>Discorde de ideias, respeite pessoas</h2>
+      <p>
+        Discuta evidências, hipóteses e decisões técnicas. Explique suas
+        críticas e aceite correções. Não use conhecimento, cargo ou experiência
+        para diminuir outras pessoas. Ninguém é obrigado a responder, concluir
+        um desafio ou revisar código individualmente.
+      </p>
+      <h2>Privacidade e consentimento</h2>
+      <p>
+        Não divulgue mensagens privadas, dados pessoais, imagens, voz ou
+        trabalho de outras pessoas sem permissão. Cite e atribua contribuições.
+        Compartilhar código no clube não transfere sua autoria nem concede
+        automaticamente uma licença de republicação.
+      </p>
+      <p>
+        As sessões não pressupõem gravação. Qualquer gravação deverá ser avisada
+        com antecedência, com tratamento adequado do consentimento e
+        alternativas para quem não quiser aparecer ou ter sua voz e mensagens
+        registradas.
+      </p>
+      <h2>Como relatar um problema</h2>
+      {links.reporting ? (
+        <p>
+          Use o{' '}
+          <a href={links.reporting}>
+            {links.reporting.startsWith('mailto:')
+              ? links.reporting.slice(7)
+              : 'canal privado de relato'}
+          </a>
+          . Conte o que aconteceu e, se puder, inclua links, datas e contexto.
+          Compartilhe apenas os dados necessários. Não publique o relato no
+          fórum de desafios.
+        </p>
+      ) : (
+        <p class="notice">
+          O canal privado de relatos ainda está sendo definido. Esta página está
+          em preparação; a divulgação pública do site depende de um contato
+          funcional.
+        </p>
+      )}
+      {links.backupReporting ? (
+        <p>
+          Se o relato envolver a administração principal, procure o{' '}
+          <a href={links.backupReporting}>contato alternativo de moderação</a>.
+        </p>
+      ) : (
+        <p>
+          Atualmente, os relatos são recebidos pela própria administração. Ainda
+          não há um contato alternativo nem uma instância independente de
+          revisão.
+        </p>
+      )}
+      <h2>O que acontece depois</h2>
+      <p>
+        A administração analisa o contexto e pode pedir informações adicionais.
+        O acesso aos relatos deve se limitar às pessoas necessárias para tratar
+        o caso. Não prometemos sigilo absoluto quando houver necessidade de
+        proteção ou obrigação legal.
+      </p>
+      <p>
+        As medidas podem incluir orientação, advertência, remoção de conteúdo,
+        restrição temporária ou exclusão, conforme a gravidade e a recorrência.
+        Sempre que apropriado, a pessoa afetada receberá uma explicação e poderá
+        pedir reconsideração pelo canal privado de relato.
+      </p>
+      <p>
+        Retaliação contra quem relata um problema ou contribui para sua apuração
+        não é permitida. Eventuais conflitos de interesse devem ser explicitados
+        no tratamento do relato; neste momento, não há revisão independente.
+      </p>
+      <h2>Cuidar do espaço é parte de aprender</h2>
+      <p>
+        Você pode propor melhorias a estas regras. A administração inicial é
+        responsável pela moderação; voluntários de confiança poderão ajudar
+        conforme a comunidade crescer.
+      </p>
+    </article>
+  </div>
+</BaseLayout>
+<style>
+  .conduct {
+    padding-bottom: 80px;
+  }
+  .prose {
+    margin-right: auto;
+  }
+</style>

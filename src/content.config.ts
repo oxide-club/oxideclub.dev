@@ -1,0 +1,32 @@
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
+import { glob } from 'astro/loaders';
+import { challengeTaxonomySchema } from './lib/challenge-taxonomy.mjs';
+const discordUrl = z.url().refine((value) => {
+  const url = new URL(value);
+  return (
+    url.protocol === 'https:' &&
+    url.hostname === 'discord.com' &&
+    !url.username &&
+    !url.password
+  );
+}, 'Use a real HTTPS Discord permalink');
+const challenges = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/challenges' }),
+  schema: challengeTaxonomySchema.extend({
+    title: z.string().min(1),
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    summary: z.string().min(1),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    draft: z.boolean(),
+    participation: z.enum(['flagship', 'open']),
+    recommendedLanguage: z.string().min(1).optional(),
+    topics: z.array(z.string()).min(1),
+    featured: z.boolean().default(false),
+    discordThreadUrl: discordUrl.optional(),
+    eventUrl: discordUrl.optional(),
+    environment: z.string().min(1).optional(),
+  }),
+});
+export const collections = { challenges };

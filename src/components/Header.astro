@@ -1,0 +1,157 @@
+---
+import JoinLink from './JoinLink.astro';
+const pathname = Astro.url.pathname;
+---
+
+<header class="container header">
+  <a class="wordmark" href="/" aria-label="Oxide Club — início">
+    <img src="/branding/oxide-core.svg" alt="" width="44" height="44" />
+    <span class="brand-name">Oxide Club</span>
+  </a>
+  <nav aria-label="Navegação principal" class="desktop-nav">
+    <a href="/#o-clube">O clube</a>
+    <a
+      href="/desafios"
+      aria-current={pathname.startsWith('/desafios') ? 'page' : undefined}
+    >
+      Desafios
+    </a>
+    <a href="/#como-participar">Como participar</a>
+  </nav>
+  <div class="header-join">
+    <JoinLink />
+  </div>
+  <details class="mobile-nav">
+    <summary>
+      Menu <span aria-hidden="true">＋</span>
+    </summary>
+    <nav aria-label="Navegação móvel">
+      <a href="/#o-clube">O clube</a>
+      <a href="/desafios">Desafios</a>
+      <a href="/#como-participar">Como participar</a>
+      <JoinLink />
+    </nav>
+  </details>
+</header>
+<script>
+  document.querySelectorAll('.mobile-nav a').forEach((link) =>
+    link.addEventListener('click', () => {
+      const details = link.closest('details');
+      if (details) details.open = false;
+    }),
+  );
+  document
+    .querySelector('.mobile-nav')
+    ?.addEventListener('keydown', (event) => {
+      if ((event as KeyboardEvent).key === 'Escape') {
+        const details = event.currentTarget as HTMLDetailsElement;
+        details.open = false;
+        details.querySelector('summary')?.focus();
+      }
+    });
+</script>
+<style>
+  .header {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-block: 16px;
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+  }
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    font-size: 25px;
+    font-weight: 600;
+    letter-spacing: -1px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .wordmark img {
+    flex-shrink: 0;
+  }
+  @media (max-width: 380px) {
+    .wordmark {
+      gap: 8px;
+      font-size: 22px;
+    }
+    .wordmark img {
+      width: 36px;
+      height: 36px;
+    }
+  }
+  .desktop-nav {
+    margin-left: auto;
+    display: flex;
+    gap: 32px;
+  }
+  .desktop-nav > a {
+    font-size: 13px;
+    text-decoration: none;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .desktop-nav > a:hover,
+  .desktop-nav > a[aria-current] {
+    text-decoration: underline;
+  }
+  .header-join :global(.button) {
+    min-height: 40px;
+    font-size: 12px;
+    padding: 10px 16px;
+  }
+  .mobile-nav {
+    display: none;
+  }
+  @media (max-width: 800px) {
+    .header {
+      min-height: 80px;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .desktop-nav,
+    .header-join {
+      display: none;
+    }
+    .mobile-nav {
+      display: block;
+    }
+    .mobile-nav summary {
+      list-style: none;
+      cursor: pointer;
+      font-size: 14px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .mobile-nav summary::-webkit-details-marker {
+      display: none;
+    }
+    .mobile-nav nav {
+      position: absolute;
+      z-index: 5;
+      top: 100%;
+      left: 0;
+      right: 0;
+      padding: 24px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .mobile-nav nav > a {
+      padding: 10px 0;
+    }
+    .mobile-nav nav :global(.button) {
+      margin-top: 8px;
+    }
+  }
+</style>

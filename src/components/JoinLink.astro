@@ -1,0 +1,13 @@
+---
+import { links } from '../config/site';
+const { secondary = false, label = 'Entrar no Discord' } = Astro.props;
+---
+
+{links.discord ? (
+  <a class:list={['button', { secondary }]} href={links.discord}>
+    {label}
+    <span aria-hidden="true">↗</span>
+  </a>
+) : (
+  <p class="notice">O convite para a comunidade será disponibilizado aqui.</p>
+)}

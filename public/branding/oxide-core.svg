@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="116.5 110 642 642" width="642" height="642" role="img" aria-labelledby="title desc">
+  <title id="title">Oxide Club</title>
+  <desc id="desc">Monograma geométrico OC em creme, contornado por um hexágono fragmentado em cobre.</desc>
+  <g fill="#D26930">
+    <!-- Broken outer hexagon: left side -->
+    <path d="M427 130 427 192 216 311 216 550 417 665 417 723 166 581 166 278Z"/>
+    <!-- Broken outer hexagon: upper-right side -->
+    <path d="M451 130 709 278 709 382 660 410 660 312 496 220 496 289 451 263Z"/>
+    <!-- Broken outer hexagon: lower-right side -->
+    <path d="M660 460 709 488 709 581 440 732 440 595 485 569 485 650 660 550Z"/>
+  </g>
+  <g fill="#EBE3D7">
+    <!-- O: evenodd preserves the transparent hexagonal counter -->
+    <path fill-rule="evenodd" d="M359 277 463 337 463 524 357 587 243 523 243 343Z M356 334 290 372 290 495 357 532 416 496 416 366Z"/>
+    <!-- Angular C -->
+    <path d="M553 299 650 350 650 410 553 354 533 367 533 501 552 512 650 459 650 512 551 568 487 529 487 339Z"/>
+  </g>
+</svg>

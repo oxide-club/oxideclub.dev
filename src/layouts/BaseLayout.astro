@@ -1,0 +1,169 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource/ibm-plex-mono/400.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import { site, links } from '../config/site';
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+const { title, description = site.description, noindex = false } = Astro.props;
+const pageTitle = title
+  ? `${title} — Oxide Club`
+  : 'Oxide Club — Explore computação em profundidade.';
+const canonical = new URL(Astro.url.pathname, site.url);
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#17191b" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/branding/oxide-core.svg" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/branding/oxide-core-32.png"
+    />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/branding/oxide-core-180.png"
+    />
+    <meta
+      name="robots"
+      content={
+        !site.production || noindex ? 'noindex, nofollow' : 'index, follow'
+      }
+    />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="Oxide Club" />
+    <meta
+      property="og:image"
+      content={new URL('/branding/social-card.png', site.url)}
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Oxide Club — Explore computação em profundidade."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:image"
+      content={new URL('/branding/social-card.png', site.url)}
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Oxide Club — Explore computação em profundidade."
+    />
+  </head>
+  <body>
+    <a class="skip" href="#conteudo">
+      Pular para o conteúdo
+    </a>
+    <Header />
+    <main id="conteudo" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="container footer">
+      <div>
+        <a class="footer-brand" href="/">
+          <img
+            src="/branding/oxide-core.svg"
+            alt=""
+            width="36"
+            height="36"
+            loading="lazy"
+          />
+          <span>Oxide Club</span>
+        </a>
+        <p>
+          Curiosidade compartilhada.
+          <br />
+          Conhecimento construído junto.
+        </p>
+      </div>
+      <nav aria-label="Links do rodapé">
+        <a href="/codigo-de-conduta">Código de conduta</a>
+        {links.github && <a href={links.github}>GitHub ↗</a>}
+        {links.discord && <a href={links.discord}>Discord ↗</a>}
+        {links.reporting && <a href={links.reporting}>Relatar um problema</a>}
+      </nav>
+      <div class="footer-bottom">
+        <span>Investigação técnica. Conhecimento compartilhado.</span>
+        <span>Uma comunidade independente.</span>
+      </div>
+    </footer>
+  </body>
+</html>
+<style>
+  .footer {
+    border-top: 1px solid var(--color-border);
+    padding-block: 48px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+  }
+  .footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    font-size: 24px;
+    font-weight: 650;
+    text-decoration: none;
+    letter-spacing: -1px;
+  }
+  .footer p {
+    font-size: 13px;
+    margin-top: 12px;
+  }
+  .footer nav {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    align-items: start;
+  }
+  .footer nav a {
+    font-size: 12px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .footer-bottom {
+    grid-column: 1/-1;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    border-top: 1px solid var(--color-border);
+    padding-top: 24px;
+    font: 10px var(--font-mono);
+    color: var(--color-muted);
+  }
+  @media (max-width: 700px) {
+    .footer {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .footer nav {
+      gap: 20px;
+    }
+    .footer-bottom {
+      flex-direction: column;
+      font-size: 11px;
+    }
+  }
+</style>

@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ChallengeCard from '../../components/ChallengeCard.astro';
+import { publishedChallenges } from '../../lib/challenges';
+const challenges = await publishedChallenges();
+---
+
+<BaseLayout
+  title="Desafios"
+  description="Desafios públicos de computação e programação de sistemas: implemente, depure, meça desempenho e discuta hipóteses e decisões de engenharia."
+>
+  <div class="container">
+    <header class="page-intro">
+      <div class="eyebrow">Laboratório aberto / Desafios</div>
+      <h1>
+        Perguntas abertas.
+        <br />
+        <span class="accent">Investigações compartilhadas.</span>
+      </h1>
+      <p>
+        Construa programas, investigue sistemas, depure problemas, otimize
+        implementações ou teste hipóteses. Cada desafio define seu objetivo e o
+        que explorar: pode resultar em código, medições, uma explicação ou um
+        relato técnico. As especificações são públicas; a discussão continua no
+        Discord.
+      </p>
+    </header>
+    <section class="catalogue" aria-label="Desafios publicados">
+      {challenges.map((challenge) => (
+        <ChallengeCard challenge={challenge} headingLevel="h2" />
+      ))}
+    </section>
+    <div class="catalogue-note">
+      <h2>Diferentes caminhos de investigação.</h2>
+      <p>
+        As categorias indicam o tipo de atividade e podem se combinar. A
+        dificuldade indica os conhecimentos envolvidos, não quem pode
+        participar: qualquer categoria pode ser iniciante, intermediária ou
+        avançada. As extensões são opcionais. No piloto, começamos por C; outras
+        linguagens são bem-vindas quando o problema permitir.
+      </p>
+      <a class="text-link" href="/#como-participar">
+        Como compartilhar sua descoberta <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</BaseLayout>
+<style>
+  .catalogue {
+    padding-bottom: 48px;
+    display: grid;
+    gap: 24px;
+  }
+  .catalogue-note {
+    max-width: 680px;
+    padding-bottom: 80px;
+  }
+  .catalogue-note h2 {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  .catalogue-note p {
+    font-size: 15px;
+  }
+  .catalogue-note a {
+    margin-top: 16px;
+  }
+</style>
