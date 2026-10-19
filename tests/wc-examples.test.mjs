@@ -12,6 +12,8 @@ const fixtures = [
   ['one   two\n', [1, 2, 10]],
   ['a\tb\n', [1, 2, 4]],
   ['ola mundo\n', [1, 2, 10]],
+  [' \t\n\r\v\f', [1, 0, 6]],
+  ['\r\n', [1, 0, 2]],
 ];
 for (const [input, expected] of fixtures)
   test(`wc oracle: ${JSON.stringify(input)}`, () => {
