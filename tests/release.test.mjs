@@ -32,3 +32,26 @@ test('verified release inputs permit release without the deferred alternate cont
   );
   assert.deepEqual(releaseBlockers(links, reviews), []);
 });
+
+test('owner deferral waives only the manual accessibility reviews', () => {
+  const reviews = { manualAccessibilityReviewDeferred: true };
+  const blockers = releaseBlockers({}, reviews);
+  for (const key of [
+    'keyboardReviewed',
+    'screenReaderReviewed',
+    'accessibilityReviewed',
+  ])
+    assert.ok(!blockers.includes(`review: ${key}`));
+  for (const key of [
+    'brandingApproved',
+    'licensesAndHistoryReviewed',
+    'domainVerified',
+  ])
+    assert.ok(blockers.includes(`review: ${key}`));
+  assert.ok(blockers.includes('link: reporting'));
+  assert.ok(
+    releaseBlockers({}, { manualAccessibilityReviewDeferred: 'true' }).includes(
+      'review: screenReaderReviewed',
+    ),
+  );
+});

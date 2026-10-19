@@ -55,7 +55,7 @@ After changing collection schemas or their imported validators, restart the deve
 
 `wrangler.jsonc` serves `dist/` as Workers Static Assets with custom 404 handling. No adapter or server is required. Configure the actual Cloudflare account and domain before release; no remote resources have been created.
 
-`npm run build:production` checks every required link and the review acknowledgements in `src/config/release.json`, then generates indexable output. Never set review flags to true without completing the corresponding human review. `npm run deploy` invokes this gate before Wrangler. Keep deployments restricted to this command/workflow rather than directly deploying preview output.
+`npm run build:production` checks every required link and the review acknowledgements in `src/config/release.json`, then generates indexable output. Never set review flags to true without completing the corresponding review. The owner-authorized `manualAccessibilityReviewDeferred` exception is documented in docs/ACCESSIBILITY.md; it does not claim completed manual checks. `npm run deploy` invokes this gate before Wrangler. Keep deployments restricted to this command/workflow rather than directly deploying preview output.
 
 The manual deployment workflow uses the GitHub `production` environment and `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets. Protect that environment and review the generated artifact before launch. CI runs checks on pushes and pull requests. Set the custom domain to `oxideclub.dev` in Cloudflare after confirming ownership and DNS; this repository does not guess zone identifiers.
 

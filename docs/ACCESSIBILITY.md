@@ -40,3 +40,7 @@ No screen reader is available in this environment. Browser accessibility-tree ch
 Before release, review with a real screen reader/browser combination (for example NVDA/Firefox or VoiceOver/Safari): landmarks, navigation disclosure and its state, challenge headings and code/table reading, the ASCII byte figure, reporting links, and skip-link behavior. Complete a human keyboard pass including Shift+Tab, open-menu navigation and focus visibility. Check browser-native 200% enlargement and 400% zoom/reflow, all actual interactive states, and forced-colors readability. Record results and resolve failures before changing the release flags.
 
 References: [WCAG text spacing](https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html), [resize text](https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html), and [target size minimum](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html).
+
+## Owner-authorized release exception
+
+On 19 October 2026, the owner explicitly instructed publication without the pending accessibility reviews. `manualAccessibilityReviewDeferred: true` records that exception. The three manual-review flags remain false; no completed review or full WCAG conformance is claimed. Automated checks remain required by CI. The manual checks above remain follow-up work, rather than blockers for this owner-authorized release.

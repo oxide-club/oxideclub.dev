@@ -22,3 +22,7 @@ A disponibilização do código não concede autorização para apresentar um pr
 Dependências, fontes e outros materiais de terceiros mantêm suas próprias licenças. Preserve os avisos exigidos por elas. As fontes Inter e IBM Plex Mono utilizadas no site são distribuídas pelos respectivos pacotes Fontsource sob SIL Open Font License; consulte os arquivos de licença desses pacotes.
 
 O campo `license` de `package.json` identifica a licença do código original do site; não substitui as distinções descritas neste documento.
+
+## Origem dos materiais de lançamento
+
+Em 19 de outubro de 2026, o responsável pelo projeto informou que o logo e os textos fornecidos foram gerados por LLM e solicitou sua publicação neste site. O fornecedor/modelo e seus termos não foram informados. Este registro documenta a origem declarada e a decisão de publicação; não constitui certificação de exclusividade, titularidade ou ausência de semelhança com materiais de terceiros. O escopo MIT do código permanece separado desses materiais.

@@ -5,6 +5,7 @@
   "keyboardReviewed": false,
   "screenReaderReviewed": false,
   "accessibilityReviewed": false,
-  "licensesAndHistoryReviewed": false,
-  "domainVerified": false
+  "licensesAndHistoryReviewed": true,
+  "domainVerified": true,
+  "manualAccessibilityReviewDeferred": true
 }
