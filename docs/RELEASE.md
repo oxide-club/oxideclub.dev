@@ -1,6 +1,6 @@
 # Implementation and release status
 
-Implemented from the approved v2 brief on 18 October 2026, with the subsequent Explore → Experiment → Explain amendment. This is a local development preview, not a public launch.
+Implemented from the approved v2 brief on 18 October 2026, with the subsequent Explore → Experiment → Explain amendment. The first production deployment completed on 19 October 2026; see the current status below.
 
 ## Delivered
 
@@ -29,7 +29,7 @@ Challenge categories are nonexclusive and independent of difficulty: build, inve
 - Initial checks found insufficient code-comment contrast and mobile article-grid overflow; both were corrected and the suite rerun.
 - Independent source review found a missing-key release bypass and wc-specific reusable-card assumptions; both corrected. `npm run build:production` was verified to refuse current incomplete release inputs.
 
-## Still required before launch
+## Prelaunch checklist snapshot (superseded by the authorization and deployment records below)
 
 1. Branding integration is complete: the supplied oxide-club.svg is used faithfully in header/footer; SVG/PNG/ICO icons and a 1200×630 social image are generated. Symbol exports at 16/32/48 px and the social image were visually inspected. The supplied artwork and approved direction were preserved; brandingApproved is true following integration and visual verification.
 2. The user supplied report@oxideclub.dev as the private administration reporting contact; it is configured in the conduct page and footer. Community readiness was confirmed by the user on 19 October 2026. An alternate reporting person is explicitly deferred by the user and is no longer a production-gate requirement. The conduct page transparently states that reports go to the administrator and independent review is unavailable. Do not use public issues for sensitive reports.
@@ -63,3 +63,11 @@ The owner authorized publishing without the pending manual accessibility reviews
 The owner supplied LLM-generated branding and editorial material for publication; provenance is recorded in LICENSING.md without claiming exclusive rights or legal clearance. The two existing commits (60 unique blobs) were scanned for common credential patterns with no matches. Source/configuration and bundled assets were reviewed; Inter and IBM Plex Mono notices exactly match the installed packages. The code remains MIT. Local credentials and build outputs are ignored. The repository remains private; public visibility has not been requested in this deployment step.
 
 The owner confirmed the zone active in their Cloudflare account. Public DNS resolves Cloudflare nameservers (duke and savanna); the apex had no A, AAAA or CNAME records before deployment. `domainVerified` records this predeployment check, not a completed HTTPS check. The GitHub production secrets are configured; actual token authorization and live HTTPS/404 behavior must be verified by deployment and postdeployment requests.
+
+## Production deployment — 19 October 2026
+
+Published commit `2c056e9` to https://oxideclub.dev through [GitHub Actions run 39202783940](https://github.com/oxide-club/oxideclub.dev/actions/runs/39202783940). All 17 content/unit tests, Astro checks, 25 browser tests and the guarded production build passed. Cloudflare accepted the configured token, created Worker `oxideclub-dev` and attached the custom domain. Worker version: `940b0af6-5374-4261-80d4-f158b3d6eb94`.
+
+Postdeployment requests verified valid HTTPS, HTTP 200 for home/catalogue/challenge/conduct, icons and social image, robots and both sitemap files. A nonexistent URL returned the custom page with HTTP 404. Public pages have index/follow metadata; the 404 remains noindex. `/desafios` redirects to `/desafios/` with HTTP 307. Plain HTTP currently returns 200 rather than an HTTP-to-HTTPS redirect; no zone-wide security settings were changed.
+
+Both 1.1.1.1 and 8.8.8.8 resolved the new apex records. Local negative DNS caching initially delayed resolution; HTTPS checks used the freshly resolved address while preserving the domain and certificate verification. The repository remains private. The manually deferred accessibility reviews and optional Discord challenge-thread link remain follow-up work.

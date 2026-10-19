@@ -2,7 +2,7 @@
 
 Repository: `https://github.com/oxide-club/oxideclub.dev.git`. Keep it private during development; review the complete history again before public launch.
 
-Static PT-BR community website, implementing the approved 18 October 2026 v2 brief and the subsequent educational-philosophy amendment: Explore → Experiment → Explain. Astro + TypeScript + Markdown collections + plain CSS. No runtime backend. Default builds are non-indexable development previews, not launch-ready releases.
+Static PT-BR community website, implementing the approved 18 October 2026 v2 brief and the subsequent educational-philosophy amendment: Explore → Experiment → Explain. Astro + TypeScript + Markdown collections + plain CSS. No runtime backend. The production site is https://oxideclub.dev. Default local builds remain non-indexable development previews; `build:production` produces the indexable release.
 
 ## Work locally
 
@@ -53,11 +53,11 @@ After changing collection schemas or their imported validators, restart the deve
 
 ## Production and Cloudflare
 
-`wrangler.jsonc` serves `dist/` as Workers Static Assets with custom 404 handling. No adapter or server is required. Configure the actual Cloudflare account and domain before release; no remote resources have been created.
+`wrangler.jsonc` serves `dist/` as Workers Static Assets with custom 404 handling. No adapter or server is required. The Worker `oxideclub-dev` and custom domain `oxideclub.dev` are configured; production deployment runs through GitHub Actions.
 
 `npm run build:production` checks every required link and the review acknowledgements in `src/config/release.json`, then generates indexable output. Never set review flags to true without completing the corresponding review. The owner-authorized `manualAccessibilityReviewDeferred` exception is documented in docs/ACCESSIBILITY.md; it does not claim completed manual checks. `npm run deploy` invokes this gate before Wrangler. Keep deployments restricted to this command/workflow rather than directly deploying preview output.
 
-The manual deployment workflow uses the GitHub `production` environment and `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets. Protect that environment and review the generated artifact before launch. CI runs checks on pushes and pull requests. Set the custom domain to `oxideclub.dev` in Cloudflare after confirming ownership and DNS; this repository does not guess zone identifiers.
+The manual deployment workflow uses the GitHub `production` environment and `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets. Protect that environment and review the generated artifact before launch. CI runs checks on pushes and pull requests. The custom domain `oxideclub.dev` is declared in wrangler.jsonc; this repository does not embed account or zone identifiers.
 
 See [release status](docs/RELEASE.md) for outstanding inputs and verification limits. The original website code is licensed under [MIT](LICENSE). Editorial content (including challenge specifications and copy embedded in Astro files), logos and artwork are excluded; see [licensing scope](LICENSING.md). Third-party materials retain their own licenses. The full asset-permission and repository-history review remains required before launch.
 
