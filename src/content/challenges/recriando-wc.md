@@ -80,3 +80,13 @@ Compartilhe sua implementação no fórum de desafios do Discord, acompanhada de
 **Não é necessário concluir o desafio para participar.** Dúvidas, experimentos, casos de teste e implementações parciais também são contribuições válidas.
 
 O objetivo não é apenas fazer o programa funcionar, mas compreender e explicar as decisões tomadas durante sua construção.
+
+## Precisa de uma dica?
+
+Está com dificuldades ou não sabe por onde começar?
+
+Preparamos **dicas progressivas** para ajudar você a avançar sem revelar a solução.
+
+[Acesse as dicas no Discord](https://discord.com/channels/1561460326136811570/1561825043577573547)
+
+Você também pode compartilhar dúvidas, experimentos e descobertas no tópico do desafio.
