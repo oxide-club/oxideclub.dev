@@ -22,6 +22,12 @@ const pathname = Astro.url.pathname;
     >
       Notas
     </a>
+    <a
+      href="/biblioteca"
+      aria-current={pathname.startsWith('/biblioteca') ? 'page' : undefined}
+    >
+      Biblioteca
+    </a>
     <a href="/#como-participar">Como participar</a>
   </nav>
   <div class="header-join">
@@ -39,6 +45,12 @@ const pathname = Astro.url.pathname;
         aria-current={pathname.startsWith('/notas') ? 'page' : undefined}
       >
         Notas
+      </a>
+      <a
+        href="/biblioteca"
+        aria-current={pathname.startsWith('/biblioteca') ? 'page' : undefined}
+      >
+        Biblioteca
       </a>
       <a href="/#como-participar">Como participar</a>
       <JoinLink />
@@ -121,7 +133,15 @@ const pathname = Astro.url.pathname;
   .mobile-nav {
     display: none;
   }
-  @media (max-width: 800px) {
+  @media (max-width: 1080px) {
+    .desktop-nav {
+      gap: 20px;
+    }
+    .header {
+      gap: 18px;
+    }
+  }
+  @media (max-width: 900px) {
     .header {
       min-height: 80px;
       justify-content: space-between;

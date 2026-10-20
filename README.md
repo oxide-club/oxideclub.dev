@@ -63,6 +63,21 @@ Automated checks do not replace manual accessibility review. See [accessibility 
 | `scripts/`, `tests/`                             | Maintenance scripts and automated checks                              |
 | `.github/workflows/`                             | CI and manual production deployment                                   |
 
+## Library
+
+The static `/biblioteca` directory is maintained in `src/lib/library.ts`.
+Each typed category owns its ordered resource list; authors and resource types
+remain in the data while the page displays titles, language, availability and
+occasional editorial notes. `gratuito` refers to the linked online material,
+even when a printed edition or optional hardware is sold separately.
+
+The catalogue contains 40 resources across eight categories. Link review
+on 2026-10-20 retained the approved works: the GNU C and Make links use their
+official `manual/html_node/` indexes because the parent directories returned 403.
+*Structured Computer Organization* links to the user-selected English sixth
+edition PDF hosted by St. Xavier's College, Jaipur. *Entendendo Algoritmos*
+links to Novatec's Brazilian second edition. Both destinations were verified.
+
 ## Publishing content
 
 Markdown is the canonical specification for challenges and notes. See [CONTRIBUTING.md](CONTRIBUTING.md) for the community's contribution process and editorial expectations.

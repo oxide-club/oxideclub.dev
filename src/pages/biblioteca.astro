@@ -1,0 +1,271 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { libraryCategories } from '../lib/library';
+
+const resourceCount = libraryCategories.reduce(
+  (count, category) => count + category.resources.length,
+  0,
+);
+const description =
+  'Uma coleção de livros, cursos e referências para estudar os fundamentos da computação e da programação de sistemas.';
+const availabilityLabels = { gratuito: 'Gratuito', comercial: 'Comercial' };
+const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
+---
+
+<BaseLayout title="Biblioteca" description={description}>
+  <div class="container">
+    <header class="page-intro">
+      <div class="eyebrow">Oxide Club / Referências</div>
+      <h1>
+        Biblioteca{' '}
+        <span class="accent" aria-hidden="true">
+          _
+        </span>
+      </h1>
+      <p>{description}</p>
+    </header>
+    <div class="library-layout">
+      <aside class="library-sidebar">
+        <p class="index-label" id="library-index-label">
+          Nesta página
+        </p>
+        <nav aria-labelledby="library-index-label">
+          <ul>
+            {libraryCategories.map((category) => (
+              <li>
+                <a href={`#${category.id}`}>{category.title}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <p class="index-note">
+          {resourceCount} recursos · {libraryCategories.length} categorias
+          <br />
+          EN: inglês · PT-BR: português
+        </p>
+      </aside>
+      <div class="library-resources">
+        <details class="library-index">
+          <summary>
+            Categorias
+            <span>{libraryCategories.length} assuntos</span>
+          </summary>
+          <nav aria-label="Categorias da biblioteca">
+            <ul>
+              {libraryCategories.map((category) => (
+                <li>
+                  <a href={`#${category.id}`}>{category.title}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </details>
+        {libraryCategories.map((category) => (
+          <section
+            class="library-category"
+            id={category.id}
+            aria-labelledby={`${category.id}-heading`}
+            tabindex="-1"
+          >
+            <h2 id={`${category.id}-heading`}>{category.title}</h2>
+            <ul role="list">
+              {category.resources.map((resource) => (
+                <li>
+                  <a href={resource.url}>{resource.title}</a>
+                  <span class="resource-meta">
+                    <abbr title={languageLabels[resource.language]}>
+                      {resource.language}
+                    </abbr>
+                    {' · '}
+                    {availabilityLabels[resource.availability]}
+                    {resource.note && ` · ${resource.note}`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .library-layout {
+    border-top: 1px solid var(--color-border);
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 64px;
+    padding-block: 40px 80px;
+  }
+  .library-sidebar {
+    align-self: start;
+  }
+  /* Stay in flow on short screens or with enlarged text. */
+  @media (min-width: 901px) and (min-height: 1000px) {
+    .library-sidebar {
+      position: sticky;
+      top: 32px;
+      max-height: calc(100dvh - 64px);
+      overflow-y: auto;
+      padding: 8px;
+      margin: -8px;
+    }
+  }
+  .index-label {
+    font: 11px var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .library-sidebar li + li {
+    margin-top: 8px;
+  }
+  .library-sidebar a {
+    display: block;
+    padding-block: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+    text-decoration: none;
+    color: var(--color-muted);
+  }
+  .library-sidebar a:hover {
+    color: var(--color-accent-text);
+    text-decoration: underline;
+  }
+  .index-note {
+    border-top: 1px solid var(--color-border);
+    margin-top: 24px;
+    padding-top: 20px;
+    font: 11px/1.8 var(--font-mono);
+  }
+  .library-resources {
+    min-width: 0;
+  }
+  .library-category + .library-category {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--color-border);
+  }
+  .library-category h2 {
+    font-size: 28px;
+    line-height: 1.22;
+    letter-spacing: -0.035em;
+    margin-bottom: 20px;
+    max-width: 680px;
+  }
+  .library-category li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 3px 16px;
+    padding-block: 9px;
+  }
+  .library-category a {
+    display: inline-block;
+    min-width: 0;
+    min-height: 26px;
+    color: var(--color-accent-text);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  .library-category a:hover {
+    color: var(--color-text);
+  }
+  .resource-meta {
+    font: 11px/1.6 var(--font-mono);
+    color: var(--color-muted);
+    margin-left: auto;
+  }
+  abbr {
+    text-decoration: none;
+  }
+  .library-index {
+    display: none;
+  }
+  @media (max-width: 1080px) {
+    .library-layout {
+      grid-template-columns: 210px minmax(0, 1fr);
+      gap: 40px;
+    }
+    .library-category li {
+      display: block;
+    }
+    .resource-meta {
+      display: block;
+      margin-top: 3px;
+    }
+  }
+  @media (max-width: 900px) {
+    .library-layout {
+      display: block;
+      padding-top: 0;
+    }
+    .library-sidebar {
+      display: none;
+    }
+    .library-index {
+      display: block;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 32px;
+    }
+    .library-index summary {
+      cursor: pointer;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      min-height: 64px;
+      padding-block: 12px;
+      font: 12px var(--font-mono);
+      list-style: none;
+    }
+    .library-index summary::-webkit-details-marker {
+      display: none;
+    }
+    .library-index summary::after {
+      content: '+';
+      font-size: 20px;
+      color: var(--color-accent-text);
+    }
+    .library-index[open] summary::after {
+      content: '−';
+    }
+    .library-index nav {
+      padding-bottom: 20px;
+    }
+    .library-index a {
+      display: block;
+      padding-block: 10px;
+      font-size: 14px;
+    }
+    .library-category h2 {
+      font-size: 26px;
+    }
+    .library-category li {
+      padding-block: 10px;
+    }
+    .library-category + .library-category {
+      margin-top: 32px;
+    }
+    .page-intro > p {
+      font-size: 17px;
+    }
+    .page-intro {
+      padding-bottom: 36px;
+    }
+  }
+  @media (forced-colors: active) {
+    .library-category a,
+    .library-sidebar a {
+      color: LinkText;
+    }
+  }
+</style>

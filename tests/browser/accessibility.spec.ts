@@ -5,6 +5,7 @@ const routes = [
   '/',
   '/desafios',
   '/notas',
+  '/biblioteca',
   '/desafios/001-wc',
   '/desafios/002-ppm',
   '/codigo-de-conduta',
@@ -92,8 +93,8 @@ for (const route of routes) {
       expect(snapshot).toContain('main:');
       expect(snapshot).toContain('Oxide Club — início');
       if (width === 320) {
-        await page.locator('summary').press('Enter');
-        await expect(page.locator('details')).toHaveAttribute('open', '');
+        await page.locator('.mobile-nav summary').press('Enter');
+        await expect(page.locator('.mobile-nav')).toHaveAttribute('open', '');
         const client = await page.context().newCDPSession(page);
         const { nodes } = await client.send('Accessibility.getFullAXTree');
         const menu = nodes.find(
@@ -104,8 +105,8 @@ for (const route of routes) {
         expect(
           menu?.properties?.find((p) => p.name === 'expanded')?.value.value,
         ).toBe(true);
-        await page.locator('summary').press('Escape');
-        await expect(page.locator('summary')).toBeFocused();
+        await page.locator('.mobile-nav summary').press('Escape');
+        await expect(page.locator('.mobile-nav summary')).toBeFocused();
       }
     }
   });
@@ -119,7 +120,7 @@ for (const route of routes) {
         .violations,
     ).toEqual([]);
     await page.setViewportSize({ width: 320, height: 900 });
-    await page.locator('summary').press('Enter');
+    await page.locator('.mobile-nav summary').press('Enter');
     expect(
       (
         await new AxeBuilder({ page })
@@ -134,10 +135,10 @@ for (const route of routes) {
     await expect(
       page.getByRole('navigation', { name: 'Navegação móvel' }),
     ).toBeVisible();
-    await page.locator('summary').press('Escape');
+    await page.locator('.mobile-nav summary').press('Escape');
     expect(
       await page
-        .locator('summary')
+        .locator('.mobile-nav summary')
         .evaluate((el) => getComputedStyle(el).outlineStyle),
     ).not.toBe('none');
   });
