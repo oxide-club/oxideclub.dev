@@ -3,7 +3,7 @@
 ## Objetivo e decisão aprovada
 
 Divulgar propostas de novos desafios e notas em `#contribuicoes` e divulgar
-o conteúdo disponível no site em `#anuncios`. O anúncio exige merge e
+o conteúdo disponível no site em `#novidades`. O anúncio exige merge e
 publicação bem-sucedida, conforme confirmado pelo mantenedor.
 
 O site Astro está em `oxide-club/oxideclub.dev`. Os conteúdos são mantidos
@@ -28,7 +28,8 @@ próprio acrescentaria infraestrutura desnecessária para este escopo.
   `<id>/index.md`, excluindo `docs` e `templates`. Renomeações, modificações
   de páginas existentes, testes e anexos isolados não são novas propostas.
 - Aguardar o PR deixar de ser draft. Publicar uma mensagem por PR, contendo
-  autor, título do PR, identificadores propostos e link do PR.
+  autor, título do PR, identificadores propostos e link do PR. O título clicável
+  e o link principal da mensagem devem direcionar ao PR no GitHub.
 - Registrar o PR como notificado; atualizações, reaberturas e novas execuções
   não devem gerar outro aviso para o mesmo PR.
 - Executar apenas lógica confiável da branch padrão. Para acesso ao webhook
@@ -36,7 +37,7 @@ próprio acrescentaria infraestrutura desnecessária para este escopo.
   do PR, com permissões explícitas. Verificar as políticas de eventos da
   organização durante a configuração.
 
-## Publicações em #anuncios
+## Publicações em #novidades
 
 - Gerar no build de produção um manifesto com tipo, ID, título, resumo e URL
   de cada desafio e nota efetivamente incluído nas rotas publicadas.
@@ -48,6 +49,8 @@ próprio acrescentaria infraestrutura desnecessária para este escopo.
   pela primeira vez e registrar o envio após confirmação do Discord.
 - URLs: `https://oxideclub.dev/desafios/<id>` e
   `https://oxideclub.dev/notas/<id>`.
+- O título clicável e o link principal da mensagem devem direcionar à página
+  publicada no site. Essa mensagem não deve usar o PR como destino.
 - Excluir drafts. A passagem de draft para publicado conta como primeira
   publicação; alterações posteriores, renomeações detectadas no histórico e
   restauração de um ID já anunciado não geram novo anúncio.
@@ -87,9 +90,11 @@ que falhou nos logs, sem revelar URLs de webhook ou outros tokens.
 ## Configuração e permissões
 
 - Criar um webhook no canal `#contribuicoes` e armazenar a URL em
-  `DISCORD_CONTRIBUICOES_WEBHOOK_URL`, disponível somente a challenges e notes.
-- Criar outro no canal `#anuncios` e armazenar a URL em
-  `DISCORD_ANUNCIOS_WEBHOOK_URL`, disponível somente a oxideclub.dev.
+  `DISCORD_CONTRIBUTIONS_WEBHOOK_URL`, disponível somente a challenges e notes.
+- Criar outro no canal `#novidades` e armazenar a URL em
+  `DISCORD_ANNOUNCEMENTS_WEBHOOK_URL`, disponível somente a oxideclub.dev.
+- Armazenar ambas as URLs em Actions Secrets e disponibilizá-las aos scripts
+  como variáveis de ambiente com esses mesmos nomes.
 - Preservar o `WEBSITE_DEPLOY_TOKEN` já usado no disparo entre repositórios.
 - Conceder `contents: write` somente aos jobs confiáveis que atualizam o
   registro; os notificadores de PR também precisam de `pull-requests: read`.
@@ -104,6 +109,8 @@ fixtures e HTTP simulado: PR de fork, draft, novo conteúdo, edição, renomeaç
 múltiplas páginas, paginação, reexecução, baseline, publicação de draft,
 falha de deploy, indisponibilidade da página, erro/rate limit do Discord e
 falha na gravação do estado. Garantir que nenhum teste envie mensagens reais.
+Verificar também os destinos dos links e dos títulos clicáveis: PR do GitHub
+em contribuições e página de produção do site em novidades.
 
 Executar os testes e checks relevantes do site e validar a sintaxe dos
 workflows. Incluir exemplos das mensagens e instruções de ativação e retomada
