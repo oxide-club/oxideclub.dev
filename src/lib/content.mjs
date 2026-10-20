@@ -4,9 +4,7 @@ export function selectPublished(entries) {
   if (
     new Set(published.map((entry) => entry.data.slug)).size !== published.length
   )
-    throw new Error('Duplicate challenge slug');
-  if (published.filter((entry) => entry.data.featured).length !== 1)
-    throw new Error('Exactly one published featured challenge is required');
+    throw new Error('Duplicate publication slug');
   return published;
 }
 /** @param {Record<string, string | null>} links */
@@ -34,4 +32,18 @@ export function validateLinks(links) {
     if (url.pathname === '/') throw new Error(`Missing destination for ${key}`);
   }
   return links;
+}
+
+/** Select once at build time; never changes in the browser.
+ * @template {{featured: boolean}} T
+ * @param {T[]} entries
+ * @param {() => number} random
+ * @returns {T | undefined}
+ */
+export function selectFeatured(entries, random = Math.random) {
+  const editorial = entries.filter((entry) => entry.featured);
+  const eligible = editorial.length ? editorial : entries;
+  return eligible.length
+    ? eligible[Math.floor(random() * eligible.length)]
+    : undefined;
 }

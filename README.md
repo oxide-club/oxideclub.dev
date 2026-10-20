@@ -39,7 +39,7 @@ After changing collection schemas or their imported validators, restart the deve
 ## Content and links
 
 - Add Markdown under `src/content/challenges/`. Copy the first challenge's metadata structure; use a stable unique slug.
-- Drafts use `draft: true` and are excluded from both lists and generated routes. Exactly one published challenge must have `featured: true`.
+- Drafts use `draft: true` and are excluded from both lists and generated routes. `featured: true` gives editorial priority on the homepage; zero or multiple highlights are supported. `FeaturedContent.astro` selects one eligible publication at build time (randomly among highlights, or among all published entries if none are highlighted). The selection stays fixed until the next build, with no browser JavaScript or layout shift. An empty catalogue omits the section. `src/lib/publications.ts` maps existing collection metadata to a shared presentation shape; add adapters there when new collections and their real routes are published, without changing the homepage.
 - Set `categories` to one or more of `build`, `investigate`, `debug`, `optimize`, `experiment`. Categories are nonexclusive and independent from `difficulty` (`beginner`, `intermediate`, `advanced`); no category implies a level. Duplicate, empty or unknown categories fail schema validation.
 - Categories describe the activity: building programs/algorithms/data structures; investigating observed behavior; diagnosing bugs; measuring and optimizing implementations; or testing hypotheses. The wc challenge is one building/investigation example, not the club's entire scope.
 - Define the objective, prerequisites, minimum investigation, expected outputs or evidence, verification method and optional extensions in Markdown. Outputs may be programs, measurements, explanations, fixes or technical reports. The template renders those sections without requiring code submissions or a complete program.
@@ -49,7 +49,17 @@ After changing collection schemas or their imported validators, restart the deve
 - Add `eventUrl` only after scheduling a real Discord event. No recording or retrospective is promised.
 - For substantive corrections, set `updatedAt` and describe changes under “Esclarecimentos”. Preserve published slugs or configure redirects deliberately.
 - Central community/reporting destinations live in `src/config/links.json`. Null destinations are omitted, never fabricated.
-- Zine is intentionally absent. When approved writing exists, add a separate collection and routes with original-language metadata and documented author permission.
+- Technical notes use the `notes` collection and `/notas` routes. Only publish real, approved writing with author permission; do not add placeholder articles to the content directory.
+
+## Publishing technical notes
+
+Add a `.md` file to `src/content/notes/`. Required frontmatter: `title`, `slug` (unique, lowercase words separated by hyphens), `summary`, `publishedAt` (actual publication date, `YYYY-MM-DD`) and `draft` (boolean). Optional fields: `updatedAt` (actual revision date), `authors` (nonempty list of credited names) and `featured` (defaults to false). No author is inferred when omitted. Drafts require the same metadata and are excluded from listings, routes, sitemap and homepage highlights in every build, including previews.
+
+`/notas` lists publications newest first; ties use the slug. With no published notes, it shows an intentional empty state. Each published entry generates `/notas/<slug>` automatically. There are no placeholder article routes. Notes share the build-time highlight selection with challenges through `src/lib/publications.ts`.
+
+Start body sections at `##`: the template supplies the title and builds the table of contents from second-level headings. Use fenced code blocks with a language identifier, Markdown blockquotes, descriptive links and a final `## Referências` section with real sources. Heading anchors preserve accents: link to `#referências`, for example. For figures, use an HTML `<figure>` with an `<img>` (meaningful `alt`, explicit `width`/`height`) and `<figcaption>`; store local assets in `public/` and use root-relative paths. Code blocks remain scrollable and keyboard-focusable. Markdown is sufficient; MDX and client-side reading features are intentionally absent.
+
+Run `npm run test:notes` (or `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run test:notes`) to build an empty catalogue and synthetic published/draft notes in a temporary copy, check production visibility, homepage integration, rendering, reflow and axe accessibility, then delete the copy. Fixtures never enter `src/content/notes` in the working tree. This test needs the same Chromium installation as the browser suite.
 
 ## Production and Cloudflare
 

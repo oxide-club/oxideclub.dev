@@ -16,6 +16,12 @@ const pathname = Astro.url.pathname;
     >
       Desafios
     </a>
+    <a
+      href="/notas"
+      aria-current={pathname.startsWith('/notas') ? 'page' : undefined}
+    >
+      Notas
+    </a>
     <a href="/#como-participar">Como participar</a>
   </nav>
   <div class="header-join">
@@ -28,6 +34,12 @@ const pathname = Astro.url.pathname;
     <nav aria-label="Navegação móvel">
       <a href="/#o-clube">O clube</a>
       <a href="/desafios">Desafios</a>
+      <a
+        href="/notas"
+        aria-current={pathname.startsWith('/notas') ? 'page' : undefined}
+      >
+        Notas
+      </a>
       <a href="/#como-participar">Como participar</a>
       <JoinLink />
     </nav>

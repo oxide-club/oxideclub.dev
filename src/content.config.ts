@@ -29,4 +29,17 @@ const challenges = defineCollection({
     environment: z.string().min(1).optional(),
   }),
 });
-export const collections = { challenges };
+const notes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/notes' }),
+  schema: z.object({
+    title: z.string().min(1),
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    summary: z.string().min(1),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    draft: z.boolean(),
+    featured: z.boolean().default(false),
+    authors: z.array(z.string().min(1)).min(1).optional(),
+  }),
+});
+export const collections = { challenges, notes };

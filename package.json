@@ -11,7 +11,8 @@
     "test": "node --test tests/*.test.mjs",
     "test:browser": "playwright test",
     "build:production": "node scripts/release-check.mjs && SITE_RELEASE=production astro build",
-    "deploy": "npm run build:production && wrangler deploy"
+    "deploy": "npm run build:production && wrangler deploy",
+    "test:notes": "node --test tests/integration/notes.test.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

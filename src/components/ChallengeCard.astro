@@ -10,12 +10,7 @@ const { challenge, headingLevel: Heading = 'h3' } = Astro.props;
 const { data } = challenge;
 ---
 
-<article
-  class:list={[
-    'challenge-card',
-    { 'without-example': data.slug !== 'recriando-wc' },
-  ]}
->
+<article class="challenge-card">
   <div class="challenge-info">
     <div class="challenge-meta">
       <span class="level">{difficultyLabels[data.difficulty]}</span>
@@ -48,42 +43,11 @@ const { data } = challenge;
       Ler o desafio completo <span aria-hidden="true">↗</span>
     </a>
   </div>
-  {data.slug === 'recriando-wc' && (
-    <div class="example">
-      <div class="example-top">
-        <span>EXPERIMENTO / ENTRADA E SAÍDA</span>
-        <span aria-hidden="true">stdin → stdout</span>
-      </div>
-      <pre aria-label="Exemplo: contar uma linha, duas palavras e dez bytes"><code><span class="muted">$</span> printf 'ola mundo\n' | ./oxide-wc
-<span class="result">1 2 10</span></code></pre>
-      <div class="counts" aria-hidden="true">
-        <span>
-          01 <small>linha</small>
-        </span>
-        <span>
-          02 <small>palavras</small>
-        </span>
-        <span>
-          10 <small>bytes</small>
-        </span>
-      </div>
-      <p>
-        Streams, contagem e estado.
-        <br />O que acontece entre a entrada e o resultado?
-      </p>
-    </div>
-  )}
 </article>
 <style>
-  .challenge-card.without-example {
-    grid-template-columns: 1fr;
-  }
   .challenge-card {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    overflow: hidden;
   }
   .challenge-info {
     padding: 36px 40px;
@@ -116,7 +80,7 @@ const { data } = challenge;
   }
   p {
     font-size: 14px;
-    max-width: 420px;
+    max-width: 70ch;
   }
   .categories {
     margin-top: 16px;
@@ -132,70 +96,12 @@ const { data } = challenge;
     color: var(--color-text);
     font-weight: 550;
   }
-  .example {
-    padding: 32px 36px;
-    background: #1e2123;
-    border-left: 1px solid var(--color-border);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-width: 0;
-  }
-  .example-top {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    font: 9px var(--font-mono);
-    letter-spacing: 0.06em;
-    color: var(--color-muted);
-  }
-  pre {
-    font: 14px/2 var(--font-mono);
-    margin: 32px 0 24px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
-  .muted {
-    color: var(--color-muted);
-  }
-  .result {
-    color: var(--color-accent-text);
-  }
-  .counts {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    border-top: 1px solid var(--color-border);
-    padding-top: 20px;
-    font: 23px var(--font-mono);
-  }
-  .counts small {
-    display: block;
-    margin-top: 9px;
-    font-size: 10px;
-    color: var(--color-muted);
-  }
-  .example > p {
-    font-size: 11px;
-    margin-top: 26px;
-  }
   @media (max-width: 700px) {
-    .challenge-card {
-      grid-template-columns: 1fr;
-    }
-    .challenge-info,
-    .example {
+    .challenge-info {
       padding: 28px 24px;
-    }
-    .example {
-      border-left: 0;
-      border-top: 1px solid var(--color-border);
     }
     .challenge-title {
       font-size: 30px;
-    }
-    .example-top {
-      flex-wrap: wrap;
     }
   }
 </style>

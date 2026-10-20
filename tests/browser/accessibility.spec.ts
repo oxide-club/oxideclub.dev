@@ -4,6 +4,7 @@ import AxeBuilder from '@axe-core/playwright';
 const routes = [
   '/',
   '/desafios',
+  '/notas',
   '/desafios/recriando-wc',
   '/codigo-de-conduta',
   '/404',

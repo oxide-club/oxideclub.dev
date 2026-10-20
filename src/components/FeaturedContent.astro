@@ -1,0 +1,73 @@
+---
+import { publishedContent } from '../lib/publications';
+import { selectFeatured } from '../lib/content.mjs';
+const publication = selectFeatured(await publishedContent());
+---
+
+{publication && (
+  <section class="section" id="do-laboratorio" aria-labelledby="lab-heading">
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow">02 / Conteúdo publicado</div>
+        <h2 id="lab-heading">Do laboratório</h2>
+      </div>
+      <div class="catalogue-links">
+        <a class="text-link" href="/desafios">
+          Ver os desafios <span aria-hidden="true">↗</span>
+        </a>
+        <a class="text-link" href="/notas">
+          Ver as notas <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+    <article class="featured">
+      <span class="tag">{publication.kind}</span>
+      <div>
+        <h3>{publication.title}</h3>
+        <p>{publication.summary}</p>
+      </div>
+      <a class="text-link" href={publication.href}>
+        Ler conteúdo <span aria-hidden="true">↗</span>
+      </a>
+    </article>
+  </section>
+)}
+<style>
+  .catalogue-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
+  .featured {
+    display: flex;
+    align-items: start;
+    gap: 28px;
+    padding: 28px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  .tag {
+    flex-shrink: 0;
+  }
+  .featured > div {
+    flex: 1;
+    min-width: 0;
+  }
+  h3 {
+    margin-bottom: 12px;
+  }
+  p {
+    font-size: 14px;
+    max-width: 70ch;
+  }
+  .text-link {
+    flex-shrink: 0;
+  }
+  @media (max-width: 700px) {
+    .featured {
+      flex-direction: column;
+      gap: 20px;
+      padding: 24px;
+    }
+  }
+</style>
