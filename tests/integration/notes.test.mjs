@@ -60,6 +60,8 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
           env: {
             ...process.env,
             SITE_RELEASE: 'production',
+            CHALLENGES_COMMIT: process.env.CHALLENGES_COMMIT || 'a'.repeat(40),
+            NOTES_COMMIT: process.env.NOTES_COMMIT || 'b'.repeat(40),
             SOLUTIONS_SOURCE: undefined,
             NOTES_SOURCE: '',
             MEETINGS_SOURCE: '',
@@ -146,6 +148,9 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
       /id="challenge-resources-heading"/,
     );
     build();
+    const manifest = JSON.parse(await readFile(join(root, 'dist/publication-manifest.json'), 'utf8'));
+    assert.deepEqual(manifest.entries.filter(entry => entry.type === 'note').map(entry => entry.id), ['fixture-publica']);
+    assert.equal(manifest.entries.find(entry => entry.id === 'fixture-publica').url, 'https://oxideclub.dev/notas/fixture-publica');
     const listing = await readFile(join(root, 'dist/notas/index.html'), 'utf8');
     assert.match(listing, /href="\/notas\/fixture-publica"/);
     assert.doesNotMatch(

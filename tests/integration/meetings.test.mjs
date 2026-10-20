@@ -64,6 +64,8 @@ test('meetings: static agenda, permanent articles, safe assets, calendar and res
           env: {
             ...process.env,
             SITE_RELEASE: 'production',
+            CHALLENGES_COMMIT: process.env.CHALLENGES_COMMIT || 'a'.repeat(40),
+            NOTES_COMMIT: process.env.NOTES_COMMIT || 'b'.repeat(40),
             SOLUTIONS_SOURCE: undefined,
             MEETINGS_SOURCE: '',
             NOTES_SOURCE: '',

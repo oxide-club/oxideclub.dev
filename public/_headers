@@ -9,3 +9,6 @@
   Content-Disposition: inline; filename="encontro.ics"
   Cache-Control: public, max-age=300, must-revalidate
   X-Content-Type-Options: nosniff
+
+/publication-manifest.json
+  Cache-Control: no-cache
