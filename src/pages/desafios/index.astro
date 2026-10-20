@@ -12,6 +12,7 @@ const challenges = ascendingChallenges(await publishedChallenges());
 const startingChallenge = challenges.find(({ id }) => id === '001-wc');
 const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#compartilhar-uma-implementação`;
 const runnerGuideUrl = githubUrl('challenges', 'docs/runner.md', 'blob');
+const proposalGuideUrl = githubUrl('challenges', 'CONTRIBUTING.md', 'blob');
 const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   (a, b) => a.localeCompare(b, 'pt-BR'),
 );
@@ -27,9 +28,12 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
       <h1>Explore sistemas na prática.</h1>
       <p>
         Construa programas para investigar entrada e saída, imagens e compressão
-        de dados. Escolha um desafio e compartilhe perguntas, tentativas e
-        descobertas.
+        de dados. Os desafios são construídos com a comunidade: qualquer pessoa
+        pode propor um novo desafio por pull request.
       </p>
+      <a class="text-link proposal-link" href="#propor-desafio">
+        Quer propor um desafio? <span aria-hidden="true">↓</span>
+      </a>
     </header>
     <div class="catalogue-guidance">
       {startingChallenge && (
@@ -96,6 +100,23 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
           <ChallengeCard challenge={challenge} headingLevel="h2" />
         </div>
       ))}
+    </section>
+    <section
+      class="proposal"
+      id="propor-desafio"
+      aria-labelledby="proposal-heading"
+      tabindex="-1"
+    >
+      <h2 id="proposal-heading">O próximo desafio pode começar com você.</h2>
+      <p>
+        Tem uma ideia para explorar computação e programação de sistemas?
+        Qualquer pessoa pode propor um desafio abrindo um pull request no
+        repositório <code>challenges</code>. Você também pode contribuir com
+        melhorias nos enunciados e novos casos de teste.
+      </p>
+      <a class="button secondary" href={proposalGuideUrl}>
+        Ver como propor no GitHub <span aria-hidden="true">↗</span>
+      </a>
     </section>
     <section class="testing-intro" aria-labelledby="testing-intro-heading">
       <h2 id="testing-intro-heading">Teste sua implementação</h2>
@@ -195,6 +216,27 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   }
   .page-intro h1 {
     font-size: clamp(36px, 5vw, 56px);
+  }
+  .proposal-link {
+    margin-top: 12px;
+  }
+  .proposal-link:is(:hover, :focus-visible) > span[aria-hidden] {
+    transform: translateY(3px);
+  }
+  .proposal {
+    border-top: 1px solid var(--color-border);
+    padding-block: 36px;
+  }
+  .proposal h2 {
+    max-width: 26ch;
+    font-size: clamp(28px, 4vw, 36px);
+  }
+  .proposal p {
+    max-width: 72ch;
+    margin-block: 20px 24px;
+  }
+  .proposal code {
+    font-family: var(--font-mono);
   }
   .catalogue-guidance {
     max-width: 88ch;
