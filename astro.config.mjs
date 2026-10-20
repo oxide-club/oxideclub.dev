@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import markdownNotes from './src/lib/markdown-notes.mjs';
+import markdownMeetings from './src/lib/markdown-meetings.mjs';
 import { satteri } from '@astrojs/markdown-satteri';
 import sitemap from '@astrojs/sitemap';
 export default defineConfig({
@@ -7,7 +8,7 @@ export default defineConfig({
   output: 'static',
   integrations: [sitemap()],
   markdown: {
-    processor: satteri({ mdastPlugins: [markdownNotes] }),
+    processor: satteri({ mdastPlugins: [markdownNotes, markdownMeetings] }),
     shikiConfig: {
       theme: 'github-dark',
       transformers: [

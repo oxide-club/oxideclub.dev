@@ -1,5 +1,6 @@
 import { syncChallenges } from './sync-challenges.mjs';
 import { syncNotes } from './sync-notes.mjs';
+import { syncMeetings } from './sync-meetings.mjs';
 
 try {
   const production =
@@ -7,11 +8,12 @@ try {
     process.env.SITE_RELEASE === 'production' ||
     process.env.npm_lifecycle_event === 'build:production';
   if (
-    process.env.NOTES_SOURCE !== undefined &&
+    (process.env.NOTES_SOURCE !== undefined ||
+      process.env.MEETINGS_SOURCE !== undefined) &&
     (production || (process.env.CI && process.env.CI !== 'false'))
   ) {
     throw new Error(
-      'Local notes source overrides are forbidden in CI and production',
+      'Local content source overrides are forbidden in CI and production',
     );
   }
   const challenges = await syncChallenges({
@@ -28,6 +30,16 @@ try {
     notes
       ? `[content] oxide-club/notes main @ ${notes}`
       : '[content] notes local source validated',
+  );
+  const meetings = await syncMeetings({
+    expectedRevision: process.env.MEETINGS_COMMIT,
+    githubEnv: process.env.GITHUB_ENV,
+    production,
+  });
+  console.log(
+    meetings
+      ? `[content] oxide-club/meetings main @ ${meetings}`
+      : '[content] meetings local source validated',
   );
 } catch (error) {
   console.error(`[content] ${error.message}`);

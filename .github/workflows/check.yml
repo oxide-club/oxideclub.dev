@@ -12,7 +12,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Fetch latest public challenges and notes for this run
+      - name: Fetch latest public challenges, notes and meetings for this run
         run: npm run content:sync
       - run: npm test
       - run: npm run check
@@ -20,6 +20,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - run: npm run test:notes
+      - run: npm run test:meetings
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

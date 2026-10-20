@@ -6,7 +6,7 @@ Built with Astro, TypeScript, Markdown content collections and plain CSS. Pages 
 
 ## Local development
 
-Use Node.js 24, matching CI, and Git. Development, checks and builds fetch the latest public challenge definitions and technical notes before starting.
+Use Node.js 24, matching CI, and Git. Development, checks and builds fetch the latest public challenge definitions, technical notes and meeting records before starting.
 
 ```sh
 npm ci
@@ -74,8 +74,8 @@ even when a printed edition or optional hardware is sold separately.
 The catalogue contains 40 resources across eight categories. Link review
 on 2026-10-20 retained the approved works: the GNU C and Make links use their
 official `manual/html_node/` indexes because the parent directories returned 403.
-*Structured Computer Organization* links to the user-selected English sixth
-edition PDF hosted by St. Xavier's College, Jaipur. *Entendendo Algoritmos*
+_Structured Computer Organization_ links to the user-selected English sixth
+edition PDF hosted by St. Xavier's College, Jaipur. _Entendendo Algoritmos_
 links to Novatec's Brazilian second edition. Both destinations were verified.
 
 ## Publishing content
@@ -145,33 +145,116 @@ Only published notes' assets receive static routes at `/notas/<note-id>/assets/<
 
 Published notes appear newest first in `/notas/` and can appear in the homepage's existing featured-content section. An empty repository is valid and displays the existing empty state. No placeholder articles are published.
 
+### Meetings
+
+[oxide-club/meetings](https://github.com/oxide-club/meetings) is the sole source for
+`/encontros/` and permanent `/encontros/<id>/` pages. Each definition lives at
+`meetings/NNN-title.md`; its filename defines the canonical identifier. Do not add
+`slug` or rename a published file. The listing sorts by `startsAt` descending,
+including future and past meetings in the same sequence, without clock-derived
+statuses or client JavaScript.
+
+Copy the source repository's `templates/meeting.md`, replace its illustrative
+dates, and write the agenda in Markdown. Required fields are `title`, `summary`,
+`startsAt`, `endsAt`, `timeZone`, `format` and `createdAt`. Date-time strings need an
+explicit offset; the end must follow the start. Display uses the declared IANA
+zone, including the end date when crossing midnight. `format` is `online`,
+`presencial` or `hibrido`; physical formats require `location`. `platform` and
+`participationUrl` are optional. Access links are editorial; they do not disappear
+based on the browser clock. Cancelled meetings omit the participation button.
+
+Use `draft: true` while preparing content; drafts are validated but never generate
+pages, assets or calendar entries. An empty documented source repository is valid
+and produces the empty agenda and an empty calendar feed. Templates are excluded.
+
+For a local preview of uncommitted content:
+
+```sh
+MEETINGS_SOURCE=/absolute/path/to/meetings npm run dev
+```
+
+The override is read directly, never copied, and is forbidden in CI and production.
+As with notes, temporarily set `draft: false` only in your local checkout when you
+need to inspect an article. Production always fetches the public `main` snapshot.
+
+Store small attachments at `assets/<id>/` in the source repository and reference
+`../assets/<id>/file.pdf`. The allowed types and regular-file protections match
+notes: PNG, JPEG, WebP, GIF, AVIF, PDF, TXT, CSV and JSON; no symlinks or executable
+HTML. Markdown images require alt text. Raw HTML is rejected. Links to another
+meeting use `./NNN-title.md#section`. Recordings and large files use external links.
+Code can remain versioned in the source repository and be linked through GitHub.
+Only published meetings' attachments receive `/encontros/<id>/assets/<file>` routes.
+
+Optional `materials` contains `{title, type, url}` objects. Types are `slides`,
+`document`, `code`, `recording`, `transcript` and `reference`. URLs must be HTTPS
+without credentials, or refer to the meeting's own attachments. Missing or empty
+lists omit the entire materials section. Markdown can also contain annotated
+references; avoid repeating the same list in both places. A native anchor index
+lists existing Markdown sections and the materials block, when present.
+
+#### Calendar revisions and cancellations
+
+Each meeting generates `/encontros/<id>/calendario.ics`; the subscription feed is
+`https://oxideclub.dev/encontros/calendario.ics`. Importing an individual file does
+not guarantee updates. Subscribe by URL in a compatible calendar app; polling
+frequency and cancellation display depend on that app.
+
+Generation follows [RFC 5545](https://www.rfc-editor.org/rfc/rfc5545.html): UTC
+instants, stable UID from the canonical filename, metadata-based timestamps,
+`SEQUENCE`, escaped text, CRLF and UTF-8-safe line folding. `createdAt` is required
+and immutable; every published edit increments `sequence` and sets `updatedAt`.
+These editorial revision fields describe actual changes, not temporal state.
+Rebuilds alone do not change calendar timestamps. The feed includes cancelled
+meetings with `STATUS:CANCELLED`; do not delete published meetings or turn them
+into drafts to cancel them.
+
+To reschedule, keep the ID, change `startsAt`/`endsAt`, record `previousStartsAt`
+and explain with `changeNotice`, increment `sequence` and set `updatedAt`. To
+cancel, set `cancelled: true` with `changeNotice` and a new revision. Keep the
+record and materials available. Follow the source contribution guide for a
+postponement whose replacement date is not yet known.
+
+The static endpoint headers are mirrored in `public/_headers` because Cloudflare
+serves files after the Astro build. No calendar API or runtime service is used.
+
+Run `npm run test:meetings` for isolated empty/published/draft builds, generated
+calendar and asset checks, accessibility, and desktop/mobile layout checks. Tests
+use synthetic content in temporary builds and never publish it. When using an
+installed system Chromium, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium`.
+The notes integration suite also requires the meetings snapshot to be synced.
+
+Before the first automatic content publication, merge the website integration to
+`main` and configure `WEBSITE_DEPLOY_TOKEN` in the meetings repository using the
+existing trigger procedure below. This setup does not grant or copy credentials.
+
 ### Community links
 
 Shared community and reporting destinations live in `src/config/links.json`. Missing destinations are omitted from the interface; add links only when the destination exists.
 
 ## Fetching canonical content
 
-`npm run dev`, `npm run check`, `npm run build` and `npm run build:production` fetch the latest `main` from both public content repositories (`challenges` and `notes`). To fetch explicitly:
+`npm run dev`, `npm run check`, `npm run build` and `npm run build:production` fetch the latest `main` from all three public content repositories (`challenges`, `notes` and `meetings`). To fetch explicitly:
 
 ```sh
 npm run content:sync
 ```
 
-The shared sync script prints each exact commit used. Challenges are cached at `.content/challenges/` and notes at `.content/notes/`; both are ignored, generated checkouts, not independently maintained content copies. A fetch failure stops the command; an older cached checkout is not silently substituted. Local edits in the generated checkout also stop synchronization so work is not discarded.
+The shared sync script prints each exact commit used. Challenges are cached at `.content/challenges/`, notes at `.content/notes/` and meetings at `.content/meetings/`; all are ignored, generated checkouts, not independently maintained content copies. A fetch failure stops the command; an older cached checkout is not silently substituted. Local edits in the generated checkout also stop synchronization so work is not discarded.
 
-CI and the deployment workflow fetch once at the start and export `CHALLENGES_COMMIT` and `NOTES_COMMIT` for subsequent steps. This is a snapshot for that workflow run, not a manually maintained pin: validation, browser tests and the production build all use the same fetched content. A new workflow run picks up the latest `main` again. Standalone local commands fetch the latest by default.
+CI and the deployment workflow fetch once at the start and export `CHALLENGES_COMMIT`, `NOTES_COMMIT` and `MEETINGS_COMMIT` for subsequent steps. This is a snapshot for that workflow run, not a manually maintained pin: validation, browser tests and the production build all use the same fetched content. A new workflow run picks up the latest `main` again. Standalone local commands fetch the latest by default.
 
 Pushes to `main` in the content repositories automatically dispatch this repository's existing **Deploy production** workflow when website inputs change:
 
 - **challenges:** `*/index.md` (definitions directly inside a challenge directory).
 - **notes:** `*/index.md` and `*/assets/**`, excluding `docs/**` and `templates/**`.
+- **meetings:** `meetings/*.md` and `assets/**`. Documentation and templates are excluded.
 - **solutions:** no trigger. The site links to this repository but does not fetch its contents. Resource availability is declared in the challenges' `index.md` metadata, so changing that metadata triggers deployment.
 
 These path filters cover additions, edits, deletions and renames. Documentation, challenge tests and fixtures do not trigger deployment. Draft note changes also trigger validation; drafts remain excluded from the published site. Pull requests and pushes to other branches do not dispatch production deployments.
 
 #### One-time trigger setup
 
-Create a fine-grained personal access token owned by an account with access to `oxide-club/oxideclub.dev`, restricted to that repository with **Actions: read and write** permission. Complete any organization approval required for the token. Store it as the Actions secret `WEBSITE_DEPLOY_TOKEN` in both `oxide-club/challenges` and `oxide-club/notes` (or as an organization secret available only to those two repositories). Their default `GITHUB_TOKEN` cannot dispatch a workflow in another repository. Renew the token before it expires.
+Create a fine-grained personal access token owned by an account with access to `oxide-club/oxideclub.dev`, restricted to that repository with **Actions: read and write** permission. Complete any organization approval required for the token. Store it as the Actions secret `WEBSITE_DEPLOY_TOKEN` in `oxide-club/challenges`, `oxide-club/notes` and `oxide-club/meetings` (or as an organization secret available only to those repositories). Their default `GITHUB_TOKEN` cannot dispatch a workflow in another repository. Renew the token before it expires.
 
 Merge `.github/workflows/deploy-website.yml` into `main` in each source repository. The destination's `deploy.yml` must remain available on `main` with `workflow_dispatch` enabled. No Cloudflare credentials are needed in the source repositories. Missing or invalid dispatch credentials fail the source workflow rather than silently skipping publication.
 
@@ -183,7 +266,7 @@ Legacy challenge URLs are redirected by Cloudflare using `public/_redirects`; As
 
 Production is hosted at **https://oxideclub.dev**. [wrangler.jsonc](wrangler.jsonc) configures the `oxideclub-dev` Worker, custom domain and static assets from `dist/`, including custom 404 handling.
 
-To publish an update, run the **Deploy production** workflow from GitHub Actions. Deployment is manually triggered; pushes and pull requests run the **Check website** workflow. The deployment workflow runs unit tests, Astro checks, the preview build and both browser suites before building and deploying production output.
+To publish an update, run the **Deploy production** workflow from GitHub Actions. Deployment is manually triggered; pushes and pull requests run the **Check website** workflow. The deployment workflow runs unit tests, Astro checks, the preview build, browser suite and both content integration suites before building and deploying production output.
 
 The workflow uses the GitHub `production` environment with these secrets:
 

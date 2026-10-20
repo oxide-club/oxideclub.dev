@@ -1,0 +1,11 @@
+/encontros/calendario.ics
+  Content-Type: text/calendar; charset=utf-8
+  Content-Disposition: inline; filename="encontros.ics"
+  Cache-Control: public, max-age=300, must-revalidate
+  X-Content-Type-Options: nosniff
+
+/encontros/*/calendario.ics
+  Content-Type: text/calendar; charset=utf-8
+  Content-Disposition: inline; filename="encontro.ics"
+  Cache-Control: public, max-age=300, must-revalidate
+  X-Content-Type-Options: nosniff

@@ -6,6 +6,11 @@ import { notesDirectory, noteId, noteSchema } from './lib/note-source.mjs';
 import { githubResourcesSchema } from './lib/challenge-resources.mjs';
 import { challengeTaxonomySchema } from './lib/challenge-taxonomy.mjs';
 import { challengeId, challengeIdentifier } from './lib/challenge-source.mjs';
+import {
+  meetingsDirectory,
+  meetingId,
+  meetingSchema,
+} from './lib/meeting-source.mjs';
 if (!existsSync('.content/challenges')) {
   throw new Error(
     'Challenge content is missing. Run npm run content:sync first.',
@@ -56,4 +61,17 @@ const notes = defineCollection({
   }),
   schema: noteSchema,
 });
-export const collections = { challenges, notes };
+if (!existsSync(meetingsDirectory())) {
+  throw new Error(
+    'Meeting content is missing. Run npm run content:sync or set MEETINGS_SOURCE to a local meetings checkout.',
+  );
+}
+const meetings = defineCollection({
+  loader: glob({
+    pattern: '*.md',
+    base: `${meetingsDirectory()}/meetings`,
+    generateId: meetingId,
+  }),
+  schema: meetingSchema,
+});
+export const collections = { challenges, notes, meetings };

@@ -1,0 +1,270 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { githubUrl } from '../../config/github.mjs';
+import { publishedMeetings } from '../../lib/meetings';
+import {
+  meetingWhen,
+  formatLabels,
+  materialLabels,
+} from '../../lib/meeting-source.mjs';
+import { meetingMaterialUrl } from '../../lib/meeting-assets.mjs';
+export async function getStaticPaths() {
+  return (await publishedMeetings()).map((meeting) => ({
+    params: { id: meeting.id },
+    props: { meeting },
+  }));
+}
+interface Props {
+  meeting: CollectionEntry<'meetings'>;
+}
+const { meeting } = Astro.props;
+const { id, data } = meeting;
+const { Content, headings } = await render(meeting);
+const sections = headings.filter(({ depth }) => depth === 2);
+const when = meetingWhen(data);
+const revisionDate =
+  data.updatedAt &&
+  new Intl.DateTimeFormat('pt-BR', {
+    timeZone: data.timeZone,
+    dateStyle: 'long',
+  }).format(new Date(data.updatedAt));
+---
+
+<BaseLayout title={data.title} description={data.summary}>
+  <div class="container">
+    <article class="meeting">
+      <header class="page-intro">
+        <a class="text-link back-link" href="/encontros/">
+          ← Todos os encontros
+        </a>
+        <div class="eyebrow">Oxide Club / Encontros</div>
+        <h1>{data.title}</h1>
+        <p>{data.summary}</p>
+        <div class="metadata mono">
+          <p>
+            <time datetime={data.startsAt}>{when.date}</time> · {when.time}
+          </p>
+          <p>{when.zone}</p>
+          <p>
+            {formatLabels[data.format]}
+            {data.platform && ` · ${data.platform}`}
+          </p>
+          {data.location && <p>{data.location}</p>}
+        </div>
+        {(data.cancelled || data.changeNotice) && (
+          <div class="notice meeting-notice">
+            {data.cancelled && <strong>Encontro cancelado.</strong>}
+            {data.previousStartsAt && (
+              <p>
+                Data anterior:{' '}
+                {
+                  meetingWhen({
+                    ...data,
+                    startsAt: data.previousStartsAt,
+                    endsAt: data.previousStartsAt,
+                  }).date
+                }{' '}
+                ·{' '}
+                {new Intl.DateTimeFormat('pt-BR', {
+                  timeZone: data.timeZone,
+                  timeStyle: 'short',
+                }).format(new Date(data.previousStartsAt))}
+              </p>
+            )}
+            {data.changeNotice && <p>{data.changeNotice}</p>}
+          </div>
+        )}
+        <div class="meeting-actions">
+          {!data.cancelled && data.participationUrl && (
+            <a class="button" href={data.participationUrl}>
+              Acessar encontro <span aria-hidden="true">↗</span>
+            </a>
+          )}
+          <a
+            class="text-link"
+            href={`/encontros/${id}/calendario.ics`}
+            download={`${id}.ics`}
+          >
+            Adicionar ao calendário (.ics)
+          </a>
+        </div>
+      </header>
+      {(sections.length > 0 || data.materials.length > 0) && (
+        <nav class="contents" aria-label="Neste encontro">
+          <span class="eyebrow">Neste encontro</span>
+          <ul>
+            {sections.map(({ slug, text }) => (
+              <li>
+                <a href={`#${slug}`}>{text}</a>
+              </li>
+            ))}
+            {data.materials.length > 0 && (
+              <li>
+                <a href="#materials-heading">Materiais</a>
+              </li>
+            )}
+          </ul>
+        </nav>
+      )}
+      <div class="prose meeting-body">
+        <Content />
+      </div>
+      {data.materials.length > 0 && (
+        <section class="meeting-materials" aria-labelledby="materials-heading">
+          <h2 id="materials-heading">Materiais</h2>
+          <ul>
+            {data.materials.map((material) => (
+              <li>
+                <a href={meetingMaterialUrl(id, material.url)}>
+                  {material.title}
+                  <span aria-hidden="true">↗</span>
+                </a>
+                <span class="material-type mono">
+                  {materialLabels[material.type]}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      <footer class="meeting-footer">
+        {revisionDate && (
+          <p class="revision mono">
+            Atualizado em <time datetime={data.updatedAt}>{revisionDate}</time>
+          </p>
+        )}
+        <a
+          class="text-link"
+          href={githubUrl('meetings', `meetings/${id}.md`, 'blob')}
+        >
+          Ver fonte no GitHub <span aria-hidden="true">↗</span>
+        </a>
+        <p>
+          Texto disponível sob{' '}
+          <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>,
+          salvo indicação em contrário. Preserve a atribuição aos autores.
+          Código e materiais de terceiros podem ter licenças próprias, indicadas
+          na fonte.
+        </p>
+        <a class="text-link" href="/encontros/">
+          ← Todos os encontros
+        </a>
+      </footer>
+    </article>
+  </div>
+</BaseLayout>
+<style>
+  .meeting {
+    max-width: 76ch;
+    margin-inline: auto;
+  }
+  .back-link {
+    margin-bottom: 28px;
+  }
+  .metadata {
+    margin-top: 24px;
+    font-size: 12px;
+  }
+  .metadata p + p {
+    margin-top: 4px;
+  }
+  .meeting-notice {
+    margin-top: 24px;
+  }
+  .meeting-notice p {
+    color: inherit;
+  }
+  .meeting-notice strong + p {
+    margin-top: 8px;
+  }
+  .meeting-actions {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .contents {
+    padding-block: 24px;
+    border-block: 1px solid var(--color-border);
+  }
+  .contents ul {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0;
+  }
+  .contents a {
+    display: inline-block;
+    padding-block: 8px;
+    font-size: 14px;
+  }
+  .meeting-body {
+    max-width: none;
+    padding-top: 16px;
+    line-height: 1.8;
+  }
+  .meeting-body :global(blockquote) {
+    margin: 28px 0;
+    border-left: 2px solid var(--color-accent);
+    padding-left: 24px;
+  }
+  .meeting-body :global(figure) {
+    margin: 32px 0;
+  }
+  .meeting-body :global(figcaption) {
+    font-size: 13px;
+    color: var(--color-muted);
+    margin-top: 12px;
+  }
+  .meeting-materials {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+  }
+  .meeting-materials h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  .meeting-materials ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .meeting-materials li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0 20px;
+    padding-block: 8px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .meeting-materials a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    gap: 12px;
+    color: var(--color-accent-text);
+  }
+  .material-type {
+    font-size: 12px;
+    color: var(--color-muted);
+  }
+  .meeting-footer {
+    margin-top: 48px;
+    padding-block: 24px 64px;
+    border-top: 1px solid var(--color-border);
+  }
+  .meeting-footer p {
+    font-size: 13px;
+  }
+  .meeting-footer .revision {
+    font-size: 12px;
+  }
+  .meeting-footer p a {
+    display: inline-block;
+    min-height: 24px;
+  }
+</style>

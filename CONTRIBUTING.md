@@ -14,4 +14,8 @@ Proponha notas técnicas no [repositório notes](https://github.com/oxide-club/n
 
 Não inclua tokens, informações pessoais, conversas privadas ou material sem permissão. Relatos de moderação não devem ir em issues públicas. Envie relatos privados para [report@oxideclub.dev](mailto:report@oxideclub.dev).
 
-O site busca o `main` de `challenges` e `notes` antes de iniciar desenvolvimento, validação ou build. Não edite `.content/challenges/` nem `.content/notes/`: são checkouts gerados. Para uma prévia de notas locais, use `NOTES_SOURCE=/caminho/absoluto/para/notes npm run dev` no site. Consulte o README para rascunhos, anexos e publicação manual pelo workflow existente.
+O site busca o `main` de `challenges`, `notes` e `meetings` antes de iniciar desenvolvimento, validação ou build. Não edite `.content/challenges/`, `.content/notes/` nem `.content/meetings/`: são checkouts gerados. Para uma prévia de notas locais, use `NOTES_SOURCE=/caminho/absoluto/para/notes npm run dev` no site. Consulte o README para rascunhos, anexos e publicação manual pelo workflow existente.
+
+## Encontros
+
+Proponha pautas, registros e materiais em [oxide-club/meetings](https://github.com/oxide-club/meetings), seguindo o modelo e o guia desse repositório. Cada arquivo em `meetings/NNN-titulo.md` define uma página permanente; o website não mantém cópias editoriais. Para uma prévia local use `MEETINGS_SOURCE=/caminho/absoluto/para/meetings npm run dev`. Consulte o README para calendário, revisões, cancelamentos e publicação automática.

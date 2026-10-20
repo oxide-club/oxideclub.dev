@@ -11,6 +11,12 @@ const pathname = Astro.url.pathname;
   <nav aria-label="Navegação principal" class="desktop-nav">
     <a href="/#o-clube">O clube</a>
     <a
+      href="/encontros/"
+      aria-current={pathname.startsWith('/encontros') ? 'page' : undefined}
+    >
+      Encontros
+    </a>
+    <a
       href="/desafios"
       aria-current={pathname.startsWith('/desafios') ? 'page' : undefined}
     >
@@ -39,6 +45,12 @@ const pathname = Astro.url.pathname;
     </summary>
     <nav aria-label="Navegação móvel">
       <a href="/#o-clube">O clube</a>
+      <a
+        href="/encontros/"
+        aria-current={pathname.startsWith('/encontros') ? 'page' : undefined}
+      >
+        Encontros
+      </a>
       <a href="/desafios">Desafios</a>
       <a
         href="/notas"
