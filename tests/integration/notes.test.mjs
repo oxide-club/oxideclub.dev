@@ -24,6 +24,7 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
   try {
     for (const path of [
       'src',
+      '.content/challenges',
       'public',
       'astro.config.mjs',
       'tsconfig.json',
@@ -68,19 +69,22 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
       fixture('fixture-rascunho', true, true),
     );
     // Guarantee the real homepage exercises the notes adapter, independently of randomness.
-    const challengeDirectory = join(root, 'src/content/challenges');
+    const challengeDirectory = join(root, '.content/challenges');
     for (const file of await readdir(challengeDirectory, { recursive: true })) {
-      if (!file.endsWith('.md')) continue;
+      if (!file.endsWith('/index.md')) continue;
       const challengePath = join(challengeDirectory, file);
       await writeFile(
         challengePath,
-        (await readFile(challengePath, 'utf8')).replace(
-          /featured:\s*true/g,
-          'featured: false',
-        ),
+        (await readFile(challengePath, 'utf8'))
+          .replace(/featured:\s*true/g, 'featured: false')
+          .replace(/^referenceUrl:.*\n/gm, ''),
       );
     }
     build();
+    assert.doesNotMatch(
+      await readFile(join(root, 'dist/desafios/001-wc/index.html'), 'utf8'),
+      /class="reference-note"/,
+    );
     const listing = await readFile(join(root, 'dist/notas/index.html'), 'utf8');
     assert.match(listing, /href="\/notas\/fixture-publica"/);
     assert.doesNotMatch(

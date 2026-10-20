@@ -58,6 +58,13 @@ const { data } = challenge;
     <div class="article-layout">
       <article class="prose">
         <Content />
+        {data.referenceUrl && (
+          <p class="reference-note">
+            <a href={data.referenceUrl}>Uma possível solução comentada</a> está
+            disponível para estudo. Recomendamos tentar o desafio antes de
+            consultá-la, mas você pode usá-la quando achar apropriado.
+          </p>
+        )}
       </article>
       <aside>
         <nav aria-label="Nesta especificação">
@@ -93,6 +100,13 @@ const { data } = challenge;
   </div>
 </BaseLayout>
 <style>
+  .reference-note {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-muted);
+    font-size: 0.875rem;
+  }
   .page-intro > .text-link {
     margin-bottom: 24px;
   }

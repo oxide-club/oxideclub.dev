@@ -1,78 +1,152 @@
 # Oxide Club
 
-Repository: `https://github.com/oxide-club/oxideclub.dev.git`. Keep it private during development; review the complete history again before public launch.
+Source for [oxideclub.dev](https://oxideclub.dev), the Oxide Club community website. The site is live and published in Brazilian Portuguese, with programming challenges, technical notes and community information built around **Explorar → Experimentar → Explicar**.
 
-Static PT-BR community website, implementing the approved 18 October 2026 v2 brief and the subsequent educational-philosophy amendment: Explore → Experiment → Explain. Astro + TypeScript + Markdown collections + plain CSS. No runtime backend. The production site is https://oxideclub.dev. Default local builds remain non-indexable development previews; `build:production` produces the indexable release.
+Built with Astro, TypeScript, Markdown content collections and plain CSS. Pages are generated as static files and hosted on Cloudflare Workers Static Assets; there is no runtime backend.
 
-## Work locally
+## Local development
 
-Use Node 24 LTS (or a compatible newer version).
+Use Node.js 24, matching CI, and Git. Development, checks and builds fetch the latest public challenge definitions before starting.
 
 ```sh
 npm ci
 npm run dev
-npm test
-npm run check
+```
+
+Astro prints the local development URL. To build and preview the static output:
+
+```sh
 npm run build
 npm run preview
 ```
 
-Browser verification:
+Default builds are non-indexable previews. Production builds use a separate command that validates the publication requirements and enables indexing.
+
+## Checks
 
 ```sh
+npm test
+npm run check
+npm run build
 npx playwright install chromium
 npm run test:browser
-# Or use an existing browser on Linux:
-PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run test:browser
+npm run test:notes
 ```
 
-To verify an already-running development server (including live content-collection data), point the same browser suite at its actual URL:
+- `npm test` checks content selection, URL validation, production gates, challenge taxonomy and fetching public challenge content. Its isolated repository fixtures require Git.
+- `npm run check` runs Astro and TypeScript checks.
+- `npm run test:browser` checks the built site with Playwright and axe, including navigation, internal links, keyboard behavior, reflow, enlarged text, forced colors and reduced motion.
+- `npm run test:notes` builds temporary empty, published and draft note catalogues to check visibility, rendering and homepage integration. Fixtures do not enter the working content directory.
+
+Both browser suites need Chromium. To use an existing Linux installation, prefix either command with `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium`.
+
+To check an already-running development server, use its actual URL:
 
 ```sh
 SITE_TEST_URL=http://127.0.0.1:4322 PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run test:browser
 ```
 
-After changing collection schemas or their imported validators, restart the development server and verify that URL as well as the static build. A long-running Astro development process can retain an older content schema even when a fresh build passes. Do not replace required metadata with silent empty-array fallbacks to hide stale data.
+Restart the development server after changing collection schemas or their imported validators, then check that URL as well as a fresh build. Astro can retain an older schema in a long-running development process.
 
-`npm test` verifies publication selection, URL validation and challenge examples against Unix `wc` in the C locale. It requires a Unix environment with `wc`. Browser tests cover axe rules, reflow, enlarged text, keyboard controls, internal links, forced colors and reduced motion. They do not replace screen-reader review or a full WCAG audit.
+Automated checks do not replace manual accessibility review. See [accessibility testing and outstanding reviews](docs/ACCESSIBILITY.md).
 
-## Content and links
+## Repository layout
 
-- Add Markdown under `src/content/challenges/`. Copy the first challenge's metadata structure; use a stable unique slug.
-- Drafts use `draft: true` and are excluded from both lists and generated routes. `featured: true` gives editorial priority on the homepage; zero or multiple highlights are supported. `FeaturedContent.astro` selects one eligible publication at build time (randomly among highlights, or among all published entries if none are highlighted). The selection stays fixed until the next build, with no browser JavaScript or layout shift. An empty catalogue omits the section. `src/lib/publications.ts` maps existing collection metadata to a shared presentation shape; add adapters there when new collections and their real routes are published, without changing the homepage.
-- Set `categories` to one or more of `build`, `investigate`, `debug`, `optimize`, `experiment`. Categories are nonexclusive and independent from `difficulty` (`beginner`, `intermediate`, `advanced`); no category implies a level. Duplicate, empty or unknown categories fail schema validation.
-- Categories describe the activity: building programs/algorithms/data structures; investigating observed behavior; diagnosing bugs; measuring and optimizing implementations; or testing hypotheses. The wc challenge is one building/investigation example, not the club's entire scope.
-- Define the objective, prerequisites, minimum investigation, expected outputs or evidence, verification method and optional extensions in Markdown. Outputs may be programs, measurements, explanations, fixes or technical reports. The template renders those sections without requiring code submissions or a complete program.
-- `recommendedLanguage` and `environment` are optional when not applicable. If a challenge depends on a language/platform, specify them precisely. Markdown remains the canonical specification.
-- Validate examples against an appropriate oracle or measurement method. Define input/output/errors for implementation tasks, and controls, observations and limits for experiments.
-- Keep one canonical specification here. After deploying, moderators create the corresponding Discord forum thread with a summary and canonical URL, then add its actual `discordThreadUrl` metadata.
-- Add `eventUrl` only after scheduling a real Discord event. No recording or retrospective is promised.
-- For substantive corrections, set `updatedAt` and describe changes under “Esclarecimentos”. Preserve published slugs or configure redirects deliberately.
-- Central community/reporting destinations live in `src/config/links.json`. Null destinations are omitted, never fabricated.
-- Technical notes use the `notes` collection and `/notas` routes. Only publish real, approved writing with author permission; do not add placeholder articles to the content directory.
+| Path                                             | Purpose                                                               |
+| ------------------------------------------------ | --------------------------------------------------------------------- |
+| `src/pages/`                                     | Homepage, challenge and note routes, conduct page, 404 and robots.txt |
+| `src/content/`                                   | Markdown technical notes                                              |
+| `src/content.config.ts`                          | Content schemas and validation                                        |
+| `src/components/`, `src/layouts/`, `src/styles/` | Shared interface and styling                                          |
+| `src/config/`                                    | Site metadata, community links and production review acknowledgements |
+| `src/lib/`                                       | Content selection, taxonomy and production validation                 |
+| `public/`                                        | Static assets, branding exports and font license notices              |
+| `scripts/`, `tests/`                             | Maintenance scripts and automated checks                              |
+| `.github/workflows/`                             | CI and manual production deployment                                   |
 
-## Publishing technical notes
+## Publishing content
 
-Add a `.md` file to `src/content/notes/`. Required frontmatter: `title`, `slug` (unique, lowercase words separated by hyphens), `summary`, `publishedAt` (actual publication date, `YYYY-MM-DD`) and `draft` (boolean). Optional fields: `updatedAt` (actual revision date), `authors` (nonempty list of credited names) and `featured` (defaults to false). No author is inferred when omitted. Drafts require the same metadata and are excluded from listings, routes, sitemap and homepage highlights in every build, including previews.
+Markdown is the canonical specification for challenges and notes. See [CONTRIBUTING.md](CONTRIBUTING.md) for the community's contribution process and editorial expectations.
 
-`/notas` lists publications newest first; ties use the slug. With no published notes, it shows an intentional empty state. Each published entry generates `/notas/<slug>` automatically. There are no placeholder article routes. Notes share the build-time highlight selection with challenges through `src/lib/publications.ts`.
+Both collections require `title`, `slug`, `summary`, `publishedAt` and `draft`. Use stable, unique, lowercase slugs with hyphens and actual publication dates in `YYYY-MM-DD` format. Optional shared fields are `updatedAt` and `featured` (defaults to false). Drafts are excluded from listings, generated routes, sitemaps and homepage highlights, including preview builds.
 
-Start body sections at `##`: the template supplies the title and builds the table of contents from second-level headings. Use fenced code blocks with a language identifier, Markdown blockquotes, descriptive links and a final `## Referências` section with real sources. Heading anchors preserve accents: link to `#referências`, for example. For figures, use an HTML `<figure>` with an `<img>` (meaningful `alt`, explicit `width`/`height`) and `<figcaption>`; store local assets in `public/` and use root-relative paths. Code blocks remain scrollable and keyboard-focusable. Markdown is sufficient; MDX and client-side reading features are intentionally absent.
+The homepage chooses one published challenge or note at build time, randomly among entries marked `featured: true`, or among all published entries if none are featured. The selection stays fixed until the next build. An empty catalogue omits the section.
 
-Run `npm run test:notes` (or `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run test:notes`) to build an empty catalogue and synthetic published/draft notes in a temporary copy, check production visibility, homepage integration, rendering, reflow and axe accessibility, then delete the copy. Fixtures never enter `src/content/notes` in the working tree. This test needs the same Chromium installation as the browser suite.
+### Challenges
 
-## Production and Cloudflare
+Definitions and public tests are maintained in [oxide-club/challenges](https://github.com/oxide-club/challenges). Submit challenge changes there, following its contribution guide. Each definition lives at `<id>/index.md`, where the directory and `slug` share a stable `NNN-name` identifier.
 
-`wrangler.jsonc` serves `dist/` as Workers Static Assets with custom 404 handling. No adapter or server is required. The Worker `oxideclub-dev` and custom domain `oxideclub.dev` are configured; production deployment runs through GitHub Actions.
+The website reads only these definition files from an ignored checkout at `.content/challenges/`; repository READMEs, tests and fixtures do not become pages. Do not edit the generated checkout. Metadata is validated by [the content schema](src/content.config.ts).
 
-`npm run build:production` checks every required link and the review acknowledgements in `src/config/release.json`, then generates indexable output. Never set review flags to true without completing the corresponding review. The owner-authorized `manualAccessibilityReviewDeferred` exception is documented in docs/ACCESSIBILITY.md; it does not claim completed manual checks. `npm run deploy` invokes this gate before Wrangler. Keep deployments restricted to this command/workflow rather than directly deploying preview output.
+When a commented implementation has been published, its optional `referenceUrl` points to `https://github.com/oxide-club/solutions/tree/main/<id>/<language>`. The page renders the study invitation at the end of the challenge. Omit this field when no implementation is available.
 
-The manual deployment workflow uses the GitHub `production` environment and `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets. Protect that environment and review the generated artifact before launch. CI runs checks on pushes and pull requests. The custom domain `oxideclub.dev` is declared in wrangler.jsonc; this repository does not embed account or zone identifiers.
+### Technical notes
 
-See [release status](docs/RELEASE.md) for outstanding inputs and verification limits. The original website code is licensed under [MIT](LICENSE). Editorial content (including challenge specifications and copy embedded in Astro files), logos and artwork are excluded; see [licensing scope](LICENSING.md). Third-party materials retain their own licenses. The full asset-permission and repository-history review remains required before launch.
+Add a `.md` file under `src/content/notes/`. Notes may also include `authors`, a nonempty list of credited names; no author is inferred when omitted. Publish approved writing with author permission.
+
+Published notes appear at `/notas/<slug>` and in the `/notas` catalogue, newest first. With no published notes, the catalogue displays an empty state.
+
+Start body sections at `##`: the template supplies the title and builds a table of contents from second-level headings. Use language identifiers on fenced code blocks, descriptive links and a final `## Referências` section with real sources. Heading anchors preserve accents, such as `#referências`.
+
+For figures, use an HTML `<figure>` with an `<img>` and `<figcaption>`. Supply meaningful alt text and explicit image dimensions; place local assets in `public/` and use root-relative paths. Content uses Markdown, without MDX.
+
+### Community links
+
+Shared community and reporting destinations live in `src/config/links.json`. Missing destinations are omitted from the interface; add links only when the destination exists.
+
+## Fetching challenge content
+
+`npm run dev`, `npm run check`, `npm run build` and `npm run build:production` fetch the latest `main` from the public challenges repository. To fetch explicitly:
+
+```sh
+npm run content:sync
+```
+
+The fetch prints the exact commit used. A fetch failure stops the command; an older cached checkout is not silently substituted. Local edits in the generated checkout also stop synchronization so work is not discarded.
+
+CI and the deployment workflow fetch once at the start and export `CHALLENGES_COMMIT` for subsequent steps. This is a snapshot for that workflow run, not a manually maintained pin: validation, browser tests and the production build all use the same fetched content. A new workflow run picks up the latest `main` again. Standalone local commands fetch the latest by default.
+
+Merging content does not deploy the website by itself; the next deployment workflow publishes it. Notes remain local to this repository. Legacy challenge URLs are redirected by Cloudflare using `public/_redirects`; Astro's local preview does not emulate those edge rules.
+
+## Deployment
+
+Production is hosted at **https://oxideclub.dev**. [wrangler.jsonc](wrangler.jsonc) configures the `oxideclub-dev` Worker, custom domain and static assets from `dist/`, including custom 404 handling.
+
+To publish an update, run the **Deploy production** workflow from GitHub Actions. Deployment is manually triggered; pushes and pull requests run the **Check website** workflow. The deployment workflow runs unit tests, Astro checks, the preview build and both browser suites before building and deploying production output.
+
+The workflow uses the GitHub `production` environment with these secrets:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+For a production build without deploying:
+
+```sh
+npm run build:production
+```
+
+For a local deployment with Cloudflare credentials configured:
+
+```sh
+npm run deploy
+```
+
+Both commands run `scripts/release-check.mjs`, which validates required links and review acknowledgements in `src/config/release.json`. The deploy command then rebuilds indexable output and invokes Wrangler. Use the workflow or `npm run deploy` to publish so preview output is not deployed accidentally. A local deployment does not run the full test suite; run the checks above first.
+
+Keep review acknowledgements accurate. The existing `manualAccessibilityReviewDeferred` exception allows publication while the three manual accessibility review flags remain false. The authorization and remaining work are recorded in [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md).
 
 ## Branding assets
 
-The supplied vector master is `oxide-club.svg`. The header/footer use `public/branding/oxide-core.svg`, with only the outer whitespace cropped through its viewBox. Original paths and colors are preserved. PNG icons (16/32/48/180/512 px), an ICO, and a 1200×630 social image are included.
+The vector master is `oxide-club.svg`. The header and footer use `public/branding/oxide-core.svg`, with outer whitespace cropped through its viewBox while preserving the original paths and colors. Generated assets include PNG icons, an ICO and a 1200×630 social image.
 
-To regenerate exports, install librsvg (`rsvg-convert`) and ImageMagick (`magick`), then run `node scripts/build-branding.mjs` from the repository root. This is a maintenance command, not a CI prerequisite: generated assets are committed alongside the source. Font license notices are shipped under `public/licenses/`.
+To regenerate exports, install librsvg (`rsvg-convert`) and ImageMagick (`magick`), then run:
+
+```sh
+node scripts/build-branding.mjs
+```
+
+Generated assets are committed alongside the source; regeneration is a maintenance task, not a CI prerequisite. Font license notices are in `public/licenses/`.
+
+## License
+
+Original website code is licensed under [MIT](LICENSE). Editorial content, including challenge specifications and copy embedded in Astro files, logos and artwork are outside that scope. See [LICENSING.md](LICENSING.md) for details and material provenance. Third-party materials retain their own licenses.

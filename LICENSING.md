@@ -10,7 +10,7 @@ O aviso “Oxide Club contributors” identifica coletivamente os contribuidores
 
 A licença MIT do código **não abrange**:
 
-- Textos dos desafios em `src/content/challenges/`, futuros artigos e notas da Zine ou outros textos editoriais, inclusive quando incorporados a arquivos `.astro`.
+- Textos dos desafios provenientes do [repositório challenges](https://github.com/oxide-club/challenges), futuros artigos e notas da Zine ou outros textos editoriais, inclusive quando incorporados a arquivos `.astro`.
 - O logo `oxide-club.svg`, suas versões derivadas, ilustrações e demais elementos de identidade visual do Oxide Club.
 
 Esses materiais permanecem sob os direitos de seus respectivos titulares. Na ausência de uma licença específica, nenhuma licença geral de reutilização é concedida por este repositório; usos permitidos por lei continuam preservados. Registre a permissão de publicação e eventual licença de reutilização junto a cada contribuição editorial ou artística.

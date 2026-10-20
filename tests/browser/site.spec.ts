@@ -4,10 +4,30 @@ const routes = [
   '/',
   '/desafios',
   '/notas',
-  '/desafios/recriando-wc',
+  '/desafios/001-wc',
+  '/desafios/002-ppm',
   '/codigo-de-conduta',
   '/404',
 ];
+test('numbered challenges expose an optional reference implementation for study', async ({
+  page,
+}) => {
+  for (const id of ['001-wc', '002-ppm']) {
+    const response = await page.goto(`/desafios/${id}`);
+    expect(response?.ok()).toBe(true);
+    const note = page.locator('.reference-note');
+    await expect(note).toHaveText(
+      'Uma possível solução comentada está disponível para estudo. Recomendamos tentar o desafio antes de consultá-la, mas você pode usá-la quando achar apropriado.',
+    );
+    await expect(note.getByRole('link')).toHaveAttribute(
+      'href',
+      `https://github.com/oxide-club/solutions/tree/main/${id}/c`,
+    );
+    await expect(page.locator('article > :last-child')).toHaveClass(
+      'reference-note',
+    );
+  }
+});
 for (const route of routes) {
   test(`accessible static page: ${route}`, async ({ page }) => {
     await page.goto(route);
@@ -58,7 +78,7 @@ test('keyboard navigation, disclosure, skip link and real destinations', async (
   await expect(
     page.locator('a[href="https://discord.gg/cgFWUkgRfX"]').first(),
   ).toHaveAttribute('href', 'https://discord.gg/cgFWUkgRfX');
-  await page.goto('/desafios/recriando-wc');
+  await page.goto('/desafios/001-wc');
   await page.locator('summary').click();
   await page
     .getByRole('navigation', { name: 'Navegação móvel' })

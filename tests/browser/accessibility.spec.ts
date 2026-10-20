@@ -5,7 +5,8 @@ const routes = [
   '/',
   '/desafios',
   '/notas',
-  '/desafios/recriando-wc',
+  '/desafios/001-wc',
+  '/desafios/002-ppm',
   '/codigo-de-conduta',
   '/404',
 ];
