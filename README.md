@@ -61,7 +61,7 @@ Automated checks do not replace manual accessibility review. See [accessibility 
 | `src/lib/`                                       | Content selection, taxonomy and production validation                 |
 | `public/`                                        | Static assets, branding exports and font license notices              |
 | `scripts/`, `tests/`                             | Maintenance scripts and automated checks                              |
-| `.github/workflows/`                             | CI and manual production deployment                                   |
+| `.github/workflows/`                             | CI and automatic production deployment                                |
 
 ## Library
 
@@ -311,7 +311,7 @@ Legacy challenge URLs are redirected by Cloudflare using `public/_redirects`; As
 
 Production is hosted at **https://oxideclub.dev**. [wrangler.jsonc](wrangler.jsonc) configures the `oxideclub-dev` Worker, custom domain and static assets from `dist/`, including custom 404 handling.
 
-To publish an update, run the **Deploy production** workflow from GitHub Actions. Deployment is manually triggered; pushes and pull requests run the **Check website** workflow. The deployment workflow runs unit tests, Astro checks, the preview build, browser suite and the content integration suites before building and deploying production output.
+Pushes to `main`, including merged pull requests, automatically run **Deploy production**. It first calls the reusable **Check website** workflow (`.github/workflows/check.yml`); the production deployment job runs only after all checks succeed. Pull requests and pushes to other branches run **Check website** independently. Maintainers and content repositories can still dispatch **Deploy production** manually, with the same required checks. The deployment job also validates its freshly fetched content snapshot with unit tests, Astro checks, the preview build, browser suite and the content integration suites before building and deploying production output.
 
 The workflow uses the GitHub `production` environment with these secrets:
 
