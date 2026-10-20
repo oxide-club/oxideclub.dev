@@ -1,12 +1,18 @@
 name: Deploy production
-on: workflow_dispatch
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
   group: production
   cancel-in-progress: false
 jobs:
+  check:
+    uses: ./.github/workflows/check.yml
   deploy:
+    needs: check
     runs-on: ubuntu-latest
     environment: production
     steps:
