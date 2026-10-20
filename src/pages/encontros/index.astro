@@ -20,20 +20,6 @@ const meetings = await publishedMeetings();
         </span>
       </h1>
       <p>Investigação compartilhada, da conversa ao registro técnico.</p>
-      <details class="calendar-subscription">
-        <summary>Assinar calendário</summary>
-        <p>
-          Para receber atualizações, adicione este endereço como assinatura no
-          seu aplicativo de calendário.
-        </p>
-        <a class="text-link calendar-address" href="/encontros/calendario.ics">
-          https://oxideclub.dev/encontros/calendario.ics
-        </a>
-        <p>
-          Importar o arquivo uma única vez não cria uma assinatura. A frequência
-          de atualização depende do aplicativo.
-        </p>
-      </details>
     </header>
     <section class="agenda" aria-labelledby="meetings-heading">
       <h2 id="meetings-heading" class="sr-only">
@@ -82,23 +68,45 @@ const meetings = await publishedMeetings();
         </ol>
       ) : (
         <div class="empty-meetings">
-          <h3>Ainda não há encontros publicados.</h3>
+          <h3>Primeiros encontros em preparação</h3>
           <p>
-            Estamos organizando os primeiros encontros. Acompanhe as conversas
-            no Discord e compartilhe os assuntos que você gostaria de explorar
-            com a comunidade.
+            Estamos definindo os primeiros encontros do Oxide Club. Você pode
+            sugerir uma leitura, uma dúvida, um desafio ou um projeto para
+            explorarmos em conjunto.
+          </p>
+          <p>
+            As datas e o formato de cada atividade serão publicados nesta página
+            quando estiverem definidos.
+          </p>
+          <p>
+            O convite leva ao servidor do clube, pelo canal{' '}
+            <strong>#comece-aqui</strong>.
           </p>
           <div class="actions">
-            <JoinLink label="Acompanhar a organização no Discord" />
+            <JoinLink label="Entrar no Discord para sugerir um assunto" />
           </div>
         </div>
       )}
     </section>
+    <details class="calendar-subscription">
+      <summary>Assinar calendário</summary>
+      <p>
+        Para receber atualizações, adicione este endereço como assinatura no seu
+        aplicativo de calendário.
+      </p>
+      <a class="text-link calendar-address" href="/encontros/calendario.ics">
+        https://oxideclub.dev/encontros/calendario.ics
+      </a>
+      <p>
+        Importar o arquivo uma única vez não cria uma assinatura. A frequência
+        de atualização depende do aplicativo.
+      </p>
+    </details>
   </div>
 </BaseLayout>
 <style>
   .calendar-subscription {
-    margin-top: 24px;
+    margin-block: 0 64px;
     max-width: 66ch;
   }
   .calendar-subscription summary {
@@ -128,7 +136,7 @@ const meetings = await publishedMeetings();
   }
   .agenda {
     border-top: 1px solid var(--color-border);
-    padding-bottom: 80px;
+    padding-bottom: 32px;
   }
   .meetings-list {
     list-style: none;
@@ -198,6 +206,9 @@ const meetings = await publishedMeetings();
   .empty-meetings {
     padding-block: 32px;
     max-width: 68ch;
+  }
+  .empty-meetings p + p {
+    margin-top: 16px;
   }
   .empty-meetings h3 {
     margin-bottom: 16px;

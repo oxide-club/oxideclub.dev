@@ -79,6 +79,8 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
     build();
     const empty = await readFile(join(root, 'dist/notas/index.html'), 'utf8');
     assert.match(empty, /Ainda não há notas publicadas/);
+    assert.match(empty, /id="contribuir"/);
+    assert.match(empty, /href="#contribuir"/);
     for (const directory of ['scripts', 'tests']) {
       await assert.rejects(
         access(join(root, 'dist/notas', directory, 'index.html')),
@@ -128,7 +130,7 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
       recursive: true,
     });
     const fixture = (draft, featured = false) =>
-      `---\ntitle: 'Fixture de teste editorial'\nsummary: 'Conteúdo sintético exclusivo da suíte de testes.'\npublishedAt: 2026-01-01\nupdatedAt: 2026-01-02\ndraft: ${draft}\nfeatured: ${featured}\n---\n\n## Observações\n\nTexto de teste com uma referência [1](#referências).\n\n\`\`\`c\nint main(void) { return 0; }\n\`\`\`\n\n> Uma citação de teste.\n\n![Diagrama usado na verificação](./assets/diagram.png)\n\n[Dados do experimento](./assets/data.csv)\n\n| Entrada | Saída |\n| --- | --- |\n| 1 | 2 |\n\n## Referências\n\n1. [Documentação do Astro](https://docs.astro.build/).\n`;
+      `---\ntitle: 'Fixture de teste editorial'\nsummary: 'Conteúdo sintético exclusivo da suíte de testes.'\npublishedAt: 2026-01-01\nupdatedAt: 2026-01-02\ndraft: ${draft}\nauthors: ["Pessoa A", "Pseudônimo B"]\nfeatured: ${featured}\n---\n\n## Observações\n\nTexto de teste com uma referência [1](#referências).\n\n\`\`\`c\nint main(void) { return 0; }\n\`\`\`\n\n> Uma citação de teste.\n\n![Diagrama usado na verificação](./assets/diagram.png)\n\n[Dados do experimento](./assets/data.csv)\n\n| Entrada | Saída |\n| --- | --- |\n| 1 | 2 |\n\n## Referências\n\n1. [Documentação do Astro](https://docs.astro.build/).\n`;
     await writeFile(
       join(root, '.content/notes/fixture-publica/index.md'),
       fixture(false, true),
@@ -175,6 +177,8 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
     );
     const listing = await readFile(join(root, 'dist/notas/index.html'), 'utf8');
     assert.match(listing, /href="\/notas\/fixture-publica"/);
+    assert.match(listing, /id="contribuir"/);
+    assert.match(listing, /Pessoa A · Pseudônimo B/);
     assert.doesNotMatch(
       listing,
       /fixture-rascunho|Ainda não há notas publicadas/,
@@ -192,6 +196,8 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
     );
     assert.match(article, /<time datetime="2026-01-01T00:00:00.000Z"/);
     assert.match(article, /<blockquote>/);
+    assert.match(article, /Por Pessoa A · Pseudônimo B/);
+    assert.match(article, /href="\/notas\/#contribuir"/);
     assert.match(article, /<table>/);
     assert.match(
       article,
@@ -369,7 +375,18 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
       /id="challenge-resources-heading"/,
     );
     await setGithub('001-wc', undefined);
+    await writeFile(
+      publishedPath,
+      original.replace('authors: ["Pessoa A", "Pseudônimo B"]\n', ''),
+    );
     build();
+    assert.doesNotMatch(
+      await readFile(
+        join(root, 'dist/notas/fixture-publica/index.html'),
+        'utf8',
+      ),
+      /Por Pessoa A|Pseudônimo B|<p>Por /,
+    );
     assert.doesNotMatch(
       await readFile(join(root, 'dist/desafios/001-wc/index.html'), 'utf8'),
       /id="challenge-resources-heading"/,

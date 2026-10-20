@@ -1,25 +1,28 @@
 ---
+import { githubUrl, repositoryUrl } from '../../config/github.mjs';
+import { links } from '../../config/site';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { publishedNotes, noteDate } from '../../lib/notes';
 const notes = await publishedNotes();
 ---
 
 <BaseLayout
-  title="Notas técnicas"
-  description="O caderno técnico público do Oxide Club: artigos, notas de laboratório e experimentos sobre modelos, algoritmos, protocolos e sistemas de computação."
+  title="Notas e textos técnicos"
+  description="Notas e textos de quem participa do Oxide Club sobre computação, com foco em sistemas. Leia e saiba como propor seu texto pelo GitHub."
 >
   <div class="container">
     <header class="page-intro">
       <div class="eyebrow">Oxide Club / Caderno técnico</div>
       <h1>
-        Notas técnicas
+        Notas e textos técnicos
         <span class="accent" aria-hidden="true">
           _
         </span>
       </h1>
       <p>
-        Um espaço para registrar como chegamos a uma conclusão: o código, os
-        testes, as referências e as perguntas que continuam abertas.
+        Textos de quem participa do Oxide Club sobre computação, com foco em
+        sistemas. Explicações, relatos de experimentos e investigações que podem
+        ser aprofundados e revisados pela comunidade.
       </p>
     </header>
     <section class="notebook" aria-labelledby="notes-heading">
@@ -56,21 +59,107 @@ const notes = await publishedNotes();
         </ol>
       ) : (
         <div class="empty-note">
-          <h3>Ainda não há notas publicadas.</h3>
+          <h3>As primeiras notas estão por vir</h3>
           <p>
-            Este caderno reunirá artigos técnicos, notas de laboratório e
-            relatos de experimentos. Enquanto isso, os desafios já estão abertos
-            para leitura e prática.
+            Ainda não há notas publicadas. Você pode contribuir com as
+            primeiras: escreva sobre uma pergunta que investigou, um conceito
+            que estudou ou um experimento que realizou.
           </p>
-          <a class="text-link" href="/desafios">
-            Explorar os desafios <span aria-hidden="true">↗</span>
+          <a class="text-link" href="#contribuir">
+            Como enviar seu texto <span aria-hidden="true">→</span>
           </a>
         </div>
+      )}
+    </section>
+    <section
+      class="contribution"
+      id="contribuir"
+      aria-labelledby="contribution-heading"
+      tabindex="-1"
+    >
+      <h2 id="contribution-heading">Escreva para o Oxide Club</h2>
+      <p>
+        Quem participa do clube pode propor notas e textos técnicos para
+        publicação no site. Quem está começando também pode escrever. Uma
+        explicação curta, uma comparação de abordagens ou um relato de
+        experimento já pode ser uma contribuição. As notas não precisam estar
+        ligadas a um desafio.
+      </p>
+      <p>
+        Os textos são enviados por pull request — uma proposta de contribuição
+        no GitHub — no repositório{' '}
+        <a href={repositoryUrl('notes')}>oxide-club/notes</a>. Consulte o guia e
+        use o{' '}
+        <a href={githubUrl('notes', 'templates/note.md', 'blob')}>
+          modelo de nota
+        </a>{' '}
+        para preparar sua contribuição. A discussão e a revisão acontecem no PR,
+        que pode receber pedidos de ajuste antes de ser incorporado.
+      </p>
+      <p>Algumas sugestões para começar:</p>
+      <ul>
+        <li>Uma descoberta feita ao implementar um programa.</li>
+        <li>Um experimento que compara duas abordagens.</li>
+        <li>Uma explicação de um conceito estudado pelo clube.</li>
+      </ul>
+      <p>
+        Para artigos substanciais, o guia recomenda discutir o assunto em uma{' '}
+        <a href={`${repositoryUrl('notes')}/issues`}>issue</a>. Essa
+        recomendação ajuda a ajustar o recorte; não é uma aprovação obrigatória
+        para contribuir.
+      </p>
+      <p>
+        Após a revisão e o merge, textos prontos para publicar passam pela
+        validação e publicação do site. Rascunhos continuam fora do site até
+        estarem prontos; abrir um PR ou incorporá-lo não significa publicação
+        imediata. O crédito de autoria informado acompanha o texto publicado.
+      </p>
+      <div class="actions">
+        <a class="button" href={githubUrl('notes', 'CONTRIBUTING.md', 'blob')}>
+          Ver como contribuir no GitHub <span aria-hidden="true">→</span>
+        </a>
+        <a class="text-link" href={repositoryUrl('notes')}>
+          Ver o repositório de notas <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+      {links.discord && (
+        <p class="optional-support">
+          Quer conversar sobre uma ideia ou precisa de ajuda para começar? Você
+          também pode procurar a comunidade no{' '}
+          <a href={links.discord}>Discord</a>. Esse apoio é opcional: você pode
+          abrir seu PR diretamente no GitHub.
+        </p>
       )}
     </section>
   </div>
 </BaseLayout>
 <style>
+  .contribution {
+    border-top: 1px solid var(--color-border);
+    padding-block: 40px 80px;
+    max-width: 76ch;
+  }
+  .contribution h2 {
+    margin-bottom: 24px;
+  }
+  .contribution p + p {
+    margin-top: 16px;
+  }
+  .contribution ul {
+    color: var(--color-muted);
+    padding-left: 24px;
+    margin-block: 16px;
+  }
+  .contribution li + li {
+    margin-top: 8px;
+  }
+  .contribution .actions {
+    margin-top: 24px;
+  }
+  .contribution .optional-support {
+    margin-top: 24px;
+    font-size: 14px;
+  }
   .topics {
     display: flex;
     flex-wrap: wrap;

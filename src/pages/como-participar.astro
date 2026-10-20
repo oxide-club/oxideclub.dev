@@ -1,13 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import JoinLink from '../components/JoinLink.astro';
-import { githubUrl } from '../config/github.mjs';
+import { publishedMeetings } from '../lib/meetings';
+import { githubUrl, repositoryUrl } from '../config/github.mjs';
+const meetings = await publishedMeetings();
 const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#compartilhar-uma-implementação`;
 ---
 
 <BaseLayout
   title="Como participar"
-  description="Participe do Oxide Club, clube de computação com foco em sistemas. Traga uma pergunta, uma tentativa ou um projeto ao Discord, mesmo começando os estudos."
+  description="Participe do Oxide Club, clube de computação com foco em sistemas. Compartilhe dúvidas, desafios, projetos e textos técnicos. Contribua pelo GitHub ou acompanhe as conversas no Discord, mesmo começando os estudos."
 >
   <div class="container participation">
     <header class="page-intro">
@@ -16,8 +18,8 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
       <p>
         O Oxide Club reúne pessoas interessadas em C, Rust, arquitetura de
         computadores e sistemas operacionais. Você pode começar com uma
-        pergunta, uma tentativa de desafio ou um projeto em andamento. Quem está
-        começando também é bem-vindo.
+        pergunta, uma tentativa de desafio, um projeto em andamento ou um texto
+        para o site. Quem está começando também é bem-vindo.
       </p>
       <div class="actions">
         <JoinLink />
@@ -125,20 +127,64 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
         </a>
       </div>
     </section>
+    <section class="participation-section" aria-labelledby="writing-heading">
+      <h2 id="writing-heading">Contribua com uma nota ou texto técnico</h2>
+      <div class="section-copy">
+        <p>
+          Você também pode participar escrevendo para o site do Oxide Club.
+          Compartilhe uma explicação, um relato de experimento ou algo que
+          aprendeu desenvolvendo um projeto. Quem está começando também pode
+          contribuir.
+        </p>
+        <p>
+          Para enviar seu texto, abra um pull request (uma proposta de
+          contribuição no GitHub) no repositório{' '}
+          <a href={repositoryUrl('notes')}>oxide-club/notes</a> e siga o guia de
+          contribuição. A revisão e os ajustes acontecem pelo GitHub. Se quiser
+          conversar sobre uma ideia ou tirar dúvidas, o Discord também está
+          disponível como apoio opcional.
+        </p>
+        <a
+          class="text-link"
+          href={githubUrl('notes', 'CONTRIBUTING.md', 'blob')}
+        >
+          Ver o guia de contribuição <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
     <section
       class="participation-section planning"
       id="o-que-estamos-preparando"
       aria-labelledby="planning-heading"
       tabindex="-1"
     >
-      <h2 id="planning-heading">Em preparação</h2>
+      <h2 id="planning-heading">
+        {meetings.length ? 'Encontros do clube' : 'Encontros em preparação'}
+      </h2>
       <div class="section-copy">
+        {meetings.length ? (
+          <p>
+            Consulte as datas, as pautas e as orientações de participação dos
+            encontros publicados. Os registros e materiais disponíveis também
+            ficam na página de cada atividade.
+          </p>
+        ) : (
+          <p>
+            Estamos definindo os primeiros encontros. Você pode acompanhar a
+            organização e sugerir uma leitura, uma dúvida, um desafio ou um
+            projeto no Discord. As datas e o formato serão publicados quando
+            estiverem definidos.
+          </p>
+        )}
+        <a class="text-link" href="/encontros/">
+          {meetings.length
+            ? 'Ver os encontros'
+            : 'Conheça os encontros em preparação'}{' '}
+          <span aria-hidden="true">→</span>
+        </a>
         <p>
-          O clube está começando. Estamos preparando as primeiras{' '}
-          <a href="/notas/">notas técnicas</a> e os primeiros{' '}
-          <a href="/encontros/">encontros</a>; uma zine está em discussão, com
-          formato e periodicidade em aberto. Compartilhe no Discord os assuntos
-          que gostaria de estudar em conjunto.
+          Uma zine também está em discussão, com formato e periodicidade em
+          aberto.
         </p>
       </div>
     </section>

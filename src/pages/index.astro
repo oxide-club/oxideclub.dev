@@ -2,7 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import JoinLink from '../components/JoinLink.astro';
 import StartHere from '../components/StartHere.astro';
+import { publishedMeetings } from '../lib/meetings';
 import { publishedChallenges } from '../lib/challenges';
+const meetings = await publishedMeetings();
 const startingChallenge = (await publishedChallenges()).find(
   ({ id }) => id === '001-wc',
 );
@@ -144,6 +146,17 @@ const startingChallenge = (await publishedChallenges()).find(
             comunidade.
           </p>
         </article>
+        <article>
+          <h3>Notas e textos técnicos</h3>
+          <p>
+            Escreva sobre algo que estudou, implementou ou investigou. Quem
+            participa do clube pode contribuir com textos para o site, com
+            crédito de autoria.
+          </p>
+          <a class="text-link" href="/notas/#contribuir">
+            Como contribuir com um texto <span aria-hidden="true">→</span>
+          </a>
+        </article>
       </div>
       <p class="club-invitation">
         Compartilhe uma tentativa, compare abordagens e volte para contar o que
@@ -151,8 +164,11 @@ const startingChallenge = (await publishedChallenges()).find(
         forma de participar.
       </p>
       <p class="club-planning">
-        <a class="text-link" href="/como-participar/#o-que-estamos-preparando">
-          Veja o que estamos preparando <span aria-hidden="true">→</span>
+        <a class="text-link" href="/encontros/">
+          {meetings.length
+            ? 'Conheça os encontros do clube'
+            : 'Conheça os encontros em preparação'}{' '}
+          <span aria-hidden="true">→</span>
         </a>
       </p>
     </section>
@@ -470,7 +486,7 @@ const startingChallenge = (await publishedChallenges()).find(
   }
   .club-paths {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 32px;
   }
   .club-paths article {
@@ -480,6 +496,10 @@ const startingChallenge = (await publishedChallenges()).find(
   }
   .club-paths h3 {
     margin-bottom: 16px;
+  }
+  .club-paths .text-link {
+    margin-top: 16px;
+    font-size: 14px;
   }
   .club-paths p {
     font-size: 14px;

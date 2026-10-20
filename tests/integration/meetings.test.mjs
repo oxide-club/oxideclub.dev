@@ -76,7 +76,10 @@ test('meetings: static agenda, permanent articles, safe assets, calendar and res
     build();
     const read = (path) => readFile(join(root, 'dist', path), 'utf8');
     const empty = await read('encontros/index.html');
-    assert.match(empty, /Ainda não há encontros publicados/);
+    assert.ok(
+      empty.indexOf('class="empty-meetings"') <
+        empty.indexOf('class="calendar-subscription"'),
+    );
     assert.ok(
       !(await read('encontros/calendario.ics')).includes('BEGIN:VEVENT'),
     );
