@@ -47,6 +47,10 @@ export function validateManifest(manifest, { requireProduction = true } = {}) {
   }
   return manifest;
 }
+/**
+ * @typedef {{id: string, data: {title: string, summary: string, draft?: boolean}}} SourceEntry
+ * @param {{challenges?: SourceEntry[], notes?: SourceEntry[], revisions?: {challenges?: string, notes?: string}, production?: boolean}} [options]
+ */
 export function createManifest({
   challenges = [],
   notes = [],

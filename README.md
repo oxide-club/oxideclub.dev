@@ -349,3 +349,12 @@ Generated assets are committed alongside the source; regeneration is a maintenan
 ## License
 
 Original website code is licensed under [MIT](LICENSE). Original prose and documentation from `oxide-club/notes` and `oxide-club/meetings` use CC BY 4.0, subject to their source notices. Challenge specifications, other editorial copy, logos and artwork remain outside the website code’s MIT scope. See [LICENSING.md](LICENSING.md) for details and material provenance. Third-party materials retain their own licenses.
+
+## Notificações no Discord
+
+Propostas de desafios e notas são divulgadas em `#contribuicoes`, com link do PR.
+Após merge e publicação bem-sucedida, `#novidades` recebe o link da página no site.
+A ativação exige os Actions Secrets `DISCORD_CONTRIBUTIONS_WEBHOOK_URL` nos
+repositórios de conteúdo e `DISCORD_ANNOUNCEMENTS_WEBHOOK_URL` neste repositório.
+Siga a [configuração, baseline e recuperação](docs/DISCORD-NOTIFICATIONS.md#ativação-pelos-mantenedores)
+antes de habilitar anúncios, para não divulgar retroativamente o catálogo atual.
