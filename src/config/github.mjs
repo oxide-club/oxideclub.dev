@@ -7,7 +7,6 @@ export const github = {
     notes: { name: 'notes', branch: 'main' },
     meetings: { name: 'meetings', branch: 'main' },
   },
-  communityIndex: 'COMMUNITY.md',
 };
 
 /** @param {keyof typeof github.repositories} repository */

@@ -11,7 +11,7 @@ import {
   access,
 } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { chromium } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -24,6 +24,7 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
     for (const path of [
       'src',
       '.content/challenges',
+      '.content/solutions',
       '.content/meetings',
       'public',
       'astro.config.mjs',
@@ -33,7 +34,9 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
       await cp(
         path === '.content/challenges' && process.env.CHALLENGES_TEST_SOURCE
           ? process.env.CHALLENGES_TEST_SOURCE
-          : path,
+          : path === '.content/solutions'
+            ? resolve(process.env.SOLUTIONS_SOURCE || path)
+            : path,
         join(root, path),
         { recursive: true },
       );
@@ -57,6 +60,7 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
           env: {
             ...process.env,
             SITE_RELEASE: 'production',
+            SOLUTIONS_SOURCE: undefined,
             NOTES_SOURCE: '',
             MEETINGS_SOURCE: '',
             ...environment,

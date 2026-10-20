@@ -7,8 +7,7 @@ interface Props {
 }
 const { challengeId, github } = Astro.props;
 const resources = challengeResources(challengeId, github);
-const visible =
-  resources.challenge || resources.solutions.length || resources.community;
+const visible = resources.challenge || resources.solutions.length;
 ---
 
 {visible && (
@@ -18,8 +17,7 @@ const visible =
   >
     <h2 id="challenge-resources-heading">Recursos e implementações</h2>
     <p>
-      Explore o código, consulte implementações de referência ou descubra como
-      outros participantes resolveram o desafio.
+      Explore o enunciado, os testes e as implementações de referência do clube.
     </p>
     {resources.challenge && (
       <div class="resource-row">
@@ -50,16 +48,6 @@ const visible =
             </li>
           ))}
         </ul>
-      </div>
-    )}
-    {resources.community && (
-      <div class="resource-row">
-        <h3>
-          <a href={resources.community}>
-            Soluções da comunidade <span aria-hidden="true">↗</span>
-          </a>
-        </h3>
-        <p>Compare implementações compartilhadas pelos membros.</p>
       </div>
     )}
   </section>

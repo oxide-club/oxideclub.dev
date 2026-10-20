@@ -1,5 +1,5 @@
 import { z } from 'astro/zod';
-import { github, githubUrl } from '../config/github.mjs';
+import { githubUrl } from '../config/github.mjs';
 import { challengeIdentifier } from './challenge-source.mjs';
 
 export const languageLabels = { c: 'C', rust: 'Rust', cpp: 'C++' };
@@ -36,7 +36,11 @@ export function challengeResources(challengeId, metadata) {
       url: githubUrl('solutions', `${challengeId}/${language}`),
     })),
     ...(resources.community && {
-      community: `${githubUrl('solutions', github.communityIndex, 'blob')}#${challengeId}`,
+      community: githubUrl(
+        'solutions',
+        `${challengeId}/community.yaml`,
+        'blob',
+      ),
     }),
   };
 }

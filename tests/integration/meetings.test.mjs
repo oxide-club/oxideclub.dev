@@ -11,7 +11,7 @@ import {
   access,
 } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, extname } from 'node:path';
+import { join, extname, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { chromium } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -23,13 +23,20 @@ test('meetings: static agenda, permanent articles, safe assets, calendar and res
     for (const path of [
       'src',
       '.content/challenges',
+      '.content/solutions',
       '.content/notes',
       'public',
       'astro.config.mjs',
       'tsconfig.json',
       'package.json',
     ])
-      await cp(path, join(root, path), { recursive: true });
+      await cp(
+        path === '.content/solutions'
+          ? resolve(process.env.SOLUTIONS_SOURCE || path)
+          : path,
+        join(root, path),
+        { recursive: true },
+      );
     await symlink(
       join(process.cwd(), 'node_modules'),
       join(root, 'node_modules'),
@@ -57,6 +64,7 @@ test('meetings: static agenda, permanent articles, safe assets, calendar and res
           env: {
             ...process.env,
             SITE_RELEASE: 'production',
+            SOLUTIONS_SOURCE: undefined,
             MEETINGS_SOURCE: '',
             NOTES_SOURCE: '',
             ...env,

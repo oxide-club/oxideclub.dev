@@ -94,9 +94,9 @@ The website reads only these definition files from an ignored checkout at `.cont
 
 #### GitHub resources
 
-The optional `github` metadata controls the compact **Recursos e implementações** section. It accepts `challenge` (boolean), `solutions` (language identifiers), and `community` (boolean); omitted fields default to false or an empty list. No metadata or an empty configuration renders no section.
+The optional `github` metadata controls the compact **Recursos e implementações** section. It accepts `challenge` (boolean) and `solutions` (official language identifiers); omitted fields default to false or an empty list. No official resources renders no resource section. The legacy `community` boolean is still accepted for compatibility but no longer controls community presentation.
 
-Declare `github` directly in the challenge's `<canonical-id>/index.md` frontmatter in [oxide-club/challenges](https://github.com/oxide-club/challenges). The fetched Markdown is the sole source for resource availability, validated by the Astro schema. There are no website-local overrides or identifier mappings.
+Declare `github` directly in the challenge's `<canonical-id>/index.md` frontmatter in [oxide-club/challenges](https://github.com/oxide-club/challenges). The fetched Markdown controls official resource availability, validated by the Astro schema. There are no website-local overrides or identifier mappings.
 
 For a future challenge, verify its published resources, then configure only those resources in its frontmatter. For example, `001-wc/index.md` declares:
 
@@ -104,18 +104,55 @@ For a future challenge, verify its published resources, then configure only thos
 github:
   challenge: true
   solutions: [c]
-  community: true
 ```
 
-Repository organization, names, default branches and community index location live in `src/config/github.mjs`. Both default branches were verified as `main` on 2026-10-20. `challengeResources()` constructs specification URLs as `<challenges>/tree/<branch>/<entry.id>` and implementation URLs as `<solutions>/tree/<branch>/<entry.id>/<language>`. It never assumes the recommended language has an implementation.
+Repository organization, names and default branches live in `src/config/github.mjs`. Both default branches were verified as `main` on 2026-10-20. `challengeResources()` constructs specification URLs as `<challenges>/tree/<branch>/<entry.id>` and implementation URLs as `<solutions>/tree/<branch>/<entry.id>/<language>`. It never assumes the recommended language has an implementation.
 
 To add a published implementation, add its directory identifier to the challenge's `solutions` array. For a language not yet registered, first add its directory identifier and readable label to `languageLabels` in `src/lib/challenge-resources.mjs` (for example, `python: 'Python'`). The schema derives its allowed identifiers from that registry; the component needs no changes. Duplicate or unknown identifiers fail validation. Publish metadata changes in the challenges repository; the next website content sync picks them up. Restart a running development server after schema changes.
 
-The actual community convention is the root `COMMUNITY.md` with canonical challenge headings. Enable `community` only after verifying the corresponding heading; links use `blob/<branch>/COMMUNITY.md#<entry.id>`. Do not enable links to a generic index without a matching challenge section.
+#### Community implementations
 
-Verification on 2026-10-20: challenges revision `ade7c127f68f8ee1730ac5b82ac5b3c06e85003e` contains `001-wc/` and public tests; solutions revision `c04d6341c28fa46c7718c7d32cb543cfb4311de1` contains `001-wc/c/` and `COMMUNITY.md#001-wc`. Rust and C++ directories are absent and disabled. The community section exists but has no participant submissions yet. Verification is manual; no GitHub requests occur when rendering these resources.
+[oxide-club/solutions](https://github.com/oxide-club/solutions) is the sole source
+of solution references. External implementations live only in
+`<canonical-id>/community.yaml`; they never go in challenge frontmatter or a
+website-local catalogue. The ignored `.content/solutions/` checkout is fetched by
+the same atomic synchronization infrastructure as the other content sources.
+`src/lib/community.ts` reads the shared `community.schema.json` from that snapshot,
+converts it to Zod, validates YAML and enforces HTTPS URLs, unique implementation
+URLs and Unicode code-point ordering by author, then language. Missing catalogues,
+unknown fields, misplaced files or invalid data stop synchronization/build with
+the filename and entry. No linked project is fetched or executed.
 
-Resource availability is declared only in challenge frontmatter. The educational Markdown and canonical routes remain unchanged. Publish the challenge frontmatter migration before deploying this website change; there is no website-local fallback.
+The static challenge route joins catalogues by canonical directory ID. A published
+challenge without a solutions directory receives no entries. All catalogues that
+are present in solutions are validated, including ones without a published route.
+Official language links retain the existing frontmatter discovery mechanism and
+`<challenge-id>/<language>` destinations.
+
+`CommunityImplementations.astro` renders **Implementações da comunidade** below
+the official resources: a compact list separated by existing border tokens,
+Inter for authors and notes, IBM Plex Mono for language and declared state.
+Metadata wraps on small screens; there are no fixed columns or decorative cards.
+Each entry shows an optional linked author, language, **Concluída** / **Parcial**,
+optional plain-text notes and **Código-fonte**. Notes are escaped by Astro.
+States are participant declarations, with no technical certification.
+Empty catalogues omit the list and retain **Compartilhe sua implementação**,
+linked to `solutions/CONTRIBUTING.md`. All of this HTML is built by Astro;
+there are no client requests, forms or additional UI frameworks.
+
+To preview unpublished metadata without copying it into this repository:
+
+```sh
+SOLUTIONS_SOURCE=/absolute/path/to/solutions npm run dev
+SOLUTIONS_SOURCE=/absolute/path/to/solutions npm run check
+SOLUTIONS_SOURCE=/absolute/path/to/solutions npm run build
+```
+
+The override is local only and forbidden in CI/production. The same variable may
+be used for unit and integration tests before the migration is published.
+`npm run test:community` tests empty/populated/invalid builds, escaped notes,
+no-JavaScript rendering and accessibility at 360px and 1280px, with screenshots
+in `test-results/community-*.png`.
 
 ### Technical notes
 
@@ -233,32 +270,40 @@ Shared community and reporting destinations live in `src/config/links.json`. Mis
 
 ## Fetching canonical content
 
-`npm run dev`, `npm run check`, `npm run build` and `npm run build:production` fetch the latest `main` from all three public content repositories (`challenges`, `notes` and `meetings`). To fetch explicitly:
+`npm run dev`, `npm run check`, `npm run build` and `npm run build:production` fetch the latest `main` from all four public content repositories (`challenges`, `solutions`, `notes` and `meetings`). To fetch explicitly:
 
 ```sh
 npm run content:sync
 ```
 
-The shared sync script prints each exact commit used. Challenges are cached at `.content/challenges/`, notes at `.content/notes/` and meetings at `.content/meetings/`; all are ignored, generated checkouts, not independently maintained content copies. A fetch failure stops the command; an older cached checkout is not silently substituted. Local edits in the generated checkout also stop synchronization so work is not discarded.
+The shared sync script prints each exact commit used. Challenges are cached at `.content/challenges/`, solutions at `.content/solutions/`, notes at `.content/notes/` and meetings at `.content/meetings/`; all are ignored, generated checkouts, not independently maintained content copies. A fetch failure stops the command; an older cached checkout is not silently substituted. Local edits in the generated checkout also stop synchronization so work is not discarded.
 
-CI and the deployment workflow fetch once at the start and export `CHALLENGES_COMMIT`, `NOTES_COMMIT` and `MEETINGS_COMMIT` for subsequent steps. This is a snapshot for that workflow run, not a manually maintained pin: validation, browser tests and the production build all use the same fetched content. A new workflow run picks up the latest `main` again. Standalone local commands fetch the latest by default.
+CI and the deployment workflow fetch once at the start and export `CHALLENGES_COMMIT`, `SOLUTIONS_COMMIT`, `NOTES_COMMIT` and `MEETINGS_COMMIT` for subsequent steps. This is a snapshot for that workflow run, not a manually maintained pin: validation, browser tests and the production build all use the same fetched content. A new workflow run picks up the latest `main` again. Standalone local commands fetch the latest by default.
 
 Pushes to `main` in the content repositories automatically dispatch this repository's existing **Deploy production** workflow when website inputs change:
 
 - **challenges:** `*/index.md` (definitions directly inside a challenge directory).
 - **notes:** `*/index.md` and `*/assets/**`, excluding `docs/**` and `templates/**`.
 - **meetings:** `meetings/*.md` and `assets/**`. Documentation and templates are excluded.
-- **solutions:** no trigger. The site links to this repository but does not fetch its contents. Resource availability is declared in the challenges' `index.md` metadata, so changing that metadata triggers deployment.
+- **solutions:** `*/community.yaml` and `community.schema.json`. Only metadata is consumed; participant code remains external.
 
 These path filters cover additions, edits, deletions and renames. Documentation, challenge tests and fixtures do not trigger deployment. Draft note changes also trigger validation; drafts remain excluded from the published site. Pull requests and pushes to other branches do not dispatch production deployments.
 
 #### One-time trigger setup
 
-Create a fine-grained personal access token owned by an account with access to `oxide-club/oxideclub.dev`, restricted to that repository with **Actions: read and write** permission. Complete any organization approval required for the token. Store it as the Actions secret `WEBSITE_DEPLOY_TOKEN` in `oxide-club/challenges`, `oxide-club/notes` and `oxide-club/meetings` (or as an organization secret available only to those repositories). Their default `GITHUB_TOKEN` cannot dispatch a workflow in another repository. Renew the token before it expires.
+Create a fine-grained personal access token owned by an account with access to `oxide-club/oxideclub.dev`, restricted to that repository with **Actions: read and write** permission. Complete any organization approval required for the token. Store it as the Actions secret `WEBSITE_DEPLOY_TOKEN` in `oxide-club/challenges`, `oxide-club/solutions`, `oxide-club/notes` and `oxide-club/meetings` (or as an organization secret available only to those repositories). Their default `GITHUB_TOKEN` cannot dispatch a workflow in another repository. Renew the token before it expires.
 
 Merge `.github/workflows/deploy-website.yml` into `main` in each source repository. The destination's `deploy.yml` must remain available on `main` with `workflow_dispatch` enabled. No Cloudflare credentials are needed in the source repositories. Missing or invalid dispatch credentials fail the source workflow rather than silently skipping publication.
 
 The source workflow reports whether the dispatch request succeeded; follow **Deploy production** in this repository for validation and deployment results. Its existing tests, production environment rules and deployment concurrency still apply. Each run fetches the latest content snapshot, which may include newer merges than the triggering commit. Maintainers can still run **Deploy production** manually to retry a failed deployment or dispatch.
+
+For this migration, publish the solutions schema and all three catalogues before
+merging the website reader; the new reader deliberately fails against a snapshot
+without the contract. Set up `WEBSITE_DEPLOY_TOKEN` in solutions before enabling
+its dispatch workflow. These are repository settings/release steps, not secrets
+committed in this change. Local Git fixture tests verify snapshot reuse, adoption
+of new commits, rejection of invalid metadata and preservation of edited caches;
+an actual cross-repository dispatch requires the configured remote secret.
 
 Legacy challenge URLs are redirected by Cloudflare using `public/_redirects`; Astro's local preview does not emulate those edge rules.
 
@@ -266,7 +311,7 @@ Legacy challenge URLs are redirected by Cloudflare using `public/_redirects`; As
 
 Production is hosted at **https://oxideclub.dev**. [wrangler.jsonc](wrangler.jsonc) configures the `oxideclub-dev` Worker, custom domain and static assets from `dist/`, including custom 404 handling.
 
-To publish an update, run the **Deploy production** workflow from GitHub Actions. Deployment is manually triggered; pushes and pull requests run the **Check website** workflow. The deployment workflow runs unit tests, Astro checks, the preview build, browser suite and both content integration suites before building and deploying production output.
+To publish an update, run the **Deploy production** workflow from GitHub Actions. Deployment is manually triggered; pushes and pull requests run the **Check website** workflow. The deployment workflow runs unit tests, Astro checks, the preview build, browser suite and the content integration suites before building and deploying production output.
 
 The workflow uses the GitHub `production` environment with these secrets:
 

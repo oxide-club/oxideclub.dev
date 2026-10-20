@@ -1,0 +1,121 @@
+---
+import type { CommunityImplementation } from '../lib/community';
+import { githubUrl } from '../config/github.mjs';
+interface Props {
+  implementations: CommunityImplementation[];
+}
+const { implementations } = Astro.props;
+const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#compartilhar-uma-implementação`;
+const statusLabels = { completed: 'Concluída', partial: 'Parcial' };
+---
+
+<section
+  class="community-implementations"
+  aria-labelledby="community-implementations-heading"
+>
+  <h2 id="community-implementations-heading">Implementações da comunidade</h2>
+  {implementations.length > 0 && (
+    <>
+      <p class="community-context">
+        Código e estados declarados pelos participantes, sem garantia de
+        correção, segurança, desempenho ou conclusão pelo clube.
+      </p>
+      <ul class="community-list">
+        {implementations.map((implementation) => (
+          <li>
+            <div class="implementation-meta">
+              <span class="implementation-author">
+                {implementation.authorUrl ? (
+                  <a href={implementation.authorUrl}>{implementation.author}</a>
+                ) : (
+                  implementation.author
+                )}
+              </span>
+              <span class="implementation-language">
+                {implementation.language}
+              </span>
+              <span class="implementation-status">
+                {statusLabels[implementation.status]}
+              </span>
+            </div>
+            {implementation.notes && (
+              <p class="implementation-notes">{implementation.notes}</p>
+            )}
+            <a
+              class="implementation-source"
+              href={implementation.url}
+              aria-label={`Código-fonte de ${implementation.author} em ${implementation.language}`}
+            >
+              Código-fonte <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+  <a class="community-contribute" href={contributeUrl}>
+    Compartilhe sua implementação <span aria-hidden="true">↗</span>
+  </a>
+</section>
+<style>
+  .community-implementations {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+  }
+  .community-implementations h2 {
+    margin: 0 0 12px;
+    font-size: 24px;
+  }
+  .community-context,
+  .implementation-notes {
+    margin: 8px 0 0;
+    color: var(--color-muted);
+    font-size: 14px;
+  }
+  .community-list {
+    list-style: none;
+    padding: 0;
+    margin: 18px 0 8px;
+  }
+  .community-list li {
+    margin: 0;
+    padding-block: 16px;
+    border-bottom: 1px solid var(--color-border);
+    overflow-wrap: anywhere;
+  }
+  .implementation-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 16px;
+    font-size: 14px;
+  }
+  .implementation-author {
+    font-weight: 600;
+  }
+  .implementation-language,
+  .implementation-status {
+    font: 12px var(--font-mono);
+    color: var(--color-muted);
+  }
+  .community-implementations a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+  }
+  .implementation-source,
+  .implementation-source {
+    margin-top: 8px;
+  }
+  .community-contribute {
+    font-size: 14px;
+  }
+  .implementation-source {
+    margin-top: 8px;
+  }
+  .community-contribute {
+    margin-top: 8px;
+  }
+</style>

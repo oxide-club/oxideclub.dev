@@ -19,7 +19,7 @@ test('ppm resources use its own canonical directory and community section', asyn
   const resources = page.getByRole('region', {
     name: 'Recursos e implementações',
   });
-  await expect(resources.getByRole('link')).toHaveCount(3);
+  await expect(resources.getByRole('link')).toHaveCount(2);
   await expect(
     resources.getByRole('link', { name: 'Enunciado e testes' }),
   ).toHaveAttribute(
@@ -33,10 +33,10 @@ test('ppm resources use its own canonical directory and community section', asyn
     'https://github.com/oxide-club/solutions/tree/main/002-ppm/c',
   );
   await expect(
-    resources.getByRole('link', { name: 'Soluções da comunidade' }),
+    page.getByRole('link', { name: 'Compartilhe sua implementação' }),
   ).toHaveAttribute(
     'href',
-    'https://github.com/oxide-club/solutions/blob/main/COMMUNITY.md#002-ppm',
+    'https://github.com/oxide-club/solutions/blob/main/CONTRIBUTING.md#compartilhar-uma-implementação',
   );
 });
 test('wc resources expose only verified destinations and support keyboard focus', async ({
@@ -46,7 +46,7 @@ test('wc resources expose only verified destinations and support keyboard focus'
   const section = page.getByRole('region', {
     name: 'Recursos e implementações',
   });
-  await expect(section.getByRole('link')).toHaveCount(3);
+  await expect(section.getByRole('link')).toHaveCount(2);
   await expect(
     section.getByRole('link', { name: 'Enunciado e testes' }),
   ).toHaveAttribute(
@@ -62,10 +62,10 @@ test('wc resources expose only verified destinations and support keyboard focus'
     'https://github.com/oxide-club/solutions/tree/main/001-wc/c',
   );
   await expect(
-    section.getByRole('link', { name: 'Soluções da comunidade' }),
+    page.getByRole('link', { name: 'Compartilhe sua implementação' }),
   ).toHaveAttribute(
     'href',
-    'https://github.com/oxide-club/solutions/blob/main/COMMUNITY.md#001-wc',
+    'https://github.com/oxide-club/solutions/blob/main/CONTRIBUTING.md#compartilhar-uma-implementação',
   );
   await section.getByRole('link').first().focus();
   await page.keyboard.press('Tab');

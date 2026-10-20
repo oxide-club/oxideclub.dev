@@ -3,19 +3,23 @@ import { render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ChallengeResources from '../../components/ChallengeResources.astro';
+import CommunityImplementations from '../../components/CommunityImplementations.astro';
+import { loadCommunity } from '../../lib/community';
 import JoinLink from '../../components/JoinLink.astro';
 import { categoryLabels } from '../../lib/challenge-taxonomy.mjs';
 import { publishedChallenges, difficultyLabels } from '../../lib/challenges';
 export async function getStaticPaths() {
+  const catalogues = await loadCommunity();
   return (await publishedChallenges()).map((challenge) => ({
     params: { slug: challenge.data.slug },
-    props: { challenge },
+    props: { challenge, implementations: catalogues.get(challenge.id) ?? [] },
   }));
 }
 interface Props {
   challenge: CollectionEntry<'challenges'>;
+  implementations: import('../../lib/community').CommunityImplementation[];
 }
-const { challenge } = Astro.props;
+const { challenge, implementations } = Astro.props;
 const { Content, headings } = await render(challenge);
 const { data } = challenge;
 ---
@@ -60,6 +64,7 @@ const { data } = challenge;
       <article class="prose">
         <Content />
         <ChallengeResources challengeId={challenge.id} github={data.github} />
+        <CommunityImplementations implementations={implementations} />
       </article>
       <aside>
         <nav aria-label="Nesta especificação">

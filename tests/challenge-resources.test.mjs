@@ -32,10 +32,10 @@ test('resources are opt-in and language paths use the canonical ID', () => {
   ]);
   assert.equal(resources.community, undefined);
 });
-test('community links follow the established root index and challenge anchor', () => {
+test('community catalogue links use the canonical challenge directory', () => {
   assert.equal(
     challengeResources('002-ppm', { community: true }).community,
-    'https://github.com/oxide-club/solutions/blob/main/COMMUNITY.md#002-ppm',
+    'https://github.com/oxide-club/solutions/blob/main/002-ppm/community.yaml',
   );
 });
 test('metadata rejects unknown languages, duplicates and path traversal', () => {

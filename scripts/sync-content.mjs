@@ -1,3 +1,4 @@
+import { syncSolutions } from './sync-solutions.mjs';
 import { syncChallenges } from './sync-challenges.mjs';
 import { syncNotes } from './sync-notes.mjs';
 import { syncMeetings } from './sync-meetings.mjs';
@@ -8,7 +9,8 @@ try {
     process.env.SITE_RELEASE === 'production' ||
     process.env.npm_lifecycle_event === 'build:production';
   if (
-    (process.env.NOTES_SOURCE !== undefined ||
+    (process.env.SOLUTIONS_SOURCE !== undefined ||
+      process.env.NOTES_SOURCE !== undefined ||
       process.env.MEETINGS_SOURCE !== undefined) &&
     (production || (process.env.CI && process.env.CI !== 'false'))
   ) {
@@ -21,6 +23,16 @@ try {
     githubEnv: process.env.GITHUB_ENV,
   });
   console.log(`[content] oxide-club/challenges main @ ${challenges}`);
+  const solutions = await syncSolutions({
+    expectedRevision: process.env.SOLUTIONS_COMMIT,
+    githubEnv: process.env.GITHUB_ENV,
+    production,
+  });
+  console.log(
+    solutions
+      ? `[content] oxide-club/solutions main @ ${solutions}`
+      : '[content] solutions local source validated',
+  );
   const notes = await syncNotes({
     expectedRevision: process.env.NOTES_COMMIT,
     githubEnv: process.env.GITHUB_ENV,
