@@ -1,0 +1,67 @@
+name: Manage Discord announcements
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Initialize baseline, retry announcements, or reconcile a pending delivery
+        type: choice
+        options: [initialize, announce, record, release]
+        required: true
+      run_id:
+        description: Production workflow run ID (required for initialize/announce)
+        type: string
+      key:
+        description: Pending delivery key for record/release (for example note:memoria)
+        type: string
+      message_id:
+        description: Confirmed Discord message ID (required for record)
+        type: string
+permissions: {}
+concurrency:
+  group: production
+  cancel-in-progress: false
+jobs:
+  manage:
+    if: github.repository == 'oxide-club/oxideclub.dev' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Verify the source production deployment
+        if: inputs.operation == 'initialize' || inputs.operation == 'announce'
+        run: node scripts/discord/announcements.mjs verify-run "$SOURCE_RUN_ID"
+        env:
+          SOURCE_RUN_ID: ${{ inputs.run_id }}
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        if: inputs.operation == 'initialize' || inputs.operation == 'announce'
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.run_id }}
+          name: production-publication-manifest
+          path: publication
+      - name: Apply the selected operation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DISCORD_ANNOUNCEMENTS_WEBHOOK_URL: ${{ secrets.DISCORD_ANNOUNCEMENTS_WEBHOOK_URL }}
+          OPERATION: ${{ inputs.operation }}
+          STATE_KEY: ${{ inputs.key }}
+          MESSAGE_ID: ${{ inputs.message_id }}
+        run: |
+          case "$OPERATION" in
+            initialize|announce)
+              node scripts/discord/announcements.mjs "$OPERATION" publication/publication-manifest.json
+              ;;
+            record|release)
+              node scripts/discord/announcements.mjs "$OPERATION" "$STATE_KEY" "$MESSAGE_ID"
+              ;;
+            *) exit 1 ;;
+          esac

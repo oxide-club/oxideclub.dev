@@ -148,9 +148,19 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
       /id="challenge-resources-heading"/,
     );
     build();
-    const manifest = JSON.parse(await readFile(join(root, 'dist/publication-manifest.json'), 'utf8'));
-    assert.deepEqual(manifest.entries.filter(entry => entry.type === 'note').map(entry => entry.id), ['fixture-publica']);
-    assert.equal(manifest.entries.find(entry => entry.id === 'fixture-publica').url, 'https://oxideclub.dev/notas/fixture-publica');
+    const manifest = JSON.parse(
+      await readFile(join(root, 'dist/publication-manifest.json'), 'utf8'),
+    );
+    assert.deepEqual(
+      manifest.entries
+        .filter((entry) => entry.type === 'note')
+        .map((entry) => entry.id),
+      ['fixture-publica'],
+    );
+    assert.equal(
+      manifest.entries.find((entry) => entry.id === 'fixture-publica').url,
+      'https://oxideclub.dev/notas/fixture-publica',
+    );
     const listing = await readFile(join(root, 'dist/notas/index.html'), 'utf8');
     assert.match(listing, /href="\/notas\/fixture-publica"/);
     assert.doesNotMatch(
