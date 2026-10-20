@@ -1,1 +1,22 @@
-{"version":1,"initialized":false,"records":{},"revisions":{}}
+{
+  "version": 1,
+  "initialized": true,
+  "records": {
+    "challenge:001-wc": {
+      "url": "https://oxideclub.dev/desafios/001-wc",
+      "baseline": true
+    },
+    "challenge:002-ppm": {
+      "url": "https://oxideclub.dev/desafios/002-ppm",
+      "baseline": true
+    },
+    "challenge:003-rle": {
+      "url": "https://oxideclub.dev/desafios/003-rle",
+      "baseline": true
+    }
+  },
+  "revisions": {
+    "challenges": "28c18b128a37ba53eb2875f04c30a9b1f47436b4",
+    "notes": "ff42b1d00b024d30f0dcfddefda1edef3bafb5ef"
+  }
+}
