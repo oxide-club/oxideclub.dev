@@ -1,5 +1,5 @@
 import { lstat, readdir } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { isAbsolute, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { challengeIdentifier } from '../src/lib/challenge-source.mjs';
 import { github, repositoryUrl } from '../src/config/github.mjs';
@@ -23,7 +23,23 @@ async function validateDefinitions(directory) {
   if (!count) throw new Error('No numbered challenge definitions found');
 }
 
-export async function syncChallenges(options = {}) {
+export async function syncChallenges({
+  localSource = process.env.CHALLENGES_SOURCE,
+  ci = Boolean(process.env.CI && process.env.CI !== 'false'),
+  production = process.env.SITE_RELEASE === 'production' ||
+    process.env.npm_lifecycle_event === 'build:production',
+  ...options
+} = {}) {
+  if (localSource !== undefined) {
+    if (ci || production)
+      throw new Error(
+        'Local challenges source overrides are forbidden in CI and production',
+      );
+    if (!isAbsolute(localSource))
+      throw new Error('CHALLENGES_SOURCE must be an absolute path');
+    await validateDefinitions(localSource);
+    return null;
+  }
   return syncRepository({
     name: 'challenges',
     branch: github.repositories.challenges.branch,
@@ -42,8 +58,16 @@ if (
     const revision = await syncChallenges({
       expectedRevision: process.env.CHALLENGES_COMMIT,
       githubEnv: process.env.GITHUB_ENV,
+      production:
+        process.argv.includes('--production') ||
+        process.env.SITE_RELEASE === 'production' ||
+        process.env.npm_lifecycle_event === 'build:production',
     });
-    console.log(`[content] oxide-club/challenges main @ ${revision}`);
+    console.log(
+      revision
+        ? `[content] oxide-club/challenges main @ ${revision}`
+        : '[content] challenges local source validated',
+    );
   } catch (error) {
     console.error(`[content] ${error.message}`);
     process.exitCode = 1;

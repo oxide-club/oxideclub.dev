@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { challengeLanguages } from '../lib/challenge-languages.mjs';
 import { difficultyLabels } from '../lib/challenges';
 interface Props {
   challenge: CollectionEntry<'challenges'>;
@@ -12,10 +13,16 @@ const { data } = challenge;
 <article class="challenge-card">
   <div class="challenge-info">
     <div class="challenge-meta">
-      <span class="level">{difficultyLabels[data.difficulty]}</span>
-      {data.recommendedLanguage && (
-        <span class="mono">{data.recommendedLanguage}</span>
-      )}
+      <span class="level">
+        {difficultyLabels[data.difficulty]}
+        {data.difficultyContext && ` (${data.difficultyContext})`}
+      </span>
+      <span
+        class="mono"
+        aria-label={`Linguagens: ${challengeLanguages(data).join(', ')}`}
+      >
+        {challengeLanguages(data).join(' · ')}
+      </span>
     </div>
     <Heading class="challenge-title">
       <a href={`/desafios/${data.slug}`}>
@@ -26,19 +33,23 @@ const { data } = challenge;
       </a>
     </Heading>
     <p>{data.summary}</p>
+    {data.recommendedLanguage && challengeLanguages(data).length > 1 && (
+      <p class="recommendation">Recomendação: {data.recommendedLanguage}</p>
+    )}
     <div class="topics">
-      {data.topics.map((topic) => (
+      {(data.cardTopics ?? data.topics.slice(0, 3)).map((topic) => (
         <span class="tag">{topic}</span>
       ))}
     </div>
-    <a class="text-link" href={`/desafios/${data.slug}`}>
-      Ler o desafio completo <span aria-hidden="true">↗</span>
-    </a>
+    <span class="card-action" aria-hidden="true">
+      Abrir enunciado <span>↗</span>
+    </span>
   </div>
 </article>
 <style>
   .challenge-card {
     height: 100%;
+    position: relative;
     min-width: 0;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
@@ -58,7 +69,7 @@ const { data } = challenge;
     flex-wrap: wrap;
     gap: 8px 12px;
     align-items: center;
-    font-size: 11px;
+    font-size: 13px;
     color: var(--color-muted);
     margin-bottom: 20px;
   }
@@ -67,7 +78,7 @@ const { data } = challenge;
     border: 1px solid #71503d;
     padding: 3px 9px;
     border-radius: 3px;
-    font: 11px var(--font-mono);
+    font: 12px/1.6 var(--font-mono);
   }
   .challenge-title {
     font-size: 28px;
@@ -76,11 +87,25 @@ const { data } = challenge;
   .challenge-title a {
     text-decoration: none;
   }
-  .challenge-title a:hover {
+  .challenge-title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+  }
+  .challenge-card:hover .challenge-title a {
     text-decoration: underline;
   }
+  .recommendation {
+    font-size: 12px;
+    margin-top: 12px;
+  }
+  .tag {
+    font-size: 12px;
+  }
+
   p {
-    font-size: 14px;
+    font-size: 15px;
     max-width: 70ch;
   }
   .topics {
@@ -89,7 +114,12 @@ const { data } = challenge;
     gap: 8px;
     margin-block: 24px;
   }
-  .text-link {
+  .card-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 44px;
+    font-size: 14px;
     color: var(--color-text);
     font-weight: 550;
     margin-top: auto;

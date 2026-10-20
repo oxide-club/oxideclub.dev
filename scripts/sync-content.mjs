@@ -9,7 +9,8 @@ try {
     process.env.SITE_RELEASE === 'production' ||
     process.env.npm_lifecycle_event === 'build:production';
   if (
-    (process.env.SOLUTIONS_SOURCE !== undefined ||
+    (process.env.CHALLENGES_SOURCE !== undefined ||
+      process.env.SOLUTIONS_SOURCE !== undefined ||
       process.env.NOTES_SOURCE !== undefined ||
       process.env.MEETINGS_SOURCE !== undefined) &&
     (production || (process.env.CI && process.env.CI !== 'false'))
@@ -20,9 +21,14 @@ try {
   }
   const challenges = await syncChallenges({
     expectedRevision: process.env.CHALLENGES_COMMIT,
+    production,
     githubEnv: process.env.GITHUB_ENV,
   });
-  console.log(`[content] oxide-club/challenges main @ ${challenges}`);
+  console.log(
+    challenges
+      ? `[content] oxide-club/challenges main @ ${challenges}`
+      : '[content] challenges local source validated',
+  );
   const solutions = await syncSolutions({
     expectedRevision: process.env.SOLUTIONS_COMMIT,
     githubEnv: process.env.GITHUB_ENV,

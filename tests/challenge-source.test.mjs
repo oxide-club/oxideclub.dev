@@ -12,7 +12,10 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { syncChallenges } from '../scripts/sync-challenges.mjs';
-import { challengeId } from '../src/lib/challenge-source.mjs';
+import {
+  challengeId,
+  challengesDirectory,
+} from '../src/lib/challenge-source.mjs';
 
 function git(root, ...args) {
   return execFileSync('git', ['-C', root, ...args], {
@@ -145,4 +148,60 @@ test('content IDs come from numbered directories and must match slugs', () => {
       challengeId({ entry: '001-wc/index.md', data: { slug: 'recriando-wc' } }),
     /slug/i,
   );
+});
+
+test('local challenge preview validates without replacing the synced cache and is forbidden in releases', async (t) => {
+  const f = await fixture(t);
+  const before = await readFile(f.definition, 'utf8');
+  assert.equal(
+    await syncChallenges({
+      ...f,
+      localSource: f.repository,
+      ci: false,
+      production: false,
+    }),
+    null,
+  );
+  assert.equal(await readFile(f.definition, 'utf8'), before);
+  for (const environment of [{ ci: true }, { production: true }])
+    await assert.rejects(
+      syncChallenges({ ...f, localSource: f.repository, ...environment }),
+      /forbidden/i,
+    );
+  await assert.rejects(
+    syncChallenges({
+      ...f,
+      localSource: 'relative',
+      ci: false,
+      production: false,
+    }),
+    /absolute/i,
+  );
+});
+
+test('direct content resolution also rejects local source paths in CI and production', () => {
+  const previous = Object.fromEntries(
+    ['CHALLENGES_SOURCE', 'CI', 'SITE_RELEASE'].map((key) => [
+      key,
+      process.env[key],
+    ]),
+  );
+  try {
+    delete process.env.CI;
+    delete process.env.SITE_RELEASE;
+    process.env.CHALLENGES_SOURCE = 'relative';
+    assert.throws(challengesDirectory, /absolute/i);
+    process.env.CHALLENGES_SOURCE = '/tmp/challenges-preview';
+    assert.equal(challengesDirectory(), '/tmp/challenges-preview');
+    process.env.CI = 'true';
+    assert.throws(challengesDirectory, /forbidden/i);
+    delete process.env.CI;
+    process.env.SITE_RELEASE = 'production';
+    assert.throws(challengesDirectory, /forbidden/i);
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
 });

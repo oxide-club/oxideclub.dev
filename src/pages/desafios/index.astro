@@ -4,9 +4,12 @@ import ChallengeCard from '../../components/ChallengeCard.astro';
 import JoinLink from '../../components/JoinLink.astro';
 import { githubUrl } from '../../config/github.mjs';
 import { publishedChallenges } from '../../lib/challenges';
-import { ascendingChallenges } from '../../lib/challenge-catalogue.mjs';
-import { categoryLabels } from '../../lib/challenge-taxonomy.mjs';
+import {
+  ascendingChallenges,
+  challengeSearchText,
+} from '../../lib/challenge-catalogue.mjs';
 const challenges = ascendingChallenges(await publishedChallenges());
+const startingChallenge = challenges.find(({ id }) => id === '001-wc');
 const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#compartilhar-uma-implementação`;
 const runnerGuideUrl = githubUrl('challenges', 'docs/runner.md', 'blob');
 const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
@@ -20,29 +23,29 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
 >
   <div class="container">
     <header class="page-intro">
-      <div class="eyebrow">Laboratório aberto / Desafios</div>
-      <h1>
-        Desafios de programação.
-        <br />
-        <span class="accent">Escolha por onde começar.</span>
-      </h1>
+      <div class="eyebrow">Desafios</div>
+      <h1>Explore sistemas na prática.</h1>
       <p>
-        Escolha um desafio pelo assunto que desperta sua curiosidade e confira a
-        dificuldade e a linguagem recomendada. Traga suas dúvidas e soluções
-        parciais para conversar no Discord.
+        Construa programas para investigar entrada e saída, imagens e compressão
+        de dados. Escolha um desafio e compartilhe perguntas, tentativas e
+        descobertas.
       </p>
     </header>
-    <section class="testing-intro" aria-labelledby="testing-intro-heading">
-      <h2 id="testing-intro-heading">Teste sua solução</h2>
+    <div class="catalogue-guidance">
+      {startingChallenge && (
+        <p>
+          <strong>Primeiro desafio?</strong> O{' '}
+          <a href={`/desafios/${startingChallenge.data.slug}`}>wc</a> é uma
+          sugestão de início para explorar leitura de dados, contagem e estado.
+          Você também pode escolher outro assunto que desperte sua curiosidade.
+        </p>
+      )}
       <p>
-        O <code>oxide-test</code> executa os testes públicos dos desafios no seu
-        programa compilado. Use Linux, Windows com WSL 2 ou Docker; no macOS,
-        use Docker. Cada desafio traz o comando para testar sua implementação.
+        A dificuldade indica os conhecimentos envolvidos. Você pode explorar
+        qualquer desafio e compartilhar suas tentativas. As extensões são
+        opcionais.
       </p>
-      <a class="text-link" href={runnerGuideUrl}>
-        Instalar e usar o oxide-test <span aria-hidden="true">↗</span>
-      </a>
-    </section>
+    </div>
     <form
       class="catalogue-filters"
       role="search"
@@ -54,19 +57,24 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
         <input
           id="challenge-query"
           type="search"
-          placeholder="Título, assunto ou linguagem"
+          placeholder="Título, assunto, linguagem ou nível"
           autocomplete="off"
         />
       </div>
-      <div class="filter-field">
-        <label for="challenge-topic">Assunto</label>
-        <select id="challenge-topic">
-          <option value="">Todos os assuntos</option>
-          {topics.map((topic) => (
-            <option value={topic}>{topic}</option>
-          ))}
-        </select>
-      </div>
+      <details class="topic-filter">
+        <summary>
+          Filtrar por assunto<span class="selected-topic"></span>
+        </summary>
+        <div class="filter-field">
+          <label for="challenge-topic">Assunto</label>
+          <select id="challenge-topic">
+            <option value="">Todos os assuntos</option>
+            {topics.map((topic) => (
+              <option value={topic}>{topic}</option>
+            ))}
+          </select>
+        </div>
+      </details>
       <button type="reset">Limpar filtros</button>
       <p
         class="search-status"
@@ -83,28 +91,22 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
         <div
           data-challenge
           data-topics={JSON.stringify(challenge.data.topics)}
-          data-search={[
-            challenge.id,
-            challenge.data.title,
-            challenge.data.summary,
-            ...challenge.data.topics,
-            ...challenge.data.categories.map(
-              (category) => categoryLabels[category],
-            ),
-            challenge.data.recommendedLanguage ?? '',
-          ].join(' ')}
+          data-search={challengeSearchText(challenge)}
         >
           <ChallengeCard challenge={challenge} headingLevel="h2" />
         </div>
       ))}
     </section>
-    <div class="catalogue-note">
-      <h2>Diferentes caminhos de investigação.</h2>
+    <section class="testing-intro" aria-labelledby="testing-intro-heading">
+      <h2 id="testing-intro-heading">Teste sua implementação</h2>
       <p>
-        A dificuldade indica os conhecimentos envolvidos, não quem pode
-        participar. As extensões de cada desafio são opcionais.
+        Use o <code>oxide-test</code> para executar os testes públicos no seu
+        programa. O enunciado de cada desafio traz o comando correspondente.
       </p>
-    </div>
+      <a class="text-link" href={runnerGuideUrl}>
+        Ver instruções de instalação <span aria-hidden="true">↗</span>
+      </a>
+    </section>
     <section
       class="sharing"
       id="como-compartilhar"
@@ -112,10 +114,10 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
       tabindex="-1"
     >
       <div class="eyebrow">Participação</div>
-      <h2 id="sharing-heading">Como compartilhar sua descoberta</h2>
+      <h2 id="sharing-heading">Compartilhe sua tentativa ou descoberta</h2>
       <p class="sharing-intro">
-        Não é necessário concluir um desafio para participar. Dúvidas, casos de
-        teste, tentativas e soluções parciais também são bem-vindos.
+        Você pode participar com uma dúvida, um caso de teste ou uma
+        implementação em andamento. Compartilhe o que tentou e o que observou.
       </p>
       <div class="sharing-paths">
         <article>
@@ -125,7 +127,7 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
             explorando. Conte sua dúvida ou descoberta. Se ajudar, inclua um
             trecho de código, a entrada que testou e o resultado que observou.
           </p>
-          <JoinLink label="Conversar no Discord" />
+          <JoinLink label="Entrar no Discord" />
         </article>
         <article>
           <h3>Inclua sua implementação no catálogo</h3>
@@ -144,10 +146,11 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   </div>
 </BaseLayout>
 <script>
-  import { matchesChallenge } from '../../lib/challenge-catalogue.mjs';
+  import { matchesChallenge } from '../../lib/challenge-search.mjs';
   const form = document.querySelector<HTMLFormElement>('.catalogue-filters')!;
   const query = form.querySelector<HTMLInputElement>('#challenge-query')!;
   const topic = form.querySelector<HTMLSelectElement>('#challenge-topic')!;
+  const selectedTopic = form.querySelector<HTMLElement>('.selected-topic')!;
   const status = form.querySelector<HTMLElement>('.search-status')!;
   const empty = document.querySelector<HTMLElement>('.empty-results')!;
   const entries = Array.from(
@@ -171,6 +174,7 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
       entry.element.classList.toggle('result-enter', newlyVisible);
       if (matches) count++;
     }
+    selectedTopic.textContent = topic.value ? ` · ${topic.value}` : '';
     empty.hidden = count > 0;
     status.textContent = `${count} ${count === 1 ? 'desafio encontrado' : 'desafios encontrados'}`;
   }
@@ -186,12 +190,25 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   update();
 </script>
 <style>
+  .page-intro {
+    padding-block: 48px 32px;
+  }
+  .page-intro h1 {
+    font-size: clamp(36px, 5vw, 56px);
+  }
+  .catalogue-guidance {
+    max-width: 88ch;
+    margin-bottom: 24px;
+  }
+  .catalogue-guidance p {
+    font-size: 15px;
+  }
+  .catalogue-guidance p + p {
+    margin-top: 12px;
+  }
   .testing-intro {
-    padding: 24px;
-    margin-bottom: 32px;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    padding-block: 28px;
   }
   .testing-intro h2 {
     font-size: 24px;
@@ -200,7 +217,6 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   .testing-intro p {
     max-width: 72ch;
     font-size: 15px;
-    margin-bottom: 12px;
   }
   .testing-intro code {
     font-family: var(--font-mono);
@@ -209,8 +225,27 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
     display: flex;
     align-items: end;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px 20px;
     margin-bottom: 24px;
+  }
+  .catalogue-filters > .filter-field {
+    flex: 1 1 320px;
+  }
+  .topic-filter {
+    flex: 0 1 300px;
+    min-width: 0;
+  }
+  .topic-filter summary {
+    cursor: pointer;
+    padding: 10px 0;
+    min-height: 44px;
+    font-size: 14px;
+  }
+  .topic-filter .filter-field {
+    margin-top: 12px;
+  }
+  .selected-topic {
+    color: var(--color-accent-text);
   }
   [hidden] {
     display: none !important;
@@ -222,7 +257,7 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   label {
     display: block;
     margin-bottom: 8px;
-    font-size: 14px;
+    font-size: 13px;
   }
   input,
   select,
@@ -289,17 +324,6 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
       transform: translateY(0);
     }
   }
-  .catalogue-note {
-    max-width: 680px;
-    padding-bottom: 48px;
-  }
-  .catalogue-note h2 {
-    font-size: 28px;
-    margin-bottom: 16px;
-  }
-  .catalogue-note p {
-    font-size: 15px;
-  }
   .sharing {
     border-top: 1px solid var(--color-border);
     padding-block: 48px 80px;
@@ -332,6 +356,9 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
     font-size: 15px;
   }
   @media (max-width: 700px) {
+    .topic-filter {
+      flex-basis: 150px;
+    }
     .catalogue {
       grid-template-columns: minmax(0, 1fr);
     }

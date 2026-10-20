@@ -1,5 +1,7 @@
 # Oxide Club
 
+O Oxide Club é um clube independente de computação com foco em sistemas. Nosso ponto de partida é estudar C, Rust, arquitetura de computadores e sistemas operacionais, compartilhando perguntas, experimentos e projetos. Outras frentes podem surgir a partir dos interesses e das iniciativas dos participantes.
+
 Código-fonte do [oxideclub.dev](https://oxideclub.dev), o site da comunidade Oxide Club. Publicado em português brasileiro, o site reúne desafios de programação, implementações da comunidade, notas técnicas, pautas de encontros e uma biblioteca de recursos de estudo em torno de **Explorar → Experimentar → Explicar**.
 
 O projeto usa Astro, TypeScript, coleções de conteúdo em Markdown e CSS. As páginas são geradas como arquivos estáticos e hospedadas no Cloudflare Workers Static Assets; o site não tem backend em tempo de execução.
@@ -101,6 +103,26 @@ A página inicial escolhe um desafio ou uma nota publicada durante o build, por 
 Enunciados e testes públicos são mantidos em [oxide-club/challenges](https://github.com/oxide-club/challenges). Envie alterações para esse repositório, seguindo seu guia de contribuição. Cada definição fica em `<id>/index.md`; o diretório e o campo `slug` compartilham um identificador estável no formato `NNN-nome`.
 
 O site lê apenas esses arquivos de definição a partir de `.content/challenges/`, um checkout ignorado pelo Git. READMEs, testes e dados de teste do repositório de origem não viram páginas. Não edite esse checkout gerado. Os metadados são validados pelo [schema de conteúdo](src/content.config.ts).
+
+#### Linguagens e apresentação do catálogo
+
+O frontmatter pode declarar `acceptedLanguages` (lista não vazia e sem
+repetições). `recommendedLanguage` continua sendo uma sugestão e, quando ambas
+estiverem declaradas, deve pertencer à lista. Sem `acceptedLanguages`, a interface
+usa a recomendação existente como fallback. Não se inferem linguagens a partir
+das implementações oficiais em `github.solutions`.
+
+`cardTopics` pode destacar até três conceitos no card; `topics` permanece completo
+para assuntos e busca. `difficultyContext` qualifica o nível sem reclassificá-lo.
+A busca indexa título, resumo, assuntos, conceitos destacados, categorias,
+linguagens aceitas, recomendação e dificuldade em português e no identificador.
+
+Para revisar alterações ainda não publicadas na fonte, use
+`CHALLENGES_SOURCE=/caminho/absoluto/para/challenges npm run build` (ou `dev` e
+`check`). A prévia lê essa fonte diretamente, valida sua estrutura e preserva o
+cache sincronizado. A sobrescrita é rejeitada em CI e produção, assim como as
+sobrescritas das outras coleções. A produção continua consumindo o repositório
+canônico sincronizado; publique os metadados nele antes de publicar o site.
 
 #### Recursos no GitHub
 

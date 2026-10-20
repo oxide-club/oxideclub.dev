@@ -29,7 +29,7 @@ const social = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630
 <path d="M72 72H1128M72 558H1128" stroke="#3b3e40"/>
 <svg x="72" y="157" width="280" height="280" viewBox="116.5 110 642 642">${original.match(/<g[\s\S]*<\/g>/)[0]}</svg>
 <text x="400" y="270" font-family="sans-serif" font-size="72" font-weight="600" fill="#e8e2d8">Oxide Club</text>
-<text x="404" y="336" font-family="sans-serif" font-size="30" fill="#d1875e">Explore computação em profundidade.</text>
+<text x="404" y="336" font-family="sans-serif" font-size="30" fill="#d1875e">Computação com foco em sistemas.</text>
 <text x="404" y="380" font-family="sans-serif" font-size="30" fill="#e8e2d8">Investigue. Experimente. Compartilhe.</text>
 <text x="76" y="526" font-family="monospace" font-size="20" fill="#91989a">oxideclub.dev</text>
 </svg>`;

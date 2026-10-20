@@ -38,11 +38,11 @@ test('on-page sharing guide provides Discord and GitHub paths without JavaScript
     const page = await context.newPage();
     await page.goto('/desafios/#como-compartilhar');
     const guide = page.getByRole('region', {
-      name: 'Como compartilhar sua descoberta',
+      name: 'Compartilhe sua tentativa ou descoberta',
     });
     await expect(guide).toBeInViewport();
     await expect(
-      guide.getByRole('link', { name: 'Conversar no Discord' }),
+      guide.getByRole('link', { name: 'Entrar no Discord' }),
     ).toHaveAttribute('href', discordInvite);
     await expect(
       guide.getByRole('link', { name: 'Ver o guia no GitHub' }),

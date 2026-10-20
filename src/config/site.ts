@@ -5,6 +5,6 @@ export const site = {
   name: 'Oxide Club',
   url: 'https://oxideclub.dev',
   description:
-    'Comunidade independente de programação de sistemas e fundamentos da computação. Estudos conjuntos, compartilhamento de projetos e desafios práticos.',
+    'Clube independente de computação com foco em sistemas. Estudamos C, Rust, arquitetura de computadores e sistemas operacionais em comunidade.',
   production: import.meta.env.SITE_RELEASE === 'production',
 };

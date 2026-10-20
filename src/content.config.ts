@@ -9,14 +9,19 @@ import {
   reservedNoteDirectories,
 } from './lib/note-source.mjs';
 import { githubResourcesSchema } from './lib/challenge-resources.mjs';
+import { challengeLanguageSchema } from './lib/challenge-languages.mjs';
 import { challengeTaxonomySchema } from './lib/challenge-taxonomy.mjs';
-import { challengeId, challengeIdentifier } from './lib/challenge-source.mjs';
+import {
+  challengesDirectory,
+  challengeId,
+  challengeIdentifier,
+} from './lib/challenge-source.mjs';
 import {
   meetingsDirectory,
   meetingId,
   meetingSchema,
 } from './lib/meeting-source.mjs';
-if (!existsSync('.content/challenges')) {
+if (!existsSync(challengesDirectory())) {
   throw new Error(
     'Challenge content is missing. Run npm run content:sync first.',
   );
@@ -30,13 +35,27 @@ const discordUrl = z.url().refine((value) => {
     !url.password
   );
 }, 'Use a real HTTPS Discord permalink');
+const challengeBase = challengesDirectory();
+const challengeGlob = glob({
+  pattern: '*/index.md',
+  base: challengeBase,
+  generateId: challengeId,
+});
 const challenges = defineCollection({
-  loader: glob({
-    pattern: '*/index.md',
-    base: './.content/challenges',
-    generateId: challengeId,
-  }),
-  schema: challengeTaxonomySchema.extend({
+  loader: {
+    name: 'challenge-definitions',
+    async load(context) {
+      // A preview source can change without the content config file changing.
+      // Drop paths/digests from the previous source before loading the new one.
+      if (context.meta.get('source') !== challengeBase) {
+        context.store.clear();
+        context.meta.set('source', challengeBase);
+      }
+      await challengeGlob.load(context);
+    },
+  },
+  schema: challengeLanguageSchema.safeExtend({
+    ...challengeTaxonomySchema.shape,
     title: z.string().min(1),
     slug: z.string().regex(challengeIdentifier),
     summary: z.string().min(1),
@@ -44,7 +63,8 @@ const challenges = defineCollection({
     updatedAt: z.coerce.date().optional(),
     draft: z.boolean(),
     participation: z.enum(['flagship', 'open']),
-    recommendedLanguage: z.string().min(1).optional(),
+    cardTopics: z.array(z.string().min(1)).min(1).max(3).optional(),
+    difficultyContext: z.string().min(1).optional(),
     topics: z.array(z.string()).min(1),
     featured: z.boolean().default(false),
     discordThreadUrl: discordUrl.optional(),

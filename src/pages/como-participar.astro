@@ -7,122 +7,118 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
 
 <BaseLayout
   title="Como participar"
-  description="Estude junto, construa em público e compartilhe projetos no Discord do Oxide Club. Conheça os canais, os desafios e as formas de participar."
+  description="Participe do Oxide Club, clube de computação com foco em sistemas. Traga uma pergunta, uma tentativa ou um projeto ao Discord, mesmo começando os estudos."
 >
   <div class="container participation">
     <header class="page-intro">
       <div class="eyebrow">Oxide Club / Participação</div>
       <h1>Como participar</h1>
       <p>
-        Estude computação em conjunto, construa na companhia de outras pessoas e
-        compartilhe seus projetos ao longo do desenvolvimento. Quem está
-        começando os estudos também é bem-vindo.
+        O Oxide Club reúne pessoas interessadas em C, Rust, arquitetura de
+        computadores e sistemas operacionais. Você pode começar com uma
+        pergunta, uma tentativa de desafio ou um projeto em andamento. Quem está
+        começando também é bem-vindo.
       </p>
       <div class="actions">
         <JoinLink />
       </div>
     </header>
     <section
-      class="participation-section"
+      class="participation-section first-step"
       aria-labelledby="conversation-heading"
     >
-      <h2 id="conversation-heading">Comece pela conversa</h2>
+      <h2 id="conversation-heading">Primeiro passo</h2>
       <div class="section-copy">
         <p>
-          O Discord é o ponto de encontro da comunidade. Você pode contar o que
-          está estudando, trazer uma dúvida ou começar acompanhando as
-          conversas. Não precisa chegar com um projeto pronto nem dominar uma
-          linguagem.
-        </p>
-        <p>
-          Uma apresentação pode começar com algo simples: “Estou estudando C e
-          quero entender melhor como um programa lê arquivos.”
+          O Discord é o ponto de encontro do clube. Você também pode começar
+          acompanhando as conversas. Não precisa dominar uma linguagem nem
+          publicar código para participar.
         </p>
       </div>
     </section>
-    <section class="participation-section" aria-labelledby="projects-heading">
-      <h2 id="projects-heading">Compartilhe projetos</h2>
-      <div class="section-copy">
-        <p>
-          No fórum <strong>projetos</strong>, abra um tópico para apresentar o
-          que você está desenvolvendo. Use esse espaço para registrar avanços,
-          decisões, dificuldades e descobertas ao longo do tempo. Seu projeto
-          pode estar nas primeiras ideias.
-        </p>
-        <p>
-          Você pode compartilhar um objetivo, uma captura de tela, um trecho de
-          código ou uma pergunta sobre uma decisão. Não precisa esperar o
-          projeto ficar pronto nem publicar atualizações com uma frequência
-          definida.
-        </p>
+    <section
+      class="participation-section"
+      aria-labelledby="participation-heading"
+    >
+      <h2 id="participation-heading">Formas de participar</h2>
+      <div class="section-copy options">
+        <article>
+          <h3>Dúvidas e estudos</h3>
+          <p>
+            Nas conversas do Discord, traga uma pergunta, uma referência ou um
+            teste que você fez. Conte o que tentou e onde surgiu a dúvida. Uma
+            pergunta ou um comentário sobre o trabalho de outra pessoa também
+            ajuda a investigar um assunto.
+          </p>
+        </article>
+        <article>
+          <h3>Projetos em andamento</h3>
+          <p>
+            No fórum <strong>projetos</strong>, abra um tópico com um objetivo,
+            uma captura de tela, uma decisão ou uma dificuldade. O projeto pode
+            estar nas primeiras ideias; não precisa estar pronto nem receber
+            atualizações com frequência definida.
+          </p>
+          <p>
+            Compartilhar com membros do Discord e publicar um repositório na
+            internet são decisões diferentes. Você escolhe se quer tornar seu
+            código público.
+          </p>
+        </article>
+        <article>
+          <h3>Desafios</h3>
+          <p>
+            Escolha um desafio no site e procure seu tópico no canal{' '}
+            <strong>#desafios</strong> do Discord. Compartilhe uma dúvida, uma
+            tentativa ou um caso de teste, mesmo sem concluir a implementação.
+            Compare abordagens e volte para contar o que descobriu.
+          </p>
+          <a class="text-link" href="/desafios">
+            Conhecer os desafios <span aria-hidden="true">→</span>
+          </a>
+        </article>
       </div>
     </section>
-    <section class="participation-section" aria-labelledby="build-heading">
-      <h2 id="build-heading">Construa em público</h2>
-      <div class="section-copy">
-        <p>
-          O canal de voz <strong>build in public</strong> é um espaço para
-          programar na companhia de outras pessoas. Se quiser, compartilhe a
-          tela e converse sobre o que está tentando fazer, as decisões que tomou
-          e o que ainda não resolveu.
+    <section class="participation-section" aria-labelledby="live-heading">
+      <h2 id="live-heading">Em tempo real</h2>
+      <div class="section-copy options">
+        <article>
+          <h3>Estude junto</h3>
+          <p>
+            Entre no canal de voz <strong>sala de estudos</strong> para estudar
+            na companhia de outras pessoas, discutir uma referência ou explorar
+            uma dúvida. Não é necessário preparar uma aula.
+          </p>
+        </article>
+        <article>
+          <h3>Programe junto</h3>
+          <p>
+            No canal de voz <strong>build in public</strong>, programe com
+            outras pessoas e, se quiser, mostre o que está tentando fazer.
+            Projetos e implementações podem estar incompletos.
+          </p>
+        </article>
+        <p class="activity-note">
+          Nas duas salas, falar por voz e compartilhar a tela são opcionais.
+          Você também pode acompanhar.
         </p>
-        <p>
-          Falar por voz e compartilhar a tela são opcionais. Você também pode
-          acompanhar. Aqui, construir em público é compartilhar o processo com a
-          comunidade; publicar código ou registros na internet continua sendo
-          uma escolha sua.
-        </p>
-      </div>
-    </section>
-    <section class="participation-section" aria-labelledby="study-heading">
-      <h2 id="study-heading">Estude junto</h2>
-      <div class="section-copy">
-        <p>
-          Entre no canal de voz <strong>sala de estudos</strong> para estudar
-          computação com outras pessoas. Compartilhe o assunto que está
-          explorando, discuta uma referência ou traga uma dúvida. Você também
-          pode acompanhar os estudos sem falar por voz.
-        </p>
-        <p>
-          Uma conversa pode começar com “Estou estudando processos e queria
-          discutir este capítulo”. Não é necessário preparar uma aula ou dominar
-          o assunto para participar.
-        </p>
-      </div>
-    </section>
-    <section class="participation-section" aria-labelledby="challenge-heading">
-      <h2 id="challenge-heading">Explore um desafio</h2>
-      <div class="section-copy">
-        <p>
-          Escolha um desafio e procure seu tópico no canal #desafios do Discord.
-          Compartilhe uma pergunta, um caso de teste ou algo que descobriu
-          durante a implementação.
-        </p>
-        <p>
-          Não é necessário concluir o desafio para participar. Tentativas,
-          dúvidas e soluções parciais são bem-vindas.
-        </p>
-        <a class="text-link" href="/desafios">
-          Conhecer os desafios <span aria-hidden="true">→</span>
-        </a>
       </div>
     </section>
     <section
       class="participation-section"
       aria-labelledby="implementation-heading"
     >
-      <h2 id="implementation-heading">Inclua uma implementação no catálogo</h2>
+      <h2 id="implementation-heading">Compartilhe sua implementação</h2>
       <div class="section-copy">
         <p>
-          Se quiser incluir sua implementação no catálogo do site, publique o
-          código em um repositório público seu e siga o guia no GitHub para
-          enviar um pull request com o link.
+          Se quiser incluir uma implementação no catálogo do site, mantenha o
+          código em um repositório público seu e siga o guia vigente no GitHub.
+          O catálogo reúne links, organizados por desafio e linguagem; o código
+          continua no seu repositório.
         </p>
         <p>
-          A implementação pode estar completa ou em desenvolvimento. O código
-          continua no seu repositório; o catálogo reúne os links. Essa
-          contribuição é opcional: você pode participar das conversas sem
-          adicionar código ao catálogo.
+          A implementação pode estar completa ou em desenvolvimento. Essa
+          contribuição é opcional.
         </p>
         <a class="text-link" href={contributeUrl}>
           Ver o guia no GitHub <span aria-hidden="true">↗</span>
@@ -135,46 +131,14 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
       aria-labelledby="planning-heading"
       tabindex="-1"
     >
-      <h2 id="planning-heading">O que estamos preparando</h2>
+      <h2 id="planning-heading">Em preparação</h2>
       <div class="section-copy">
-        <p class="planning-intro">
-          O clube está começando. Além dos projetos e estudos no Discord,
-          estamos construindo novas formas de compartilhar conhecimento.
-        </p>
-        <article>
-          <p class="planning-status">Planejado</p>
-          <h3>Notas técnicas</h3>
-          <p>
-            Textos escritos por membros do clube para compartilhar explicações,
-            experimentos e relatos de desenvolvimento. Ainda vamos definir como
-            propor e revisar as publicações.
-          </p>
-        </article>
-        <article>
-          <p class="planning-status">Em discussão</p>
-          <h3>Zine do clube</h3>
-          <p>
-            Uma edição que reúne notas técnicas e outras produções já publicadas
-            pela comunidade. A proposta é selecionar e organizar esses materiais
-            para leitura conjunta. O formato e a periodicidade ainda estão em
-            aberto.
-          </p>
-        </article>
-        <article>
-          <p class="planning-status">Em preparação</p>
-          <h3>Encontros</h3>
-          <p>
-            Estamos organizando os primeiros encontros para estudar temas e
-            conversar sobre projetos e soluções. O formato e as datas ainda
-            estão sendo definidos.
-          </p>
-          <a class="text-link" href="/encontros/">
-            Ver os encontros <span aria-hidden="true">→</span>
-          </a>
-        </article>
-        <p class="planning-invitation">
-          Acompanhe as conversas no Discord e compartilhe os temas e formatos
-          que você gostaria de explorar.
+        <p>
+          O clube está começando. Estamos preparando as primeiras{' '}
+          <a href="/notas/">notas técnicas</a> e os primeiros{' '}
+          <a href="/encontros/">encontros</a>; uma zine está em discussão, com
+          formato e periodicidade em aberto. Compartilhe no Discord os assuntos
+          que gostaria de estudar em conjunto.
         </p>
       </div>
     </section>
@@ -184,6 +148,12 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
         Conheça o <a href="/codigo-de-conduta">código de conduta</a> que orienta
         a convivência nos espaços do clube.
       </p>
+      <p class="closing-invitation">
+        Traga sua primeira pergunta. A conversa começa no Discord.
+      </p>
+      <div class="actions">
+        <JoinLink />
+      </div>
     </aside>
   </div>
 </BaseLayout>
@@ -214,26 +184,23 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
     margin-top: 16px;
   }
   .section-copy .text-link {
-    margin-top: 20px;
+    margin-top: 16px;
   }
-  .planning-intro {
-    margin-bottom: 28px;
-  }
-  .planning article + article {
-    border-top: 1px solid var(--color-border);
+  .options article + article {
     margin-top: 28px;
-    padding-top: 28px;
   }
-  .planning .planning-status {
-    margin: 0 0 8px;
-    font: 12px/1.6 var(--font-mono);
-    color: var(--color-accent-text);
-  }
-  .planning h3 {
+  .options h3 {
+    font-size: 21px;
     margin-bottom: 12px;
   }
-  .planning-invitation {
-    margin-top: 28px;
+  .activity-note {
+    margin-top: 24px;
+  }
+  .planning {
+    padding-block: 32px;
+  }
+  .planning h2 {
+    font-size: 26px;
   }
   .conduct-note {
     border-top: 1px solid var(--color-border);
@@ -243,11 +210,19 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
     font-size: 14px;
     max-width: 80ch;
   }
+  .conduct-note .closing-invitation {
+    margin-block: 28px 20px;
+    font-size: 18px;
+    color: var(--color-text);
+  }
   @media (max-width: 700px) {
     .participation-section {
       grid-template-columns: minmax(0, 1fr);
       gap: 24px;
       padding-block: 36px;
+    }
+    .planning {
+      padding-block: 28px;
     }
   }
 </style>

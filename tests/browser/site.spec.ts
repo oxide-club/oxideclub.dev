@@ -319,6 +319,7 @@ test('challenge catalogue sorts ascending and combines text and subjects', async
     'href',
     '/desafios/001-wc',
   );
+  await page.getByText('Filtrar por assunto', { exact: true }).click();
   await page.getByLabel('Assunto', { exact: true }).selectOption('Streams');
   await expect(cards).toHaveCount(1);
   await query.fill('002-ppm');
@@ -333,6 +334,8 @@ test('challenge catalogue sorts ascending and combines text and subjects', async
   await expect(query).toHaveValue('');
   await expect(page.getByLabel('Assunto', { exact: true })).toHaveValue('');
   await query.focus();
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.topic-filter summary')).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(page.getByLabel('Assunto', { exact: true })).toBeFocused();
 });
@@ -353,4 +356,72 @@ test('challenge catalogue remains available without JavaScript', async ({
   } finally {
     await context.close();
   }
+});
+
+test('accepted languages, difficulty and collapsed subject state remain discoverable', async ({
+  page,
+}) => {
+  await page.goto('/desafios/');
+  const total = await page.locator('[data-challenge]').count();
+  const query = page.getByRole('searchbox', { name: 'Buscar desafios' });
+  const cards = page.locator('[data-challenge]:visible');
+  const rle = cards.filter({
+    has: page.getByRole('link', { name: /Construa um compressor RLE/ }),
+  });
+  // Run against both the published legacy metadata and an authoring preview.
+  // The unit fixture separately requires acceptedLanguages [C, Rust] to index Rust.
+  const hasRust = (await rle.getAttribute('data-search'))!.includes('Rust');
+  for (const text of hasRust
+    ? ['Rust', 'avançado Rust', 'avancado rust']
+    : ['avançado C', 'avancado c']) {
+    await query.fill(text);
+    await expect(rle).toHaveCount(1);
+    const count = await cards.count();
+    await expect(page.getByRole('status')).toHaveText(
+      `${count} ${count === 1 ? 'desafio encontrado' : 'desafios encontrados'}`,
+    );
+  }
+  await expect(
+    rle.getByLabel(hasRust ? 'Linguagens: C, Rust' : 'Linguagens: C', {
+      exact: true,
+    }),
+  ).toHaveText(hasRust ? 'C · Rust' : 'C');
+  if (hasRust) await expect(rle).toContainText('Recomendação: C');
+  await expect(rle.getByRole('link')).toHaveCount(1);
+  const toggle = page.locator('.topic-filter summary');
+  await toggle.focus();
+  await page.keyboard.press('Enter');
+  await page.getByLabel('Assunto', { exact: true }).selectOption('Streams');
+  await toggle.click();
+  await expect(toggle).toContainText('Streams');
+  await expect(rle).toBeVisible();
+  await query.fill('impossivel-nenhum-resultado');
+  await expect(cards).toHaveCount(0);
+  await expect(page.locator('.empty-results')).toBeVisible();
+  const reset = page.getByRole('button', { name: 'Limpar filtros' });
+  await reset.focus();
+  await page.keyboard.press('Enter');
+  await expect(reset).toBeFocused();
+  await expect(cards).toHaveCount(total);
+  await expect(toggle).not.toContainText('Streams');
+  await expect(page.locator('.empty-results')).toBeHidden();
+});
+
+test('a card opens through its native title link across the card surface', async ({
+  page,
+}) => {
+  await page.goto('/desafios/');
+  const card = page.locator('[data-challenge]').first();
+  const link = card.getByRole('link');
+  await expect(link).toHaveCount(1);
+  const destination = await link.getAttribute('href');
+  await card.scrollIntoViewIfNeeded();
+  const rect = (await card.boundingBox())!;
+  const opened = page.context().waitForEvent('page');
+  await page.keyboard.down('Control');
+  await page.mouse.click(rect.x + rect.width - 16, rect.y + rect.height - 16);
+  await page.keyboard.up('Control');
+  const tab = await opened;
+  await expect(tab).toHaveURL(new RegExp(`${destination}/?$`));
+  await tab.close();
 });

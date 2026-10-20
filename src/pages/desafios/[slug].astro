@@ -7,6 +7,7 @@ import ChallengeTesting from '../../components/ChallengeTesting.astro';
 import CommunityImplementations from '../../components/CommunityImplementations.astro';
 import { loadCommunity } from '../../lib/community';
 import JoinLink from '../../components/JoinLink.astro';
+import { challengeLanguages } from '../../lib/challenge-languages.mjs';
 import { categoryLabels } from '../../lib/challenge-taxonomy.mjs';
 import { publishedChallenges, difficultyLabels } from '../../lib/challenges';
 export async function getStaticPaths() {
@@ -33,14 +34,20 @@ const { data } = challenge;
       </a>
       <div class="eyebrow">
         {difficultyLabels[data.difficulty]}
-        {data.recommendedLanguage && ` / ${data.recommendedLanguage}`} / Desafio
-        prático
+        {challengeLanguages(data).length > 0 &&
+          ` / ${challengeLanguages(data).join(' · ')}`}{' '}
+        / Desafio prático
       </div>
       <h1>
         {data.title}
         <span class="accent">_</span>
       </h1>
       <p>{data.summary}</p>
+      {data.recommendedLanguage && challengeLanguages(data).length > 1 && (
+        <p class="language-recommendation">
+          Recomendação: {data.recommendedLanguage}
+        </p>
+      )}
       <div class="actions participation-actions">
         <JoinLink
           href={data.discordThreadUrl}
@@ -97,6 +104,10 @@ const { data } = challenge;
   </div>
 </BaseLayout>
 <style>
+  .page-intro .language-recommendation {
+    font-size: 13px;
+    margin-top: 12px;
+  }
   .page-intro > .text-link {
     margin-bottom: 24px;
   }
