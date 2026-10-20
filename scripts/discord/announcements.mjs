@@ -150,22 +150,22 @@ export async function announce({
         })),
       );
   }
-  if (renames.length)
-    await updateState(client, repository, (current) => {
-      for (const rename of renames) {
-        const key = `${rename.type}:${rename.to}`,
-          oldKey = `${rename.type}:${rename.from}`;
-        if (current.records[oldKey]?.pending)
-          throw new Error(
-            `Pending delivery ${oldKey}; reconcile before applying rename.`,
-          );
-        if (current.records[oldKey] && !current.records[key])
-          current.records[key] = {
-            url: publicationUrl(rename.type, rename.to),
-            aliasOf: oldKey,
-          };
-      }
-    });
+  await updateState(client, repository, (current) => {
+    for (const rename of renames) {
+      const key = `${rename.type}:${rename.to}`,
+        oldKey = `${rename.type}:${rename.from}`;
+      if (current.records[oldKey]?.pending)
+        throw new Error(
+          `Pending delivery ${oldKey}; reconcile before applying rename.`,
+        );
+      if (current.records[oldKey] && !current.records[key])
+        current.records[key] = {
+          url: publicationUrl(rename.type, rename.to),
+          aliasOf: oldKey,
+        };
+    }
+    current.revisions = manifest.revisions;
+  });
   for (const entry of manifest.entries)
     await deliver({
       client,
@@ -183,9 +183,6 @@ export async function announce({
         ],
       },
     });
-  await updateState(client, repository, (current) => {
-    current.revisions = manifest.revisions;
-  });
 }
 export async function verifyDeploymentRun(client, runId) {
   if (!/^[1-9]\d*$/.test(runId)) throw new Error('Invalid production run ID');

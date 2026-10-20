@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { publishedChallenges } from '../lib/challenges';
 import { publishedNotes } from '../lib/notes';
 import { createManifest } from '../lib/publication-manifest.mjs';
+import { publicationRevisions } from '../lib/publication-revisions.mjs';
 import { site } from '../config/site';
 export const GET: APIRoute = async () =>
   new Response(
@@ -9,10 +10,17 @@ export const GET: APIRoute = async () =>
       createManifest({
         challenges: await publishedChallenges(),
         notes: await publishedNotes(),
-        revisions: {
-          challenges: process.env.CHALLENGES_COMMIT,
-          notes: process.env.NOTES_COMMIT,
-        },
+        revisions: site.production
+          ? await publicationRevisions({
+              revisions: {
+                challenges: process.env.CHALLENGES_COMMIT,
+                notes: process.env.NOTES_COMMIT,
+              },
+            })
+          : {
+              challenges: process.env.CHALLENGES_COMMIT,
+              notes: process.env.NOTES_COMMIT,
+            },
         production: site.production,
       }),
     ),

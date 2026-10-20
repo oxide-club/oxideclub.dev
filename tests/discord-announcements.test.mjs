@@ -221,3 +221,52 @@ test('manual recovery only accepts a trusted completed production deploy job', a
     ),
   );
 });
+test('partial send followed by a later rename preserves the verified snapshot and never repeats a confirmed publication', async () => {
+  const initial = { challenges: 'a'.repeat(40), notes: 'b'.repeat(40) };
+  const second = { challenges: 'a'.repeat(40), notes: 'c'.repeat(40) };
+  const third = { challenges: 'a'.repeat(40), notes: 'd'.repeat(40) };
+  const api = memoryClient({ revisions: initial });
+  const baseGithub = api.client.github;
+  api.client.github = async (path, options) => {
+    if (path.includes('/compare/')) {
+      const wasSecond = path.includes('c'.repeat(40) + '...');
+      return {
+        status: 'ahead',
+        files: wasSecond
+          ? [
+              {
+                status: 'renamed',
+                previous_filename: 'alpha/index.md',
+                filename: 'gamma/index.md',
+              },
+            ]
+          : [{ status: 'added', filename: 'gamma/index.md' }],
+      };
+    }
+    return baseGithub(path, options);
+  };
+  const baseSend = api.client.send;
+  api.client.send = async (payload) => {
+    const result = await baseSend(payload);
+    if (payload.embeds[0].title === 'Nota beta')
+      throw new Error('Lost response after partial send');
+    return result;
+  };
+  const b = { ...manifest(['alpha', 'beta']), revisions: second };
+  await assert.rejects(announce(args(api, b)));
+  await reconcileDelivery({
+    client: api.client,
+    repository,
+    key: 'note:beta',
+    messageId: '102',
+  });
+  api.client.send = baseSend;
+  const c = { ...manifest(['beta', 'gamma']), revisions: third };
+  await announce(args(api, c));
+  assert.equal(
+    api.messages.length,
+    2,
+    'gamma must alias the confirmed alpha announcement',
+  );
+  assert.equal(api.state().records['note:gamma'].aliasOf, 'note:alpha');
+});

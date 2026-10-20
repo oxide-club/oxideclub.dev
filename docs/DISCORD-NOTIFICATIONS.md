@@ -173,10 +173,14 @@ Um PR em draft não gera aviso até ficar pronto para revisão. Uma nota com
 Correções e páginas restauradas com o mesmo ID não são anunciadas novamente.
 
 `publication-manifest.json` é um endpoint público com metadados já publicados,
-sem URLs de webhooks ou tokens. Ele identifica as revisões dos repositórios
+sem URLs de webhooks ou tokens. Builds locais de produção obtêm as revisões
+diretamente dos checkouts sincronizados quando não há variáveis do CI. Ele identifica as revisões dos repositórios
 usadas naquele build. O notificador exige um manifesto de produção idêntico
 ao artefato implantado e páginas acessíveis antes de enviar qualquer anúncio.
-São feitas até seis verificações com dez segundos entre elas.
+São feitas até seis verificações com dez segundos entre elas. A revisão do
+catálogo verificado é registrada antes do primeiro envio, junto com seus
+aliases. Assim, uma falha parcial não perde o histórico necessário para
+reconhecer renomeações no próximo deploy.
 
 Mantenha IDs publicados estáveis. Quando o GitHub identifica uma renomeação
 canônica entre as revisões registradas e publicadas, o notificador guarda um
@@ -253,3 +257,19 @@ um clone isolado do site não depende deles.
 Em cada repositório de conteúdo: `node --test tests/discord-*.test.mjs`.
 O workflow **Check Discord notifications** executa esses testes em Node.js 24,
 sem secrets, em pushes e PRs. Em `challenges`, execute também `make check`.
+
+## Validação da implementação em 2026-10-20
+
+- `npm test`: 83 testes aprovados; `npm run check`: sem erros ou avisos.
+- Builds de preview e produção aprovados. O build de produção local também
+  foi executado sem variáveis de revisão do CI; seu manifesto correspondeu
+  aos commits dos checkouts sincronizados.
+- Playwright: 51 testes aprovados. Integrações de notas, comunidade e encontros
+  aprovadas; `make check` de challenges: 28 testes aprovados.
+- Notificadores dos dois repositórios de conteúdo e paridade das cópias
+  aprovados. YAML, sintaxe Node e `git diff --check` verificados.
+- A revisão independente encontrou duas falhas, corrigidas com regressões:
+  revisões ausentes no build local e repetição após falha parcial seguida de
+  renomeação. Não ficaram findings adiados.
+- Testes locais usaram Node.js 26; os workflows mantêm Node.js 24. Não houve
+  envio real ao Discord, push, merge ou alteração de configuração remota.
