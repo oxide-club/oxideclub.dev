@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import JoinLink from '../components/JoinLink.astro';
 import FeaturedContent from '../components/FeaturedContent.astro';
+import StartHere from '../components/StartHere.astro';
 ---
 
 <BaseLayout>
@@ -130,6 +131,7 @@ import FeaturedContent from '../components/FeaturedContent.astro';
         </article>
       </div>
     </section>
+    <StartHere />
     <FeaturedContent />
     <section class="section learning" aria-labelledby="learning-heading">
       <div class="section-heading">
@@ -178,61 +180,6 @@ import FeaturedContent from '../components/FeaturedContent.astro';
           </p>
         </article>
       </div>
-    </section>
-    <section
-      class="section participate"
-      id="como-participar"
-      aria-labelledby="participate-heading"
-    >
-      <div>
-        <div class="eyebrow">04 / Como participar</div>
-        <h2 id="participate-heading">Comece de onde você está.</h2>
-        <p>
-          Não é preciso ter um projeto pronto ou uma resposta definitiva para
-          participar. Dúvidas, experimentos em andamento e anotações de estudo
-          também fazem parte da troca.
-        </p>
-        <JoinLink />
-      </div>
-      <ol class="onboarding">
-        <li>
-          <span class="mono" aria-hidden="true">
-            01
-          </span>
-          <div>
-            <h3>Explore os conteúdos.</h3>
-            <p>
-              Explore os desafios e as notas técnicas. Escolha um assunto que
-              desperte sua curiosidade ou traga uma pergunta sua.
-            </p>
-          </div>
-        </li>
-        <li>
-          <span class="mono" aria-hidden="true">
-            02
-          </span>
-          <div>
-            <h3>Faça um experimento.</h3>
-            <p>
-              Teste uma ideia, reproduza um resultado ou investigue uma dúvida.
-              Comece com um exemplo pequeno e registre o que observar.
-            </p>
-          </div>
-        </li>
-        <li>
-          <span class="mono" aria-hidden="true">
-            03
-          </span>
-          <div>
-            <h3>Compartilhe com a comunidade.</h3>
-            <p>
-              Compartilhe perguntas, código e anotações. Use as discussões e os
-              espaços de contribuição indicados em cada conteúdo, mesmo que sua
-              investigação ainda esteja em andamento.
-            </p>
-          </div>
-        </li>
-      </ol>
     </section>
     <div class="closing">
       <p>
@@ -404,51 +351,6 @@ import FeaturedContent from '../components/FeaturedContent.astro';
   .activities .text-link {
     margin-top: 12px;
   }
-  .participate {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-  }
-  .participate .eyebrow {
-    margin-bottom: 24px;
-  }
-  .participate h2 {
-    font-size: 42px;
-  }
-  .participate > div > p {
-    font-size: 14px;
-    margin: 24px 0 28px;
-  }
-  .onboarding {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .onboarding li {
-    display: flex;
-    gap: 24px;
-    padding-block: 24px;
-    border-bottom: 1px solid var(--color-border);
-  }
-  .onboarding li:first-child {
-    padding-top: 0;
-  }
-  .onboarding li:last-child {
-    border: 0;
-  }
-  .onboarding li > .mono {
-    flex-shrink: 0;
-    font-size: 10px;
-    color: var(--color-accent-text);
-    padding-top: 4px;
-  }
-  .onboarding h3 {
-    font-size: 20px;
-    margin-bottom: 12px;
-  }
-  .onboarding p {
-    font-size: 13px;
-  }
   .closing {
     padding-block: 40px 64px;
     display: flex;
@@ -480,9 +382,6 @@ import FeaturedContent from '../components/FeaturedContent.astro';
     }
     .discipline-strip ul {
       gap: 12px;
-    }
-    .participate {
-      gap: 40px;
     }
     .binary {
       letter-spacing: 0;
@@ -549,13 +448,6 @@ import FeaturedContent from '../components/FeaturedContent.astro';
     }
     .step {
       margin-bottom: 20px;
-    }
-    .participate {
-      grid-template-columns: 1fr;
-      gap: 36px;
-    }
-    .participate h2 {
-      font-size: 36px;
     }
     .closing {
       align-items: start;

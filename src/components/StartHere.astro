@@ -1,0 +1,139 @@
+---
+import { links } from '../config/site';
+---
+
+<section
+  class="section start-here"
+  id="como-participar"
+  aria-labelledby="start-heading"
+>
+  <div class="section-heading">
+    <div>
+      <div class="eyebrow">Comece por aqui</div>
+      <h2 id="start-heading">Escolha uma pergunta. Comece a investigar.</h2>
+    </div>
+    <p>
+      Não é preciso saber tudo para começar. Explore uma ideia, experimente uma
+      implementação ou descubra como alguma coisa funciona. O importante é ter
+      curiosidade e disposição para investigar.
+    </p>
+  </div>
+  <div class="paths">
+    <article>
+      <span class="path-number" aria-hidden="true">
+        01
+      </span>
+      <h3>Explore</h3>
+      <p>
+        Leia uma nota, encontre uma referência na biblioteca e siga uma pergunta
+        que desperte seu interesse.
+      </p>
+      <div class="path-links">
+        <a class="text-link" href="/notas">
+          Notas
+        </a>
+        <span aria-hidden="true">·</span>
+        <a class="text-link" href="/biblioteca">
+          Biblioteca
+        </a>
+      </div>
+    </article>
+    <article>
+      <span class="path-number" aria-hidden="true">
+        02
+      </span>
+      <h3>Experimente</h3>
+      <p>
+        Escolha um desafio, construa algo, teste hipóteses e investigue o
+        comportamento do que você criou.
+      </p>
+      <div class="path-links">
+        <a class="text-link" href="/desafios">
+          Desafios
+        </a>
+      </div>
+    </article>
+    <article>
+      <span class="path-number" aria-hidden="true">
+        03
+      </span>
+      <h3>Compartilhe</h3>
+      <p>
+        Traga suas perguntas, descobertas e implementações para o Discord.
+        Aprender também é investigar em conjunto.
+      </p>
+      <div class="path-links">
+        {links.discord ? (
+          <a class="text-link" href={links.discord}>
+            Discord do Oxide Club
+          </a>
+        ) : (
+          <p class="notice">
+            O convite para a comunidade será disponibilizado aqui.
+          </p>
+        )}
+      </div>
+    </article>
+  </div>
+  <p class="start-note">
+    Não existe uma ordem certa. Comece pelo que desperta sua curiosidade.
+  </p>
+</section>
+
+<style>
+  .section-heading > div {
+    max-width: 620px;
+  }
+  .section-heading > p {
+    flex-shrink: 0;
+  }
+  .paths {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px;
+    margin-top: 48px;
+  }
+  article {
+    border-top: 1px solid var(--color-border);
+    padding-top: 20px;
+  }
+  .path-number {
+    display: block;
+    color: var(--color-accent-text);
+    font: 11px var(--font-mono);
+    margin-bottom: 32px;
+  }
+  h3 {
+    margin-bottom: 16px;
+  }
+  article p,
+  .start-note {
+    font-size: 14px;
+  }
+  .path-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 12px;
+    margin-top: 12px;
+  }
+  .path-links > span {
+    color: var(--color-muted);
+  }
+  .start-note {
+    margin-top: 40px;
+  }
+  @media (max-width: 700px) {
+    .paths {
+      grid-template-columns: 1fr;
+      gap: 28px;
+      margin-top: 32px;
+    }
+    .path-number {
+      margin-bottom: 20px;
+    }
+    .start-note {
+      margin-top: 32px;
+    }
+  }
+</style>
