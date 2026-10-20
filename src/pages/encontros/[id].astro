@@ -248,6 +248,31 @@ const revisionDate =
     gap: 12px;
     color: var(--color-accent-text);
   }
+  .meeting-materials a > span[aria-hidden] {
+    display: inline-block;
+    transition: transform 160ms ease;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .meeting-materials a:is(:hover, :focus-visible) > span[aria-hidden] {
+      transform: translate(3px, -3px);
+    }
+    .meeting-body :global(h2:target),
+    .meeting-materials h2:target {
+      animation: section-arrive 700ms ease-out;
+    }
+  }
+  .meeting-body :global(h2:target),
+  .meeting-materials h2:target {
+    color: var(--color-accent-text);
+  }
+  @keyframes section-arrive {
+    from {
+      background-color: #38271e;
+    }
+    to {
+      background-color: transparent;
+    }
+  }
   .material-type {
     font-size: 12px;
     color: var(--color-muted);
