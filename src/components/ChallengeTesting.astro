@@ -1,0 +1,55 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { githubUrl } from '../config/github.mjs';
+
+interface Props {
+  challengeId: CollectionEntry<'challenges'>['id'];
+}
+const { challengeId } = Astro.props;
+const runnerGuideUrl = githubUrl('challenges', 'docs/runner.md', 'blob');
+---
+
+<section class="challenge-testing" aria-labelledby="challenge-testing-heading">
+  <h2 id="challenge-testing-heading">Teste sua implementação</h2>
+  <p>
+    Execute os testes públicos na sua máquina com o <code>oxide-test</code>. Com
+    o runner instalado e sua solução compilada, passe o caminho do seu
+    executável:
+  </p>
+  <pre><code>{`oxide-test run ${challengeId} ./meu-programa`}</code></pre>
+  <p>
+    Substitua <code>./meu-programa</code> pelo caminho do programa compilado.
+    Para consultar os casos disponíveis:
+  </p>
+  <pre><code>{`oxide-test list ${challengeId}`}</code></pre>
+  <p>
+    <a class="runner-guide" href={runnerGuideUrl}>
+      Instalar e usar o oxide-test <span aria-hidden="true">↗</span>
+    </a>
+    <br />
+    Instruções para Linux, Windows com WSL 2 e Docker. No macOS, use Docker.
+    Compile e teste sua solução no mesmo ambiente Linux.
+  </p>
+  <p>
+    Os testes verificam o comportamento do programa. Requisitos como linguagem e
+    uso de memória também precisam de revisão do código.
+  </p>
+</section>
+
+<style>
+  .challenge-testing {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+  }
+  .challenge-testing h2 {
+    margin: 0 0 12px;
+    font-size: 24px;
+  }
+  .runner-guide {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+  }
+</style>

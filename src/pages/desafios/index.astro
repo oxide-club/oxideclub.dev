@@ -8,6 +8,7 @@ import { ascendingChallenges } from '../../lib/challenge-catalogue.mjs';
 import { categoryLabels } from '../../lib/challenge-taxonomy.mjs';
 const challenges = ascendingChallenges(await publishedChallenges());
 const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#compartilhar-uma-implementação`;
+const runnerGuideUrl = githubUrl('challenges', 'docs/runner.md', 'blob');
 const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   (a, b) => a.localeCompare(b, 'pt-BR'),
 );
@@ -31,6 +32,17 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
         parciais para conversar no Discord.
       </p>
     </header>
+    <section class="testing-intro" aria-labelledby="testing-intro-heading">
+      <h2 id="testing-intro-heading">Teste sua solução</h2>
+      <p>
+        O <code>oxide-test</code> executa os testes públicos dos desafios no seu
+        programa compilado. Use Linux, Windows com WSL 2 ou Docker; no macOS,
+        use Docker. Cada desafio traz o comando para testar sua implementação.
+      </p>
+      <a class="text-link" href={runnerGuideUrl}>
+        Instalar e usar o oxide-test <span aria-hidden="true">↗</span>
+      </a>
+    </section>
     <form
       class="catalogue-filters"
       role="search"
@@ -174,6 +186,25 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   update();
 </script>
 <style>
+  .testing-intro {
+    padding: 24px;
+    margin-bottom: 32px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+  }
+  .testing-intro h2 {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+  .testing-intro p {
+    max-width: 72ch;
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  .testing-intro code {
+    font-family: var(--font-mono);
+  }
   .catalogue-filters {
     display: flex;
     align-items: end;

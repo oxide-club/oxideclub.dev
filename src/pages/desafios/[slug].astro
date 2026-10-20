@@ -3,6 +3,7 @@ import { render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ChallengeResources from '../../components/ChallengeResources.astro';
+import ChallengeTesting from '../../components/ChallengeTesting.astro';
 import CommunityImplementations from '../../components/CommunityImplementations.astro';
 import { loadCommunity } from '../../lib/community';
 import JoinLink from '../../components/JoinLink.astro';
@@ -74,6 +75,7 @@ const { data } = challenge;
     <div class="article-layout">
       <article class="prose">
         <Content />
+        <ChallengeTesting challengeId={challenge.id} />
         <ChallengeResources challengeId={challenge.id} github={data.github} />
         <CommunityImplementations
           implementations={implementations}
@@ -88,6 +90,7 @@ const { data } = challenge;
             .map((heading) => (
               <a href={`#${heading.slug}`}>{heading.text}</a>
             ))}
+          <a href="#challenge-testing-heading">Teste sua implementação</a>
         </nav>
       </aside>
     </div>
