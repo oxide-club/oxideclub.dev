@@ -73,6 +73,7 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
                 <li>
                   <a href={resource.url}>{resource.title}</a>
                   <span class="resource-meta">
+                    {resource.author && `${resource.author} · `}
                     <abbr title={languageLabels[resource.language]}>
                       {resource.language}
                     </abbr>
