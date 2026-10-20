@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 const routes = [
   '/',
@@ -273,30 +273,53 @@ test('keyboard focus remains visible on every page', async ({ page }) => {
   }
 });
 
+async function expectPublishedCatalogue(cards: Locator) {
+  const links = cards.getByRole('heading').getByRole('link');
+  const destinations = await links.evaluateAll((elements) =>
+    elements.map((element) => element.getAttribute('href')!),
+  );
+  // Published content grows independently of the site. Keep known entries as
+  // anchors, but verify the order of every entry instead of fixing the count.
+  expect(destinations).toEqual(
+    expect.arrayContaining(['/desafios/001-wc', '/desafios/002-ppm']),
+  );
+  expect(new Set(destinations).size).toBe(destinations.length);
+  expect(destinations).toEqual([...destinations].sort().reverse());
+  await expect(cards.filter({ visible: true })).toHaveCount(
+    destinations.length,
+  );
+  return destinations;
+}
+
 test('challenge catalogue sorts descending and combines text and tags', async ({
   page,
 }) => {
   await page.goto('/desafios');
+  const destinations = await expectPublishedCatalogue(
+    page.locator('[data-challenge]'),
+  );
   const cards = page.locator('[data-challenge]:visible');
-  await expect(cards).toHaveCount(2);
-  await expect(
-    cards.first().getByRole('heading').getByRole('link'),
-  ).toHaveAttribute('href', '/desafios/002-ppm');
   const query = page.getByRole('searchbox', { name: 'Buscar desafios' });
-  await query.fill('WC SAIDA');
+  await expect(page.getByRole('search')).toBeVisible();
+  await query.fill('001-WC SAIDA');
   await expect(cards).toHaveCount(1);
-  await expect(cards.first()).toContainText('wc');
+  await expect(cards.getByRole('heading').getByRole('link')).toHaveAttribute(
+    'href',
+    '/desafios/001-wc',
+  );
   await page.getByLabel('Tag', { exact: true }).selectOption('Streams');
   await expect(cards).toHaveCount(1);
-  await query.fill('ppm');
+  await query.fill('002-ppm');
   await expect(cards).toHaveCount(0);
   await expect(
     page.getByText('Nenhum desafio encontrado.', { exact: false }),
   ).toBeVisible();
   await expect(page.getByRole('status')).toHaveText('0 desafios encontrados');
   await page.getByRole('button', { name: 'Limpar filtros' }).click();
-  await expect(cards).toHaveCount(2);
+  await expect(cards).toHaveCount(destinations.length);
+  expect(await expectPublishedCatalogue(cards)).toEqual(destinations);
   await expect(query).toHaveValue('');
+  await expect(page.getByLabel('Tag', { exact: true })).toHaveValue('');
   await query.focus();
   await page.keyboard.press('Tab');
   await expect(page.getByLabel('Tag', { exact: true })).toBeFocused();
@@ -313,15 +336,8 @@ test('challenge catalogue remains available without JavaScript', async ({
   try {
     const page = await context.newPage();
     await page.goto('/desafios');
-    await expect(page.locator('[data-challenge]')).toHaveCount(2);
+    await expectPublishedCatalogue(page.locator('[data-challenge]'));
     await expect(page.getByRole('search')).toBeHidden();
-    await expect(
-      page
-        .locator('[data-challenge]')
-        .first()
-        .getByRole('heading')
-        .getByRole('link'),
-    ).toHaveAttribute('href', '/desafios/002-ppm');
   } finally {
     await context.close();
   }
