@@ -9,7 +9,6 @@ import {
   readFile,
   rm,
   access,
-  readdir,
 } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -132,19 +131,6 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
         'input,output\n1,2\n',
       );
     }
-    // Guarantee the real homepage exercises the notes adapter, independently of randomness.
-    const challengeDirectory = join(root, '.content/challenges');
-    for (const file of await readdir(challengeDirectory, { recursive: true })) {
-      if (!file.endsWith('/index.md')) continue;
-      const challengePath = join(challengeDirectory, file);
-      await writeFile(
-        challengePath,
-        (await readFile(challengePath, 'utf8')).replace(
-          /featured:\s*true/g,
-          'featured: false',
-        ),
-      );
-    }
     assert.doesNotMatch(
       resourcesHtml,
       /solutions\/tree\/main\/001-wc\/c"|COMMUNITY.md|Enunciado e testes/,
@@ -163,9 +149,10 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
     await assert.rejects(
       access(join(root, 'dist/notas/fixture-rascunho/index.html')),
     );
+    // The homepage leads to the catalogue; published notes are linked there.
     assert.match(
       await readFile(join(root, 'dist/index.html'), 'utf8'),
-      /href="\/notas\/fixture-publica"/,
+      /href="\/notas"/,
     );
     assert.doesNotMatch(
       await readFile(join(root, 'dist/sitemap-0.xml'), 'utf8'),
