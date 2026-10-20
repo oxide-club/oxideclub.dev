@@ -36,7 +36,12 @@ import StartHere from '../components/StartHere.astro';
           <span>UM OLHAR MAIS DE PERTO</span>
         </div>
         <div class="word">
-          curiosidade
+          <span class="sr-only">curiosidade</span>
+          <span aria-hidden="true">
+            {[...'curiosidade'].map((letter, index) => (
+              <span data-letter={index}>{letter}</span>
+            ))}
+          </span>
           <span class="cursor" aria-hidden="true">
             _
           </span>
@@ -57,14 +62,21 @@ import StartHere from '../components/StartHere.astro';
             '65',
             '0A',
           ].map((byte, index) => (
-            <div class:list={['byte', { newline: index === 11 }]}>
+            <button
+              type="button"
+              class:list={['byte', { newline: index === 11 }]}
+              data-index={index}
+              data-hex={byte}
+              style={`--byte-delay: ${index * 65}ms`}
+              aria-label={`${index === 11 ? 'Fim de linha LF' : `Letra ${'curiosidade'[index]}, posição ${index + 1}`}: hexadecimal ${byte}`}
+            >
               <span>{byte}</span>
               <small>{index === 11 ? '\\n' : 'curiosidade'[index]}</small>
-            </div>
+            </button>
           ))}
         </div>
-        <div class="binary" aria-hidden="true">
-          01100011 01110101 01110010 01101001
+        <div class="binary byte-readout" aria-hidden="true">
+          Explore uma letra ou o byte de fim de linha.
         </div>
         <div class="study-bottom">
           <span>11 letras. 12 bytes com LF.</span>
@@ -191,6 +203,54 @@ import StartHere from '../components/StartHere.astro';
     </div>
   </div>
 </BaseLayout>
+<script>
+  const study = document.querySelector<HTMLElement>('.byte-study');
+  if (study) {
+    const bytes = [...study.querySelectorAll<HTMLButtonElement>('.byte')];
+    const letters = [...study.querySelectorAll<HTMLElement>('[data-letter]')];
+    const readout = study.querySelector<HTMLElement>('.byte-readout')!;
+    const initial = readout.textContent;
+    let hovered: HTMLButtonElement | null = null;
+    const update = () => {
+      const active =
+        hovered ?? bytes.find((byte) => byte === document.activeElement);
+      bytes.forEach((byte) =>
+        byte.toggleAttribute('data-active', byte === active),
+      );
+      letters.forEach((letter) =>
+        letter.toggleAttribute(
+          'data-active',
+          letter.dataset.letter === active?.dataset.index,
+        ),
+      );
+      if (!active) {
+        readout.textContent = initial;
+        return;
+      }
+      const index = Number(active.dataset.index);
+      const hex = active.dataset.hex!;
+      readout.textContent = `${index === 11 ? 'LF' : 'curiosidade'[index]} → 0x${hex} → ${parseInt(hex, 16).toString(2).padStart(8, '0')}`;
+      study.classList.add('inspected');
+    };
+    bytes.forEach((byte) => {
+      byte.addEventListener('pointerenter', (event) => {
+        if (event.pointerType === 'touch') return;
+        hovered = byte;
+        update();
+      });
+      byte.addEventListener('pointerleave', () => {
+        hovered = null;
+        update();
+      });
+      byte.addEventListener('focus', update);
+      byte.addEventListener('blur', update);
+      byte.addEventListener('click', () => {
+        byte.focus();
+        update();
+      });
+    });
+  }
+</script>
 <style>
   .hero {
     display: grid;
@@ -198,6 +258,30 @@ import StartHere from '../components/StartHere.astro';
     gap: 48px;
     align-items: center;
     padding-block: 84px 72px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-copy > :is(h1, p, .actions) {
+      animation: hero-enter 300ms ease-out backwards;
+    }
+    .hero-copy > p {
+      animation-delay: 45ms;
+    }
+    .hero-copy > .actions {
+      animation-delay: 90ms;
+    }
+    .hero-copy > .actions:focus-within {
+      animation: none;
+    }
+  }
+  @keyframes hero-enter {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   .hero .eyebrow {
     font-size: 10px;
@@ -265,6 +349,40 @@ import StartHere from '../components/StartHere.astro';
     text-align: center;
     background: #1c1f21;
     font: 16px var(--font-mono);
+    color: var(--color-text);
+    border-radius: 0;
+    cursor: pointer;
+    min-width: 0;
+    animation: byte-scan 360ms ease-out var(--byte-delay) 1;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+  @keyframes byte-scan {
+    45% {
+      border-color: var(--color-accent);
+      background-color: #38271e;
+      color: var(--color-accent-text);
+    }
+  }
+  .inspected .byte {
+    animation: none;
+  }
+  .byte[data-active] {
+    border-color: var(--color-accent);
+    background-color: #38271e;
+    color: var(--color-accent-text);
+  }
+  .word [data-letter] {
+    transition:
+      color 160ms ease,
+      background-color 160ms ease;
+  }
+  .word [data-active] {
+    color: var(--color-accent-text);
+    background-color: #38271e;
+    box-shadow: 0 2px var(--color-accent);
   }
   .byte small {
     display: block;
@@ -280,7 +398,8 @@ import StartHere from '../components/StartHere.astro';
   .binary {
     font: 9px var(--font-mono);
     color: var(--color-muted);
-    letter-spacing: 2px;
+    letter-spacing: 0;
+    min-height: 2.5em;
     text-align: center;
     margin-block: 18px 28px;
   }
@@ -325,6 +444,10 @@ import StartHere from '../components/StartHere.astro';
   .method article {
     border-top: 1px solid var(--color-border);
     padding-top: 20px;
+    transition: border-color 160ms ease;
+  }
+  .method article:has(a):is(:hover, :focus-within) {
+    border-top-color: var(--color-accent);
   }
   .step {
     display: flex;

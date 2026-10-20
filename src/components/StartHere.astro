@@ -23,7 +23,7 @@ import { links } from '../config/site';
       <span class="path-number" aria-hidden="true">
         01
       </span>
-      <h3>Explore</h3>
+      <h3>Leia</h3>
       <p>
         Leia uma nota, encontre uma referência na biblioteca e siga uma pergunta
         que desperte seu interesse.
@@ -42,7 +42,7 @@ import { links } from '../config/site';
       <span class="path-number" aria-hidden="true">
         02
       </span>
-      <h3>Experimente</h3>
+      <h3>Construa</h3>
       <p>
         Escolha um desafio, construa algo, teste hipóteses e investigue o
         comportamento do que você criou.
@@ -96,6 +96,10 @@ import { links } from '../config/site';
   article {
     border-top: 1px solid var(--color-border);
     padding-top: 20px;
+    transition: border-color 160ms ease;
+  }
+  article:has(a):is(:hover, :focus-within) {
+    border-top-color: var(--color-accent);
   }
   .path-number {
     display: block;

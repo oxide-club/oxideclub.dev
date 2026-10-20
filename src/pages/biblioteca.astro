@@ -90,6 +90,57 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
   </div>
 </BaseLayout>
 
+<script>
+  const sections = [
+    ...document.querySelectorAll<HTMLElement>('.library-category'),
+  ];
+  const indexLinks = [
+    ...document.querySelectorAll<HTMLAnchorElement>(
+      '.library-sidebar nav a, .library-index nav a',
+    ),
+  ];
+  let scheduled = false;
+  let currentId = '';
+
+  function updateIndex() {
+    scheduled = false;
+    // Track the section at the reading line, including the final short section.
+    const readingLine = Math.min(160, window.innerHeight * 0.25);
+    let current = sections[0];
+    for (const section of sections) {
+      if (section.getBoundingClientRect().top <= readingLine) current = section;
+    }
+    if (
+      window.scrollY + window.innerHeight >=
+      document.documentElement.scrollHeight - 2
+    ) {
+      current = sections[sections.length - 1];
+    }
+    if (!current || current.id === currentId) return;
+    currentId = current.id;
+    for (const link of indexLinks) {
+      if (link.hash === `#${currentId}`)
+        link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    }
+  }
+
+  function scheduleUpdate() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(updateIndex);
+  }
+
+  window.addEventListener('scroll', scheduleUpdate, { passive: true });
+  window.addEventListener('resize', scheduleUpdate);
+  window.addEventListener('pageshow', scheduleUpdate);
+  document
+    .querySelector('.library-index')
+    ?.addEventListener('toggle', scheduleUpdate);
+  document.fonts.ready.then(scheduleUpdate);
+  scheduleUpdate();
+</script>
+
 <style>
   .library-layout {
     border-top: 1px solid var(--color-border);
@@ -137,6 +188,35 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
   .library-sidebar a:hover {
     color: var(--color-accent-text);
     text-decoration: underline;
+  }
+  .library-sidebar nav a,
+  .library-index nav a {
+    border-left: 2px solid transparent;
+    padding-left: 12px;
+    transition:
+      color 160ms ease,
+      border-color 160ms ease;
+  }
+  .library-sidebar a[aria-current='location'],
+  .library-index a[aria-current='location'] {
+    border-left-color: var(--color-accent);
+    color: var(--color-accent-text);
+  }
+  .library-category:target h2 {
+    color: var(--color-accent-text);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .library-category:target h2 {
+      animation: category-arrive 700ms ease-out;
+    }
+  }
+  @keyframes category-arrive {
+    from {
+      background-color: #38271e;
+    }
+    to {
+      background-color: transparent;
+    }
   }
   .index-note {
     border-top: 1px solid var(--color-border);
@@ -265,6 +345,11 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
   @media (forced-colors: active) {
     .library-category a,
     .library-sidebar a {
+      color: LinkText;
+    }
+    .library-sidebar a[aria-current='location'],
+    .library-index a[aria-current='location'] {
+      border-left-color: Highlight;
       color: LinkText;
     }
   }

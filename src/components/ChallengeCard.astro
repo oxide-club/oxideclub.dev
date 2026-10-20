@@ -48,6 +48,10 @@ const { data } = challenge;
   .challenge-card {
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
+    transition: border-color 160ms ease;
+  }
+  .challenge-card:is(:hover, :focus-within) {
+    border-color: var(--color-accent);
   }
   .challenge-info {
     padding: 36px 40px;

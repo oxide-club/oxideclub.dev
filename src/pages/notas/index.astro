@@ -114,10 +114,16 @@ const notes = await publishedNotes();
     margin-bottom: 16px;
   }
   h3 a {
-    text-decoration: none;
-  }
-  h3 a:hover {
     text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+  h3 a:is(:hover, :focus-visible) {
+    text-decoration-color: currentColor;
   }
   .authors {
     font-size: 13px;
@@ -125,5 +131,10 @@ const notes = await publishedNotes();
   }
   .text-link {
     margin-top: 12px;
+  }
+  @media (forced-colors: active) {
+    h3 a {
+      text-decoration-color: LinkText;
+    }
   }
 </style>
