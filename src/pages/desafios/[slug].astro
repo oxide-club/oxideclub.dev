@@ -2,6 +2,8 @@
 import { render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ChallengeIndex from '../../components/ChallengeIndex.astro';
+import { challengeResources } from '../../lib/challenge-resources.mjs';
 import ChallengeResources from '../../components/ChallengeResources.astro';
 import ChallengeTesting from '../../components/ChallengeTesting.astro';
 import CommunityImplementations from '../../components/CommunityImplementations.astro';
@@ -24,6 +26,25 @@ interface Props {
 const { challenge, implementations } = Astro.props;
 const { Content, headings } = await render(challenge);
 const { data } = challenge;
+const resources = challengeResources(challenge.id, data.github);
+const indexLinks = [
+  ...headings
+    .filter(({ depth }) => depth === 2)
+    .map(({ slug, text }) => ({ href: `#${slug}`, text })),
+  { href: '#challenge-testing-heading', text: 'Teste sua implementação' },
+  ...(resources.challenge || resources.solutions.length
+    ? [
+        {
+          href: '#challenge-resources-heading',
+          text: 'Recursos e implementações',
+        },
+      ]
+    : []),
+  {
+    href: '#community-implementations-heading',
+    text: 'Implementações da comunidade',
+  },
+];
 ---
 
 <BaseLayout title={data.title} description={data.summary}>
@@ -79,6 +100,21 @@ const { data } = challenge;
         )}
       </div>
     </header>
+    {challenge.id === '001-wc' && (
+      <aside class="preparation" aria-label="Antes de começar">
+        <strong>Antes de começar</strong>
+        <p>
+          Este desafio pressupõe variáveis, laços e compilação de programas em
+          C. Para se preparar, consulte a{' '}
+          <a href="/biblioteca#programacao-em-c">biblioteca de C</a>. Você pode
+          participar da conversa enquanto aprende.
+        </p>
+      </aside>
+    )}
+    <details class="mobile-contents">
+      <summary>Neste desafio</summary>
+      <ChallengeIndex links={indexLinks} />
+    </details>
     <div class="article-layout">
       <article class="prose">
         <Content />
@@ -90,15 +126,8 @@ const { data } = challenge;
         />
       </article>
       <aside>
-        <nav aria-label="Nesta especificação">
-          <span class="eyebrow">Nesta especificação</span>
-          {headings
-            .filter((heading) => heading.depth === 2)
-            .map((heading) => (
-              <a href={`#${heading.slug}`}>{heading.text}</a>
-            ))}
-          <a href="#challenge-testing-heading">Teste sua implementação</a>
-        </nav>
+        <span class="eyebrow">Neste desafio</span>
+        <ChallengeIndex links={indexLinks} />
       </aside>
     </div>
   </div>
@@ -125,7 +154,7 @@ const { data } = challenge;
     flex-wrap: wrap;
     gap: 16px;
     margin-top: 24px;
-    font: 10px var(--font-mono);
+    font: 13px var(--font-mono);
     color: var(--color-muted);
   }
   .article-layout {
@@ -138,23 +167,29 @@ const { data } = challenge;
   aside {
     padding-top: 48px;
   }
-  aside nav {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  aside nav .eyebrow {
+  .article-layout aside > .eyebrow {
     margin-bottom: 16px;
   }
-  aside nav a {
-    font-size: 12px;
-    color: var(--color-muted);
-    padding-block: 7px;
-    text-decoration: none;
+  .mobile-contents {
+    display: none;
+    border-top: 1px solid var(--color-border);
+    padding-block: 16px;
   }
-  aside nav a:hover {
-    text-decoration: underline;
-    color: var(--color-text);
+  .mobile-contents summary {
+    min-height: 44px;
+    padding-block: 10px;
+    cursor: pointer;
+  }
+  .preparation {
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    border-left: 2px solid var(--color-accent);
+    background: var(--color-surface);
+    max-width: 72ch;
+  }
+  .preparation p {
+    margin-top: 8px;
+    font-size: 15px;
   }
   @media (max-width: 800px) {
     .article-layout {
@@ -164,11 +199,14 @@ const { data } = challenge;
     .article-layout aside {
       padding-top: 32px;
     }
-    aside nav {
+    .article-layout aside {
       display: none;
     }
+    .mobile-contents {
+      display: block;
+    }
     .metadata {
-      font-size: 11px;
+      font-size: 13px;
     }
   }
 </style>

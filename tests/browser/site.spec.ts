@@ -140,7 +140,7 @@ test('keyboard navigation, disclosure, skip link and real destinations', async (
     page.locator('a[href="https://discord.gg/cgFWUkgRfX"]').first(),
   ).toHaveAttribute('href', 'https://discord.gg/cgFWUkgRfX');
   await page.goto('/desafios/001-wc');
-  await page.locator('summary').click();
+  await page.locator('.mobile-nav summary').click();
   await page
     .getByRole('navigation', { name: 'Navegação móvel' })
     .getByRole('link', { name: 'Início', exact: true })

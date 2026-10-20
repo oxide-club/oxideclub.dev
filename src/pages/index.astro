@@ -3,11 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import JoinLink from '../components/JoinLink.astro';
 import StartHere from '../components/StartHere.astro';
 import { publishedMeetings } from '../lib/meetings';
-import { publishedChallenges } from '../lib/challenges';
 const meetings = await publishedMeetings();
-const startingChallenge = (await publishedChallenges()).find(
-  ({ id }) => id === '001-wc',
-);
 ---
 
 <BaseLayout description="Oxide Club: clube de computação com foco em sistemas. Estude C, Rust, arquitetura de computadores e sistemas operacionais em comunidade.">
@@ -19,8 +15,8 @@ const startingChallenge = (await publishedChallenges()).find(
           Entenda como o software <span>realmente funciona.</span>
         </h1>
         <p>
-          Nosso foco é estudar C, Rust, arquitetura de computadores e sistemas
-          operacionais, compartilhando perguntas, experimentos e projetos.
+          Estude C, Rust e sistemas construindo pequenos programas e discutindo
+          suas descobertas com a comunidade.
         </p>
         <div class="actions">
           <JoinLink />
@@ -29,8 +25,8 @@ const startingChallenge = (await publishedChallenges()).find(
           </a>
         </div>
         <div class="hero-note">
-          <span aria-hidden="true">↳</span> Online, gratuito e aberto a quem
-          está começando.
+          <span aria-hidden="true">↳</span> Online, gratuito e aberto a
+          iniciantes.
         </div>
       </div>
       <aside
@@ -103,16 +99,6 @@ const startingChallenge = (await publishedChallenges()).find(
         </div>
       </aside>
     </section>
-    <div class="discipline-strip" aria-label="Áreas de interesse">
-      <span>Assuntos que investigamos</span>
-      <ul>
-        <li>Memória</li>
-        <li>Processos</li>
-        <li>Arquitetura</li>
-        <li>Compiladores</li>
-        <li>Sistemas operacionais</li>
-      </ul>
-    </div>
     <section class="section" id="o-clube" aria-labelledby="club-heading">
       <div class="section-heading">
         <div>
@@ -124,13 +110,26 @@ const startingChallenge = (await publishedChallenges()).find(
           investigar como os programas e os computadores funcionam.
         </p>
       </div>
+      <div class="study-topics">
+        <h3 id="study-topics-heading">O que estudamos</h3>
+        <ul aria-labelledby="study-topics-heading" role="list">
+          <li>Memória</li>
+          <li>Processos</li>
+          <li>Arquitetura</li>
+          <li>Compiladores</li>
+          <li>Sistemas operacionais</li>
+        </ul>
+      </div>
       <div class="club-paths">
         <article>
           <h3>Desafios</h3>
           <p>
-            Implemente uma ideia, compartilhe uma dúvida ou um caso de teste e
-            compare abordagens com outras pessoas.
+            Construa pequenos programas, teste seu comportamento e compare
+            abordagens com outras pessoas.
           </p>
+          <a class="text-link" href="/desafios">
+            Explorar os desafios <span aria-hidden="true">→</span>
+          </a>
         </article>
         <article>
           <h3>Projetos</h3>
@@ -145,6 +144,9 @@ const startingChallenge = (await publishedChallenges()).find(
             Traga uma referência ou uma pergunta e investigue um assunto com a
             comunidade.
           </p>
+          <a class="text-link" href="/biblioteca">
+            Explorar a biblioteca <span aria-hidden="true">→</span>
+          </a>
         </article>
         <article>
           <h3>Notas e textos técnicos</h3>
@@ -158,11 +160,6 @@ const startingChallenge = (await publishedChallenges()).find(
           </a>
         </article>
       </div>
-      <p class="club-invitation">
-        Compartilhe uma tentativa, compare abordagens e volte para contar o que
-        descobriu. Uma pergunta sobre o trabalho de outra pessoa também é uma
-        forma de participar.
-      </p>
       <p class="club-planning">
         <a class="text-link" href="/encontros/">
           {meetings.length
@@ -171,54 +168,6 @@ const startingChallenge = (await publishedChallenges()).find(
           <span aria-hidden="true">→</span>
         </a>
       </p>
-    </section>
-    {startingChallenge && (
-      <section class="section" aria-labelledby="challenge-heading">
-        <div class="section-heading">
-          <div>
-            <div class="eyebrow">Uma ideia para começar</div>
-            <h2 id="challenge-heading">
-              Construa seu próprio <code>wc</code>
-            </h2>
-          </div>
-          <p>
-            Como um programa conta linhas, palavras e bytes? Implemente uma
-            versão dessa ferramenta em C e explore leitura de dados e
-            gerenciamento de estado.
-          </p>
-        </div>
-        <div class="wc-example" aria-label="Exemplo de contagem do wc">
-          <p>
-            Entrada representada: <code>ola, mundo\n</code>
-          </p>
-          <p class="wc-result">1 linha · 2 palavras · 11 bytes</p>
-          <p>
-            \n representa uma quebra de linha LF. Bytes:{' '}
-            <code>6F 6C 61 2C 20 6D 75 6E 64 6F 0A</code>.
-          </p>
-        </div>
-        <div class="actions">
-          <a class="text-link" href={`/desafios/${startingChallenge.id}`}>
-            Ver o desafio <span aria-hidden="true">→</span>
-          </a>
-          <a class="text-link" href="/desafios">
-            Ver todos os desafios <span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </section>
-    )}
-    <section class="section learning" aria-labelledby="learning-heading">
-      <div class="section-heading">
-        <div>
-          <div class="eyebrow">Nosso método</div>
-          <h2 id="learning-heading">Explore. Experimente. Explique.</h2>
-        </div>
-        <p>
-          Como um programa pede ao sistema operacional para ler um arquivo?
-          Investigue uma syscall, faça um experimento e compartilhe o que
-          descobriu.
-        </p>
-      </div>
     </section>
     <StartHere />
   </div>
@@ -279,7 +228,7 @@ const startingChallenge = (await publishedChallenges()).find(
     grid-template-columns: 1.5fr 1fr;
     gap: 48px;
     align-items: center;
-    padding-block: 84px 72px;
+    padding-block: 64px 56px;
   }
   @media (prefers-reduced-motion: no-preference) {
     .hero-copy > :is(h1, p, .actions) {
@@ -306,7 +255,7 @@ const startingChallenge = (await publishedChallenges()).find(
     }
   }
   .hero .eyebrow {
-    font-size: 10px;
+    font-size: 12px;
     margin-bottom: 28px;
   }
   .hero h1 {
@@ -342,7 +291,7 @@ const startingChallenge = (await publishedChallenges()).find(
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    font: 11px/1.6 var(--font-mono);
+    font: 13px/1.6 var(--font-mono);
     color: var(--color-muted);
     letter-spacing: 0.05em;
   }
@@ -409,7 +358,7 @@ const startingChallenge = (await publishedChallenges()).find(
   .byte small {
     display: block;
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: 13px;
     margin-top: 7px;
   }
   .byte.newline {
@@ -419,24 +368,11 @@ const startingChallenge = (await publishedChallenges()).find(
   }
   .byte-instruction {
     margin-top: 18px;
-    font: 11px/1.6 var(--font-mono);
+    font: 13px/1.6 var(--font-mono);
     text-align: center;
   }
-  .wc-example {
-    border-left: 2px solid var(--color-accent);
-    padding: 16px 20px;
-    margin-bottom: 24px;
-    font: 13px/1.8 var(--font-mono);
-  }
-  .wc-example p {
-    font-size: inherit;
-  }
-  .wc-example .wc-result {
-    color: var(--color-text);
-    margin-block: 8px;
-  }
   .binary {
-    font: 12px/1.6 var(--font-mono);
+    font: 13px/1.6 var(--font-mono);
     color: var(--color-muted);
     letter-spacing: 0;
     min-height: 2.5em;
@@ -446,38 +382,44 @@ const startingChallenge = (await publishedChallenges()).find(
   .study-bottom {
     border-top: 1px solid var(--color-border);
     padding-top: 12px;
-    font-size: 11px;
+    font-size: 13px;
   }
-  .discipline-strip {
-    display: flex;
-    align-items: center;
-    gap: 20px 32px;
-    flex-wrap: wrap;
-    border-top: 1px solid var(--color-border);
-    padding-block: 24px;
-    font: 12px/1.6 var(--font-mono);
-    letter-spacing: 0.05em;
-    color: var(--color-muted);
+  .study-topics {
+    margin-bottom: 32px;
   }
-  .discipline-strip ul {
+  .study-topics h3 {
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .study-topics ul {
     display: flex;
-    gap: 12px 20px;
     flex-wrap: wrap;
-    list-style: none;
-    margin: 0 0 0 auto;
+    gap: 12px 28px;
+    margin: 0;
     padding: 0;
-    color: var(--color-text);
-    font-size: 11px;
+    list-style: none;
   }
-  .discipline-strip li::before {
-    content: '·';
-    color: #777e80;
-    margin-right: 15px;
+  .study-topics li {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+    font-size: 15px;
   }
-  .club-invitation {
-    max-width: 75ch;
-    margin-top: 32px;
-    font-size: 14px;
+  .study-topics li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    flex-shrink: 0;
+    background: var(--color-accent);
+    align-self: start;
+    margin-top: 0.65em;
+  }
+  @media (forced-colors: active) {
+    .study-topics li::before {
+      background: CanvasText;
+    }
   }
   .club-planning {
     max-width: 75ch;
@@ -514,9 +456,6 @@ const startingChallenge = (await publishedChallenges()).find(
   .section > .actions {
     gap: 12px 28px;
   }
-  .learning .section-heading {
-    margin-bottom: 0;
-  }
   @media (max-width: 1000px) {
     .hero {
       gap: 32px;
@@ -527,17 +466,17 @@ const startingChallenge = (await publishedChallenges()).find(
     .word {
       font-size: 28px;
     }
-    .discipline-strip {
-      gap: 20px;
-    }
-    .discipline-strip ul {
-      gap: 12px;
-    }
     .binary {
       letter-spacing: 0;
     }
   }
   @media (max-width: 700px) {
+    .study-topics ul {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 20px;
+    }
+
     .club-paths {
       grid-template-columns: minmax(0, 1fr);
       gap: 28px;
@@ -551,7 +490,7 @@ const startingChallenge = (await publishedChallenges()).find(
       font-size: clamp(37px, 8.5vw, 54px);
     }
     .hero .eyebrow {
-      font-size: 9px;
+      font-size: 12px;
       letter-spacing: 0.07em;
     }
     .hero-copy > p {
@@ -567,20 +506,6 @@ const startingChallenge = (await publishedChallenges()).find(
     }
     .hex-grid {
       grid-template-columns: repeat(6, 1fr);
-    }
-    .discipline-strip {
-      align-items: start;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .discipline-strip ul {
-      margin: 0;
-      flex-wrap: wrap;
-      gap: 12px 20px;
-      font-size: 11px;
-    }
-    .discipline-strip li::before {
-      margin-right: 8px;
     }
   }
 </style>

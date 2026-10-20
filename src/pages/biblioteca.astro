@@ -45,7 +45,7 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
         </p>
       </aside>
       <div class="library-resources">
-        <details class="library-index">
+        <details class="library-index" id="library-index">
           <summary>
             Categorias
             <span>{libraryCategories.length} assuntos</span>
@@ -60,6 +60,39 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
             </ul>
           </nav>
         </details>
+        <p class="curation-note">
+          Em cada assunto, “Por onde começar” indica uma sugestão de entrada.
+          Use as descrições para escolher entre estudar um tema e consultar uma
+          referência.
+        </p>
+        <form class="library-filters" aria-label="Filtrar biblioteca" hidden>
+          <div>
+            <label for="library-language">Idioma</label>
+            <select id="library-language">
+              <option value="">Todos os idiomas</option>
+              <option value="PT-BR">Português</option>
+              <option value="EN">Inglês</option>
+            </select>
+          </div>
+          <div>
+            <label for="library-availability">Disponibilidade</label>
+            <select id="library-availability">
+              <option value="">Todas</option>
+              <option value="gratuito">Gratuito</option>
+              <option value="comercial">Comercial</option>
+            </select>
+          </div>
+          <button type="reset">Limpar filtros</button>
+          <p
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            class="filter-status"
+          ></p>
+        </form>
+        <p class="empty-library" hidden>
+          Nenhum recurso encontrado. Selecione outro idioma ou limpe os filtros.
+        </p>
         {libraryCategories.map((category) => (
           <section
             class="library-category"
@@ -70,9 +103,13 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
             <h2 id={`${category.id}-heading`}>{category.title}</h2>
             <ul role="list">
               {category.resources.map((resource) => (
-                <li>
+                <li
+                  data-language={resource.language}
+                  data-availability={resource.availability}
+                >
                   <a href={resource.url}>{resource.title}</a>
                   <span class="resource-meta">
+                    {resource.type} ·{' '}
                     {resource.author && `${resource.author} · `}
                     <abbr title={languageLabels[resource.language]}>
                       {resource.language}
@@ -81,9 +118,18 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
                     {availabilityLabels[resource.availability]}
                     {resource.note && ` · ${resource.note}`}
                   </span>
+                  <p class="resource-guidance">
+                    {resource.startingPoint && (
+                      <strong>Por onde começar · </strong>
+                    )}
+                    {resource.guidance}
+                  </p>
                 </li>
               ))}
             </ul>
+            <a class="category-return text-link" href="#library-index">
+              Voltar às categorias <span aria-hidden="true">↑</span>
+            </a>
           </section>
         ))}
       </div>
@@ -100,6 +146,46 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
       '.library-sidebar nav a, .library-index nav a',
     ),
   ];
+  const form = document.querySelector<HTMLFormElement>('.library-filters')!;
+  const language = form.querySelector<HTMLSelectElement>('#library-language')!;
+  const availability = form.querySelector<HTMLSelectElement>(
+    '#library-availability',
+  )!;
+  const status = form.querySelector<HTMLElement>('.filter-status')!;
+  function filterResources() {
+    let count = 0;
+    for (const section of sections) {
+      let sectionCount = 0;
+      for (const resource of section.querySelectorAll<HTMLElement>(
+        'li[data-language]',
+      )) {
+        const matches =
+          (!language.value || resource.dataset.language === language.value) &&
+          (!availability.value ||
+            resource.dataset.availability === availability.value);
+        resource.hidden = !matches;
+        if (matches) sectionCount++;
+      }
+      section.hidden = sectionCount === 0;
+      count += sectionCount;
+      for (const link of indexLinks.filter(
+        (link) => link.hash === `#${section.id}`,
+      )) {
+        link.closest('li')!.hidden = section.hidden;
+      }
+    }
+    status.textContent = `${count} ${count === 1 ? 'recurso encontrado' : 'recursos encontrados'}`;
+    document.querySelector<HTMLElement>('.empty-library')!.hidden = count > 0;
+    scheduleUpdate();
+  }
+  form.addEventListener('submit', (event) => event.preventDefault());
+  form.addEventListener('change', filterResources);
+  form.addEventListener('reset', () => {
+    language.value = '';
+    availability.value = '';
+    filterResources();
+  });
+  form.hidden = false;
   let scheduled = false;
   let currentId = '';
 
@@ -107,18 +193,19 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
     scheduled = false;
     // Track the section at the reading line, including the final short section.
     const readingLine = Math.min(160, window.innerHeight * 0.25);
-    let current = sections[0];
-    for (const section of sections) {
+    const visibleSections = sections.filter((section) => !section.hidden);
+    let current = visibleSections[0];
+    for (const section of visibleSections) {
       if (section.getBoundingClientRect().top <= readingLine) current = section;
     }
     if (
       window.scrollY + window.innerHeight >=
       document.documentElement.scrollHeight - 2
     ) {
-      current = sections[sections.length - 1];
+      current = visibleSections[visibleSections.length - 1];
     }
-    if (!current || current.id === currentId) return;
-    currentId = current.id;
+    if ((current?.id ?? '') === currentId) return;
+    currentId = current?.id ?? '';
     for (const link of indexLinks) {
       if (link.hash === `#${currentId}`)
         link.setAttribute('aria-current', 'location');
@@ -139,10 +226,67 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
     .querySelector('.library-index')
     ?.addEventListener('toggle', scheduleUpdate);
   document.fonts.ready.then(scheduleUpdate);
-  scheduleUpdate();
+  filterResources();
 </script>
 
 <style>
+  [hidden] {
+    display: none !important;
+  }
+  .curation-note {
+    margin-bottom: 20px;
+    font-size: 15px;
+  }
+  .library-filters {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .library-filters > div {
+    flex: 1 1 180px;
+    min-width: 0;
+  }
+  .library-filters label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .library-filters select,
+  .library-filters button {
+    min-height: 44px;
+    padding: 10px 12px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font: inherit;
+  }
+  .library-filters select {
+    width: 100%;
+  }
+  .library-filters button {
+    cursor: pointer;
+  }
+  .library-filters select:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 4px;
+  }
+  .filter-status {
+    flex-basis: 100%;
+    font-size: 14px;
+  }
+  .resource-guidance {
+    flex-basis: 100%;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .resource-guidance strong {
+    color: var(--color-text);
+    font-weight: 550;
+  }
+
   .library-layout {
     border-top: 1px solid var(--color-border);
     display: grid;
@@ -153,8 +297,8 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
   .library-sidebar {
     align-self: start;
   }
-  /* Stay in flow on short screens or with enlarged text. */
-  @media (min-width: 901px) and (min-height: 1000px) {
+  /* The index scrolls independently when enlarged text exceeds the viewport. */
+  @media (min-width: 901px) {
     .library-sidebar {
       position: sticky;
       top: 32px;
@@ -165,7 +309,7 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
     }
   }
   .index-label {
-    font: 11px var(--font-mono);
+    font: 13px var(--font-mono);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 20px;
@@ -223,7 +367,7 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
     border-top: 1px solid var(--color-border);
     margin-top: 24px;
     padding-top: 20px;
-    font: 11px/1.8 var(--font-mono);
+    font: 13px/1.8 var(--font-mono);
   }
   .library-resources {
     min-width: 0;
@@ -260,14 +404,15 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
     color: var(--color-text);
   }
   .resource-meta {
-    font: 11px/1.6 var(--font-mono);
+    font: 13px/1.6 var(--font-mono);
     color: var(--color-muted);
     margin-left: auto;
   }
   abbr {
     text-decoration: none;
   }
-  .library-index {
+  .library-index,
+  .category-return {
     display: none;
   }
   @media (max-width: 1080px) {
@@ -291,6 +436,13 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
     .library-sidebar {
       display: none;
     }
+    .category-return {
+      display: inline-flex;
+      margin-top: 16px;
+    }
+    .category-return:is(:hover, :focus-visible) > span {
+      transform: translateY(-3px);
+    }
     .library-index {
       display: block;
       border-bottom: 1px solid var(--color-border);
@@ -305,7 +457,7 @@ const languageLabels = { EN: 'Inglês', 'PT-BR': 'Português do Brasil' };
       gap: 12px;
       min-height: 64px;
       padding-block: 12px;
-      font: 12px var(--font-mono);
+      font: 13px var(--font-mono);
       list-style: none;
     }
     .library-index summary::-webkit-details-marker {

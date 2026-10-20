@@ -16,10 +16,8 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
       <div class="eyebrow">Oxide Club / Participação</div>
       <h1>Como participar</h1>
       <p>
-        O Oxide Club reúne pessoas interessadas em C, Rust, arquitetura de
-        computadores e sistemas operacionais. Você pode começar com uma
-        pergunta, uma tentativa de desafio, um projeto em andamento ou um texto
-        para o site. Quem está começando também é bem-vindo.
+        O Discord é o ponto de encontro do clube. Entre para estudar, trocar
+        ideias e acompanhar projetos de computação e sistemas.
       </p>
       <div class="actions">
         <JoinLink />
@@ -32,9 +30,14 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
       <h2 id="conversation-heading">Primeiro passo</h2>
       <div class="section-copy">
         <p>
-          O Discord é o ponto de encontro do clube. Você também pode começar
-          acompanhando as conversas. Não precisa dominar uma linguagem nem
-          publicar código para participar.
+          Entre no servidor e abra o <strong>#comece-aqui</strong> para conhecer
+          os canais. Depois, acompanhe uma conversa ou conte o que está
+          estudando.
+        </p>
+        <p>
+          Você pode participar sem dominar uma linguagem ou publicar código.
+          Para praticar programação, consulte os conhecimentos indicados em cada
+          desafio.
         </p>
       </div>
     </section>
@@ -48,18 +51,15 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
           <h3>Dúvidas e estudos</h3>
           <p>
             Nas conversas do Discord, traga uma pergunta, uma referência ou um
-            teste que você fez. Conte o que tentou e onde surgiu a dúvida. Uma
-            pergunta ou um comentário sobre o trabalho de outra pessoa também
-            ajuda a investigar um assunto.
+            teste que você fez. Conte o que tentou e onde surgiu a dúvida.
           </p>
         </article>
         <article>
           <h3>Projetos em andamento</h3>
           <p>
             No fórum <strong>projetos</strong>, abra um tópico com um objetivo,
-            uma captura de tela, uma decisão ou uma dificuldade. O projeto pode
-            estar nas primeiras ideias; não precisa estar pronto nem receber
-            atualizações com frequência definida.
+            uma captura de tela, uma decisão ou uma dificuldade. Ideias iniciais
+            e trabalhos em andamento são bem-vindos.
           </p>
           <p>
             Compartilhar com membros do Discord e publicar um repositório na
@@ -131,24 +131,17 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
       <h2 id="writing-heading">Contribua com uma nota ou texto técnico</h2>
       <div class="section-copy">
         <p>
-          Você também pode participar escrevendo para o site do Oxide Club.
-          Compartilhe uma explicação, um relato de experimento ou algo que
-          aprendeu desenvolvendo um projeto. Quem está começando também pode
-          contribuir.
-        </p>
-        <p>
-          Para enviar seu texto, abra um pull request (uma proposta de
-          contribuição no GitHub) no repositório{' '}
-          <a href={repositoryUrl('notes')}>oxide-club/notes</a> e siga o guia de
-          contribuição. A revisão e os ajustes acontecem pelo GitHub. Se quiser
-          conversar sobre uma ideia ou tirar dúvidas, o Discord também está
-          disponível como apoio opcional.
+          Escreva uma explicação, um relato de experimento ou uma descoberta
+          feita em um projeto. Use o modelo do repositório{' '}
+          <a href={repositoryUrl('notes')}>oxide-club/notes</a> e envie um pull
+          request (uma proposta de contribuição no GitHub). A revisão acontece
+          por lá, e o texto publicado recebe crédito de autoria.
         </p>
         <a
           class="text-link"
           href={githubUrl('notes', 'CONTRIBUTING.md', 'blob')}
         >
-          Ver o guia de contribuição <span aria-hidden="true">→</span>
+          Ver o guia de contribuição <span aria-hidden="true">↗</span>
         </a>
       </div>
     </section>
@@ -213,14 +206,14 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
   }
   .participation-section {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-    gap: 64px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
     border-top: 1px solid var(--color-border);
-    padding-block: 48px;
+    padding-block: 36px;
   }
   .participation-section h2 {
     font-size: clamp(28px, 3vw, 36px);
-    max-width: 18ch;
+    max-width: 28ch;
   }
   .section-copy {
     min-width: 0;
@@ -232,8 +225,31 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
   .section-copy .text-link {
     margin-top: 16px;
   }
-  .options article + article {
-    margin-top: 28px;
+  .options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+    max-width: none;
+  }
+  .options article {
+    min-width: 0;
+  }
+  [aria-labelledby='live-heading'] .options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .first-step {
+    background: var(--color-surface);
+    padding: 28px;
+    border-left: 2px solid var(--color-accent);
+  }
+  .activity-note {
+    grid-column: 1 / -1;
+  }
+  @media (max-width: 900px) {
+    .options,
+    [aria-labelledby='live-heading'] .options {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
   .options h3 {
     font-size: 21px;

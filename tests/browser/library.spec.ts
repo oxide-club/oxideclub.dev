@@ -45,9 +45,9 @@ test('library exposes all 40 resources in their eight approved categories', asyn
   ] as const;
   for (const [name, count] of categories) {
     const category = page.getByRole('region', { name, exact: true });
-    await expect(category.getByRole('link')).toHaveCount(count);
+    await expect(category.locator('li a')).toHaveCount(count);
   }
-  const resources = page.locator('main section a');
+  const resources = page.locator('.library-category li a');
   await expect(resources).toHaveCount(40);
   const titles = await resources.allTextContents();
   expect(new Set(titles.map((title) => title.trim())).size).toBe(40);
@@ -124,7 +124,7 @@ test('all library resources and category anchors work without JavaScript', async
   try {
     const page = await context.newPage();
     await page.goto('/biblioteca');
-    await expect(page.locator('main section a')).toHaveCount(40);
+    await expect(page.locator('.library-category li a')).toHaveCount(40);
     await page.locator('.library-index summary').click();
     await page
       .locator('.library-index')
@@ -138,6 +138,52 @@ test('all library resources and category anchors work without JavaScript', async
         name: 'Programação em C',
         exact: true,
       }),
+    ).toBeInViewport();
+  } finally {
+    await context.close();
+  }
+});
+
+test('desktop category navigation remains reachable while reading on a short screen', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 700 });
+  await page.goto('/biblioteca');
+  await page.locator('#redes-de-computadores').scrollIntoViewIfNeeded();
+  const sidebar = page.locator('.library-sidebar');
+  await expect(sidebar).toBeInViewport();
+  await sidebar
+    .getByRole('link', { name: 'Programação em C', exact: true })
+    .click();
+  await expect(
+    page.getByRole('heading', { name: 'Programação em C', exact: true }),
+  ).toBeInViewport();
+});
+
+test('mobile readers can return to categories without JavaScript', async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({
+    baseURL,
+    javaScriptEnabled: false,
+    viewport: { width: 390, height: 700 },
+  });
+  try {
+    const page = await context.newPage();
+    await page.goto('/biblioteca#redes-de-computadores');
+    await page
+      .locator('#redes-de-computadores')
+      .getByRole('link', { name: 'Voltar às categorias' })
+      .click();
+    await expect(page.locator('.library-index summary')).toBeInViewport();
+    await page.locator('.library-index summary').press('Enter');
+    await page
+      .locator('.library-index')
+      .getByRole('link', { name: 'Programação em C', exact: true })
+      .click();
+    await expect(
+      page.getByRole('heading', { name: 'Programação em C', exact: true }),
     ).toBeInViewport();
   } finally {
     await context.close();

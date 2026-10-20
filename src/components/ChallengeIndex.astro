@@ -1,0 +1,29 @@
+---
+interface Props {
+  links: { href: string; text: string }[];
+}
+const { links } = Astro.props;
+---
+
+<nav aria-label="Índice do desafio">
+  {links.map(({ href, text }) => (
+    <a href={href}>{text}</a>
+  ))}
+</nav>
+<style>
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  a {
+    font-size: 14px;
+    color: var(--color-muted);
+    padding-block: 10px;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+    color: var(--color-text);
+  }
+</style>

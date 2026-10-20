@@ -27,28 +27,20 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
       <div class="eyebrow">Desafios</div>
       <h1>Explore sistemas na prática.</h1>
       <p>
-        Construa programas para investigar entrada e saída, imagens e compressão
-        de dados. Os desafios são construídos com a comunidade: qualquer pessoa
-        pode propor um novo desafio por pull request.
+        Escolha um programa para construir e explore como ele funciona. Você
+        pode compartilhar dúvidas e implementações em andamento.
       </p>
-      <a class="text-link proposal-link" href="#propor-desafio">
-        Quer propor um desafio? <span aria-hidden="true">↓</span>
-      </a>
     </header>
     <div class="catalogue-guidance">
       {startingChallenge && (
         <p>
           <strong>Primeiro desafio?</strong> O{' '}
           <a href={`/desafios/${startingChallenge.data.slug}`}>wc</a> é uma
-          sugestão de início para explorar leitura de dados, contagem e estado.
-          Você também pode escolher outro assunto que desperte sua curiosidade.
+          sugestão para quem já conhece variáveis, laços e como compilar um
+          programa em C. Precisa se preparar? Consulte a{' '}
+          <a href="/biblioteca#programacao-em-c">biblioteca de C</a>.
         </p>
       )}
-      <p>
-        A dificuldade indica os conhecimentos envolvidos. Você pode explorar
-        qualquer desafio e compartilhar suas tentativas. As extensões são
-        opcionais.
-      </p>
     </div>
     <form
       class="catalogue-filters"
@@ -279,9 +271,52 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   }
   .topic-filter summary {
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     padding: 10px 0;
     min-height: 44px;
     font-size: 14px;
+    list-style: none;
+  }
+  .topic-filter summary::-webkit-details-marker {
+    display: none;
+  }
+  .topic-filter summary::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+  }
+  .topic-filter[open] summary::before {
+    transform: rotate(45deg);
+  }
+  .topic-filter summary:is(:hover, :focus-visible) {
+    color: var(--color-accent-text);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .topic-filter summary {
+      transition: color 180ms ease;
+    }
+    .topic-filter summary::before {
+      transition: transform 180ms ease;
+    }
+    .topic-filter[open] .filter-field {
+      animation: topic-reveal 180ms ease-out;
+    }
+  }
+  @keyframes topic-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   .topic-filter .filter-field {
     margin-top: 12px;

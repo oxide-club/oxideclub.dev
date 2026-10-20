@@ -78,7 +78,7 @@ p {
   font-family: var(--font-mono);
 }
 .eyebrow {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-muted);
@@ -149,7 +149,7 @@ p {
   flex-wrap: wrap;
 }
 .section {
-  padding-block: 88px;
+  padding-block: 64px;
   border-top: 1px solid var(--color-border);
 }
 .section-heading {
@@ -167,7 +167,7 @@ p {
   font-size: 15px;
 }
 .tag {
-  font: 11px var(--font-mono);
+  font: 13px var(--font-mono);
   display: inline-block;
   padding: 5px 9px;
   border: 1px solid var(--color-border);
@@ -289,7 +289,7 @@ img {
     width: calc(100% - 40px);
   }
   .section {
-    padding-block: 56px;
+    padding-block: 40px;
   }
   .section-heading {
     align-items: start;

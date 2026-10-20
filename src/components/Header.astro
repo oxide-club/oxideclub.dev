@@ -38,7 +38,7 @@ const navigation = [
   </div>
   <details class="mobile-nav">
     <summary>
-      Menu <span aria-hidden="true">＋</span>
+      Menu <span class="menu-symbol" aria-hidden="true"></span>
     </summary>
     <nav aria-label="Navegação móvel">
       {navigation.map(({ label, href }) => (
@@ -131,11 +131,17 @@ const navigation = [
   }
   .header-join :global(.button) {
     min-height: 40px;
-    font-size: 12px;
+    font-size: 13px;
     padding: 10px 16px;
   }
   .mobile-nav {
     display: none;
+  }
+  .menu-symbol::before {
+    content: '+';
+  }
+  .mobile-nav[open] .menu-symbol::before {
+    content: '−';
   }
   @media (max-width: 1080px) {
     .desktop-nav {

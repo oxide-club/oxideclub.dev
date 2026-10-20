@@ -119,7 +119,11 @@ const revisionDate =
               <li>
                 <a href={meetingMaterialUrl(id, material.url)}>
                   {material.title}
-                  <span aria-hidden="true">↗</span>
+                  <span aria-hidden="true">
+                    {meetingMaterialUrl(id, material.url).startsWith('/')
+                      ? '→'
+                      : '↗'}
+                  </span>
                 </a>
                 <span class="material-type mono">
                   {materialLabels[material.type]}
@@ -165,7 +169,7 @@ const revisionDate =
   }
   .metadata {
     margin-top: 24px;
-    font-size: 12px;
+    font-size: 13px;
   }
   .metadata p + p {
     margin-top: 4px;
@@ -274,7 +278,7 @@ const revisionDate =
     }
   }
   .material-type {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--color-muted);
   }
   .meeting-footer {
@@ -286,7 +290,7 @@ const revisionDate =
     font-size: 13px;
   }
   .meeting-footer .revision {
-    font-size: 12px;
+    font-size: 13px;
   }
   .meeting-footer p a {
     display: inline-block;

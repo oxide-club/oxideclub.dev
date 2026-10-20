@@ -50,7 +50,7 @@ const notes = await publishedNotes();
                   <p class="authors">{data.authors.join(' · ')}</p>
                 )}
                 <a class="text-link" href={`/notas/${id}`}>
-                  Ler nota <span aria-hidden="true">↗</span>
+                  Ler nota <span aria-hidden="true">→</span>
                   <span class="sr-only">: {data.title}</span>
                 </a>
               </article>
@@ -79,44 +79,35 @@ const notes = await publishedNotes();
     >
       <h2 id="contribution-heading">Escreva para o Oxide Club</h2>
       <p>
-        Quem participa do clube pode propor notas e textos técnicos para
-        publicação no site. Quem está começando também pode escrever. Uma
-        explicação curta, uma comparação de abordagens ou um relato de
-        experimento já pode ser uma contribuição. As notas não precisam estar
-        ligadas a um desafio.
+        Compartilhe uma explicação, uma comparação de abordagens ou um relato de
+        experimento. Você pode escrever mesmo começando os estudos.
       </p>
+      <ol class="writing-steps">
+        <li>
+          Use o{' '}
+          <a href={githubUrl('notes', 'templates/note.md', 'blob')}>
+            modelo de nota
+          </a>{' '}
+          para organizar seu texto e informar a autoria.
+        </li>
+        <li>
+          Envie um pull request (uma proposta de contribuição) no repositório{' '}
+          <a href={repositoryUrl('notes')}>oxide-club/notes</a>.
+        </li>
+        <li>
+          Acompanhe a revisão no GitHub e ajuste o texto com os comentários
+          recebidos.
+        </li>
+      </ol>
       <p>
-        Os textos são enviados por pull request — uma proposta de contribuição
-        no GitHub — no repositório{' '}
-        <a href={repositoryUrl('notes')}>oxide-club/notes</a>. Consulte o guia e
-        use o{' '}
-        <a href={githubUrl('notes', 'templates/note.md', 'blob')}>
-          modelo de nota
-        </a>{' '}
-        para preparar sua contribuição. A discussão e a revisão acontecem no PR,
-        que pode receber pedidos de ajuste antes de ser incorporado.
-      </p>
-      <p>Algumas sugestões para começar:</p>
-      <ul>
-        <li>Uma descoberta feita ao implementar um programa.</li>
-        <li>Um experimento que compara duas abordagens.</li>
-        <li>Uma explicação de um conceito estudado pelo clube.</li>
-      </ul>
-      <p>
-        Para artigos substanciais, o guia recomenda discutir o assunto em uma{' '}
-        <a href={`${repositoryUrl('notes')}/issues`}>issue</a>. Essa
-        recomendação ajuda a ajustar o recorte; não é uma aprovação obrigatória
-        para contribuir.
-      </p>
-      <p>
-        Após a revisão e o merge, textos prontos para publicar passam pela
-        validação e publicação do site. Rascunhos continuam fora do site até
-        estarem prontos; abrir um PR ou incorporá-lo não significa publicação
-        imediata. O crédito de autoria informado acompanha o texto publicado.
+        Enviar ou incorporar uma proposta não significa publicação imediata. O
+        texto passa por revisão e validação; rascunhos ficam fora do site até
+        estarem prontos. O guia explica as etapas e como discutir ideias para
+        artigos mais longos.
       </p>
       <div class="actions">
         <a class="button" href={githubUrl('notes', 'CONTRIBUTING.md', 'blob')}>
-          Ver como contribuir no GitHub <span aria-hidden="true">→</span>
+          Ver como contribuir no GitHub <span aria-hidden="true">↗</span>
         </a>
         <a class="text-link" href={repositoryUrl('notes')}>
           Ver o repositório de notas <span aria-hidden="true">↗</span>
@@ -145,12 +136,16 @@ const notes = await publishedNotes();
   .contribution p + p {
     margin-top: 16px;
   }
-  .contribution ul {
+  .writing-steps {
     color: var(--color-muted);
     padding-left: 24px;
     margin-block: 16px;
   }
-  .contribution li + li {
+  .writing-steps a {
+    display: inline-block;
+    min-height: 24px;
+  }
+  .writing-steps li + li {
     margin-top: 8px;
   }
   .contribution .actions {
@@ -198,7 +193,7 @@ const notes = await publishedNotes();
   }
   time {
     display: block;
-    font: 12px var(--font-mono);
+    font: 13px var(--font-mono);
     color: var(--color-muted);
     margin-bottom: 16px;
   }
