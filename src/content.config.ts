@@ -2,7 +2,12 @@ import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 import { existsSync } from 'node:fs';
-import { notesDirectory, noteId, noteSchema } from './lib/note-source.mjs';
+import {
+  notesDirectory,
+  noteId,
+  noteSchema,
+  reservedNoteDirectories,
+} from './lib/note-source.mjs';
 import { githubResourcesSchema } from './lib/challenge-resources.mjs';
 import { challengeTaxonomySchema } from './lib/challenge-taxonomy.mjs';
 import { challengeId, challengeIdentifier } from './lib/challenge-source.mjs';
@@ -55,7 +60,10 @@ if (!existsSync(notesDirectory())) {
 }
 const notes = defineCollection({
   loader: glob({
-    pattern: ['*/index.md', '!templates/**', '!docs/**'],
+    pattern: [
+      '*/index.md',
+      ...[...reservedNoteDirectories].map((directory) => `!${directory}/**`),
+    ],
     base: notesDirectory(),
     generateId: noteId,
   }),

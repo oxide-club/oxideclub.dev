@@ -1,10 +1,14 @@
 ---
 import { links } from '../config/site';
-const { secondary = false, label = 'Entrar no Discord' } = Astro.props;
+const {
+  secondary = false,
+  label = 'Entrar no Discord',
+  href = links.discord,
+} = Astro.props;
 ---
 
-{links.discord ? (
-  <a class:list={['button', { secondary }]} href={links.discord}>
+{href ? (
+  <a class:list={['button', { secondary }]} href={href}>
     {label}
     <span aria-hidden="true">↗</span>
   </a>

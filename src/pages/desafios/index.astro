@@ -1,10 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ChallengeCard from '../../components/ChallengeCard.astro';
+import JoinLink from '../../components/JoinLink.astro';
+import { githubUrl } from '../../config/github.mjs';
 import { publishedChallenges } from '../../lib/challenges';
-import { descendingChallenges } from '../../lib/challenge-catalogue.mjs';
+import { ascendingChallenges } from '../../lib/challenge-catalogue.mjs';
 import { categoryLabels } from '../../lib/challenge-taxonomy.mjs';
-const challenges = descendingChallenges(await publishedChallenges());
+const challenges = ascendingChallenges(await publishedChallenges());
+const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#compartilhar-uma-implementação`;
 const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   (a, b) => a.localeCompare(b, 'pt-BR'),
 );
@@ -23,11 +26,9 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
         <span class="accent">Escolha por onde começar.</span>
       </h1>
       <p>
-        Construa programas, investigue sistemas, depure problemas, otimize
-        implementações ou teste hipóteses. Cada desafio define seu objetivo e o
-        que explorar: pode resultar em código, medições, uma explicação ou um
-        relato técnico. As especificações são públicas; a discussão continua no
-        Discord.
+        Escolha um desafio pelo assunto que desperta sua curiosidade e confira a
+        dificuldade e a linguagem recomendada. Traga suas dúvidas e soluções
+        parciais para conversar no Discord.
       </p>
     </header>
     <form
@@ -46,9 +47,9 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
         />
       </div>
       <div class="filter-field">
-        <label for="challenge-topic">Tag</label>
+        <label for="challenge-topic">Assunto</label>
         <select id="challenge-topic">
-          <option value="">Todas as tags</option>
+          <option value="">Todos os assuntos</option>
           {topics.map((topic) => (
             <option value={topic}>{topic}</option>
           ))}
@@ -88,15 +89,46 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
     <div class="catalogue-note">
       <h2>Diferentes caminhos de investigação.</h2>
       <p>
-        As categorias indicam o tipo de atividade e podem se combinar. A
-        dificuldade indica os conhecimentos envolvidos, não quem pode
-        participar: qualquer categoria pode ser iniciante, intermediária ou
-        avançada. As extensões são opcionais.
+        A dificuldade indica os conhecimentos envolvidos, não quem pode
+        participar. As extensões de cada desafio são opcionais.
       </p>
-      <a class="text-link" href="/#como-participar">
-        Como compartilhar sua descoberta <span aria-hidden="true">→</span>
-      </a>
     </div>
+    <section
+      class="sharing"
+      id="como-compartilhar"
+      aria-labelledby="sharing-heading"
+      tabindex="-1"
+    >
+      <div class="eyebrow">Participação</div>
+      <h2 id="sharing-heading">Como compartilhar sua descoberta</h2>
+      <p class="sharing-intro">
+        Não é necessário concluir um desafio para participar. Dúvidas, casos de
+        teste, tentativas e soluções parciais também são bem-vindos.
+      </p>
+      <div class="sharing-paths">
+        <article>
+          <h3>Converse no Discord</h3>
+          <p>
+            No canal #desafios, procure o tópico do desafio que você está
+            explorando. Conte sua dúvida ou descoberta. Se ajudar, inclua um
+            trecho de código, a entrada que testou e o resultado que observou.
+          </p>
+          <JoinLink label="Conversar no Discord" />
+        </article>
+        <article>
+          <h3>Inclua sua implementação no catálogo</h3>
+          <p>
+            Publique o código em um repositório público seu. Depois, siga o guia
+            no GitHub para enviar um pull request com o link da implementação.
+            Ela pode estar completa ou em desenvolvimento; o código continua no
+            seu repositório.
+          </p>
+          <a class="button secondary" href={contributeUrl}>
+            Ver o guia no GitHub <span aria-hidden="true">↗</span>
+          </a>
+        </article>
+      </div>
+    </section>
   </div>
 </BaseLayout>
 <script>
@@ -202,7 +234,16 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   .catalogue {
     padding-bottom: 48px;
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
+  }
+  .catalogue > div {
+    min-width: 0;
+  }
+  @media (max-width: 1099px) {
+    .catalogue {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
   @media (prefers-reduced-motion: no-preference) {
     .result-enter {
@@ -219,7 +260,7 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   }
   .catalogue-note {
     max-width: 680px;
-    padding-bottom: 80px;
+    padding-bottom: 48px;
   }
   .catalogue-note h2 {
     font-size: 28px;
@@ -228,7 +269,43 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   .catalogue-note p {
     font-size: 15px;
   }
-  .catalogue-note a {
-    margin-top: 16px;
+  .sharing {
+    border-top: 1px solid var(--color-border);
+    padding-block: 48px 80px;
+  }
+  .sharing .eyebrow {
+    margin-bottom: 20px;
+  }
+  .sharing h2 {
+    font-size: clamp(28px, 4vw, 40px);
+    max-width: 24ch;
+  }
+  .sharing-intro {
+    margin-top: 20px;
+    max-width: 66ch;
+  }
+  .sharing-paths {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px;
+    margin-top: 36px;
+  }
+  .sharing-paths article {
+    min-width: 0;
+  }
+  .sharing-paths h3 {
+    font-size: 22px;
+  }
+  .sharing-paths p {
+    margin-block: 16px 24px;
+    font-size: 15px;
+  }
+  @media (max-width: 700px) {
+    .catalogue {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .sharing-paths {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 </style>

@@ -48,6 +48,13 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
     );
     await rm(join(root, '.content/notes'), { recursive: true, force: true });
     await mkdir(join(root, '.content/notes'), { recursive: true });
+    for (const directory of ['scripts', 'tests']) {
+      await mkdir(join(root, '.content/notes', directory), { recursive: true });
+      await writeFile(
+        join(root, '.content/notes', directory, 'index.md'),
+        '# Repository automation documentation, not an article.\n',
+      );
+    }
     const build = (environment = {}) =>
       execFileSync(
         process.execPath,
@@ -72,6 +79,11 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
     build();
     const empty = await readFile(join(root, 'dist/notas/index.html'), 'utf8');
     assert.match(empty, /Ainda não há notas publicadas/);
+    for (const directory of ['scripts', 'tests']) {
+      await assert.rejects(
+        access(join(root, 'dist/notas', directory, 'index.html')),
+      );
+    }
     assert.match(empty, /index, follow/);
     await assert.rejects(
       access(join(root, 'dist/notas/fixture-publica/index.html')),
@@ -169,11 +181,6 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
     );
     await assert.rejects(
       access(join(root, 'dist/notas/fixture-rascunho/index.html')),
-    );
-    // The homepage leads to the catalogue; published notes are linked there.
-    assert.match(
-      await readFile(join(root, 'dist/index.html'), 'utf8'),
-      /href="\/notas"/,
     );
     assert.doesNotMatch(
       await readFile(join(root, 'dist/sitemap-0.xml'), 'utf8'),

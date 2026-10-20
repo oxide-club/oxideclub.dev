@@ -1,10 +1,12 @@
 ---
 import type { CommunityImplementation } from '../lib/community';
 import { githubUrl } from '../config/github.mjs';
+import JoinLink from './JoinLink.astro';
 interface Props {
   implementations: CommunityImplementation[];
+  discordThreadUrl?: string;
 }
-const { implementations } = Astro.props;
+const { implementations, discordThreadUrl } = Astro.props;
 const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#compartilhar-uma-implementação`;
 const statusLabels = { completed: 'Concluída', partial: 'Parcial' };
 ---
@@ -53,9 +55,21 @@ const statusLabels = { completed: 'Concluída', partial: 'Parcial' };
       </ul>
     </>
   )}
-  <a class="community-contribute" href={contributeUrl}>
-    Compartilhe sua implementação <span aria-hidden="true">↗</span>
-  </a>
+  <p class="participation-note">
+    Converse sobre sua solução no Discord, mesmo que ela ainda esteja em
+    desenvolvimento. Para incluir uma implementação neste catálogo, publique o
+    código em um repositório público seu e siga o guia de contribuição no
+    GitHub.
+  </p>
+  <div class="actions community-actions">
+    <JoinLink
+      href={discordThreadUrl}
+      label="Conversar sobre a solução no Discord"
+    />
+    <a class="button secondary" href={contributeUrl}>
+      Compartilhe sua implementação <span aria-hidden="true">↗</span>
+    </a>
+  </div>
 </section>
 <style>
   .community-implementations {
@@ -105,17 +119,17 @@ const statusLabels = { completed: 'Concluída', partial: 'Parcial' };
     gap: 8px;
     min-height: 44px;
   }
-  .implementation-source,
   .implementation-source {
     margin-top: 8px;
   }
-  .community-contribute {
+  .participation-note {
     font-size: 14px;
   }
-  .implementation-source {
-    margin-top: 8px;
+  .community-actions :global(.button) {
+    color: var(--color-on-accent);
+    text-align: center;
   }
-  .community-contribute {
-    margin-top: 8px;
+  .community-actions .secondary {
+    color: var(--color-text);
   }
 </style>

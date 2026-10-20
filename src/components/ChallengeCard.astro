@@ -1,7 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { difficultyLabels } from '../lib/challenges';
-import { categoryLabels } from '../lib/challenge-taxonomy.mjs';
 interface Props {
   challenge: CollectionEntry<'challenges'>;
   headingLevel?: 'h2' | 'h3';
@@ -14,12 +13,9 @@ const { data } = challenge;
   <div class="challenge-info">
     <div class="challenge-meta">
       <span class="level">{difficultyLabels[data.difficulty]}</span>
-      <span class="mono">
-        {data.recommendedLanguage && `${data.recommendedLanguage} / `}
-        {data.participation === 'flagship'
-          ? 'Desafio principal'
-          : 'Exploração livre'}
-      </span>
+      {data.recommendedLanguage && (
+        <span class="mono">{data.recommendedLanguage}</span>
+      )}
     </div>
     <Heading class="challenge-title">
       <a href={`/desafios/${data.slug}`}>
@@ -30,10 +26,6 @@ const { data } = challenge;
       </a>
     </Heading>
     <p>{data.summary}</p>
-    <p class="categories">
-      Categorias:{' '}
-      {data.categories.map((category) => categoryLabels[category]).join(' · ')}
-    </p>
     <div class="topics">
       {data.topics.map((topic) => (
         <span class="tag">{topic}</span>
@@ -46,6 +38,8 @@ const { data } = challenge;
 </article>
 <style>
   .challenge-card {
+    height: 100%;
+    min-width: 0;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     transition: border-color 160ms ease;
@@ -54,16 +48,19 @@ const { data } = challenge;
     border-color: var(--color-accent);
   }
   .challenge-info {
-    padding: 36px 40px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 28px 24px;
   }
   .challenge-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 8px 12px;
     align-items: center;
     font-size: 11px;
     color: var(--color-muted);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
   .level {
     color: var(--color-accent-text);
@@ -73,7 +70,7 @@ const { data } = challenge;
     font: 11px var(--font-mono);
   }
   .challenge-title {
-    font-size: 36px;
+    font-size: 28px;
     margin-bottom: 16px;
   }
   .challenge-title a {
@@ -86,10 +83,6 @@ const { data } = challenge;
     font-size: 14px;
     max-width: 70ch;
   }
-  .categories {
-    margin-top: 16px;
-    font-size: 12px;
-  }
   .topics {
     display: flex;
     flex-wrap: wrap;
@@ -99,13 +92,7 @@ const { data } = challenge;
   .text-link {
     color: var(--color-text);
     font-weight: 550;
-  }
-  @media (max-width: 700px) {
-    .challenge-info {
-      padding: 28px 24px;
-    }
-    .challenge-title {
-      font-size: 30px;
-    }
+    margin-top: auto;
+    align-self: flex-start;
   }
 </style>

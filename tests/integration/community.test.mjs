@@ -42,6 +42,16 @@ test('community: empty/populated static builds, escaped notes, declared states, 
       'dir',
     );
     const catalogue = join(root, '.content/solutions/001-wc/community.yaml');
+    const challengePath = join(root, '.content/challenges/001-wc/index.md');
+    const discordThreadUrl =
+      'https://discord.com/channels/123456789012345678/234567890123456789';
+    await writeFile(
+      challengePath,
+      (await readFile(challengePath, 'utf8')).replace(
+        /^---\n/,
+        `---\ndiscordThreadUrl: '${discordThreadUrl}'\n`,
+      ),
+    );
     const build = () =>
       execFileSync(
         process.execPath,
@@ -138,6 +148,19 @@ test('community: empty/populated static builds, escaped notes, declared states, 
         name: 'Implementações da comunidade',
         exact: true,
       });
+      assert.equal(
+        await page
+          .locator('.page-intro')
+          .getByRole('link', { name: 'Conversar sobre a solução no Discord' })
+          .getAttribute('href'),
+        discordThreadUrl,
+      );
+      assert.equal(
+        await section
+          .getByRole('link', { name: 'Conversar sobre a solução no Discord' })
+          .getAttribute('href'),
+        discordThreadUrl,
+      );
       assert.equal(await section.getByRole('listitem').count(), 2);
       assert.equal(
         await section

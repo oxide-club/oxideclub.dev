@@ -9,6 +9,8 @@ test('notes derive IDs from one canonical directory without slug metadata', () =
   );
   for (const entry of [
     'templates/note.md',
+    'scripts/index.md',
+    'tests/index.md',
     'Bad_slug/index.md',
     'foo/bar/index.md',
   ]) {

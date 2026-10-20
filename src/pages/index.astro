@@ -2,6 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import JoinLink from '../components/JoinLink.astro';
 import StartHere from '../components/StartHere.astro';
+import { publishedChallenges } from '../lib/challenges';
+const startingChallenge = (await publishedChallenges()).find(
+  ({ id }) => id === '001-wc',
+);
 ---
 
 <BaseLayout>
@@ -13,18 +17,19 @@ import StartHere from '../components/StartHere.astro';
           Entenda como o software <span>realmente funciona.</span>
         </h1>
         <p>
-          Uma comunidade independente para aprender construindo programas,
-          investigando comportamentos e explorando os fundamentos da computação.
+          Uma comunidade para estudar computação em conjunto e compartilhar o
+          desenvolvimento de programas e projetos — das primeiras ideias às
+          descobertas pelo caminho.
         </p>
         <div class="actions">
           <JoinLink />
-          <a class="button secondary" href="#o-clube">
-            Explorar conteúdos <span aria-hidden="true">→</span>
+          <a class="button secondary" href="/desafios">
+            Conhecer os desafios <span aria-hidden="true">→</span>
           </a>
         </div>
         <div class="hero-note">
-          <span aria-hidden="true">↳</span> Participação remota, livre e
-          gratuita. Iniciantes são bem-vindos.
+          <span aria-hidden="true">↳</span> Participação online e gratuita. Quem
+          está começando a estudar computação também é bem-vindo.
         </div>
       </div>
       <aside
@@ -76,131 +81,115 @@ import StartHere from '../components/StartHere.astro';
           ))}
         </div>
         <div class="binary byte-readout" aria-hidden="true">
-          Explore uma letra ou o byte de fim de linha.
+          Toque ou selecione uma letra para ver seu byte.
         </div>
         <div class="study-bottom">
-          <span>11 letras. 12 bytes com LF.</span>
+          <span>11 letras + quebra de linha (LF) = 12 bytes.</span>
           <span>ASCII / HEX</span>
         </div>
       </aside>
     </section>
     <div class="discipline-strip" aria-label="Áreas de interesse">
-      <span>ENTENDA O QUE EXISTE POR BAIXO</span>
+      <span>ASSUNTOS QUE NOS INTERESSAM</span>
       <ul>
         <li>Memória</li>
         <li>Processos</li>
         <li>Compiladores</li>
-        <li>Sistemas</li>
+        <li>Sistemas operacionais</li>
       </ul>
       <span class="strip-plus" aria-hidden="true">
         +
       </span>
     </div>
-    <section class="section" id="o-clube" aria-labelledby="activities-heading">
+    <section class="section" id="o-clube" aria-labelledby="club-heading">
       <div class="section-heading">
         <div>
-          <div class="eyebrow">01 / O clube</div>
-          <h2 id="activities-heading">O que fazemos</h2>
+          <div class="eyebrow">O clube</div>
+          <h2 id="club-heading">O que acontece no clube</h2>
         </div>
         <p>
-          Estudamos programação de sistemas juntos, com espaço para quem está
-          começando e para quem já tem experiência.
+          O clube está começando. No Discord, há espaço para compartilhar
+          projetos, construir na companhia de outras pessoas e estudar junto.
         </p>
       </div>
-      <div class="method activities">
+      <div class="club-paths">
         <article>
-          <h3>Desafios</h3>
+          <p class="channel-label">Fórum · projetos</p>
+          <h3>Compartilhe projetos</h3>
           <p>
-            Problemas práticos para estudar conceitos e implementar soluções.
-            Escreva código, teste casos e compare suas decisões com as de outras
-            pessoas.
-          </p>
-          <a class="text-link" href="/desafios">
-            Conhecer os desafios <span aria-hidden="true">↗</span>
-          </a>
-        </article>
-        <article>
-          <h3>Oxide Live</h3>
-          <p>
-            Encontros de programação ao vivo para depurar, testar e discutir
-            decisões técnicas. Você pode acompanhar, fazer perguntas e trazer
-            suas próprias investigações.
-          </p>
-          <p class="activity-note">
-            Datas anunciadas no Discord quando confirmadas.
+            Abra um tópico para apresentar seu projeto e registrar avanços,
+            decisões, dificuldades e descobertas. Ele pode estar nas primeiras
+            ideias.
           </p>
         </article>
         <article>
-          <h3>Notas técnicas</h3>
+          <p class="channel-label">Voz · build in public</p>
+          <h3>Construa em público</h3>
           <p>
-            Textos e experimentos para documentar conceitos, resultados e
-            aprendizados de forma que outras pessoas possam reproduzi-los.
+            Entre para programar na companhia de outras pessoas. Se quiser,
+            compartilhe a tela e converse sobre o que está construindo.
           </p>
-          <a class="text-link" href="/notas">
-            Abrir o caderno <span aria-hidden="true">↗</span>
-          </a>
+        </article>
+        <article>
+          <p class="channel-label">Voz · sala de estudos</p>
+          <h3>Estude junto</h3>
+          <p>
+            Use a sala para estudar computação com outras pessoas, discutir
+            referências e explorar dúvidas em conjunto.
+          </p>
         </article>
       </div>
+      <p class="club-invitation">
+        Falar por voz e compartilhar a tela são opcionais. Você pode começar
+        acompanhando, sem precisar ter algo pronto para mostrar.
+      </p>
+      <p class="club-planning">
+        Notas técnicas, uma zine e os primeiros encontros estão nos planos do
+        clube.
+        <a class="text-link" href="/como-participar/#o-que-estamos-preparando">
+          Veja o que estamos preparando <span aria-hidden="true">→</span>
+        </a>
+      </p>
     </section>
-    <StartHere />
+    {startingChallenge && (
+      <section class="section" aria-labelledby="challenge-heading">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">Uma ideia para começar</div>
+            <h2 id="challenge-heading">
+              Construa seu próprio <code>wc</code>
+            </h2>
+          </div>
+          <p>
+            Como um programa conta linhas, palavras e bytes? Implemente uma
+            versão dessa ferramenta em C e explore leitura de dados e
+            gerenciamento de estado.
+          </p>
+        </div>
+        <div class="actions">
+          <a class="text-link" href={`/desafios/${startingChallenge.id}`}>
+            Ver o desafio <span aria-hidden="true">→</span>
+          </a>
+          <a class="text-link" href="/desafios">
+            Ver todos os desafios <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
+    )}
     <section class="section learning" aria-labelledby="learning-heading">
       <div class="section-heading">
         <div>
-          <div class="eyebrow">02 / Nosso método</div>
-          <h2 id="learning-heading">
-            Explore. Experimente.
-            <br />
-            Explique.
-          </h2>
+          <div class="eyebrow">Nosso método</div>
+          <h2 id="learning-heading">Explore. Experimente. Explique.</h2>
         </div>
         <p>
-          Uma pergunta orienta o estudo. Um teste ajuda a verificar a ideia. Uma
-          explicação torna o resultado útil para outras pessoas.
+          Parta de uma pergunta, experimente uma ideia e compartilhe o que
+          descobrir. Mostre também as tentativas, decisões e dúvidas enquanto
+          estuda ou constrói.
         </p>
       </div>
-      <div class="method">
-        <article>
-          <span class="step">
-            01 <span aria-hidden="true">↗</span>
-          </span>
-          <h3>Explorar.</h3>
-          <p>
-            Escolha uma pergunta e consulte a documentação. Anote o que você
-            espera observar e o que ainda precisa entender.
-          </p>
-        </article>
-        <article>
-          <span class="step">
-            02 <span aria-hidden="true">↗</span>
-          </span>
-          <h3>Experimentar.</h3>
-          <p>
-            Escreva um programa pequeno, varie as entradas e meça os resultados.
-            Use testes e depuração para conferir suas hipóteses.
-          </p>
-        </article>
-        <article>
-          <span class="step">
-            03 <span aria-hidden="true">↗</span>
-          </span>
-          <h3>Explicar.</h3>
-          <p>
-            Mostre o código, as condições do teste e o que aprendeu. Registre
-            também os limites do resultado e as perguntas que ficaram abertas.
-          </p>
-        </article>
-      </div>
     </section>
-    <div class="closing">
-      <p>
-        A próxima descoberta pode começar
-        <br />
-        com uma pergunta sua.
-      </p>
-      <a class="text-link" href="#o-clube">
-        Explore os conteúdos <span aria-hidden="true">↗</span>
-      </a>
-    </div>
+    <StartHere />
   </div>
 </BaseLayout>
 <script>
@@ -435,55 +424,48 @@ import StartHere from '../components/StartHere.astro';
   .strip-plus {
     font-size: 18px;
   }
-  .method {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
-    margin-top: 48px;
-  }
-  .method article {
-    border-top: 1px solid var(--color-border);
-    padding-top: 20px;
-    transition: border-color 160ms ease;
-  }
-  .method article:has(a):is(:hover, :focus-within) {
-    border-top-color: var(--color-accent);
-  }
-  .step {
-    display: flex;
-    justify-content: space-between;
-    color: var(--color-accent-text);
-    font: 11px var(--font-mono);
-    margin-bottom: 32px;
-  }
-  .step > span {
-    color: var(--color-muted);
-  }
-  .method h3 {
-    margin-bottom: 16px;
-  }
-  .method p {
+  .club-invitation {
+    max-width: 75ch;
+    margin-top: 32px;
     font-size: 14px;
   }
-  .activities .activity-note {
-    margin-top: 16px;
-    font-size: 12px;
+  .club-planning {
+    max-width: 75ch;
+    margin-top: 20px;
+    font-size: 14px;
   }
-  .activities .text-link {
-    margin-top: 12px;
+  .club-paths {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
   }
-  .closing {
-    padding-block: 40px 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
+  .club-paths article {
+    min-width: 0;
+    border-top: 1px solid var(--color-border);
+    padding-top: 20px;
   }
-  .closing p {
-    font-size: 24px;
-    line-height: 1.35;
-    color: var(--color-text);
-    letter-spacing: -0.035em;
+  .club-paths .channel-label {
+    font: 11px/1.6 var(--font-mono);
+    margin-bottom: 16px;
+  }
+  .club-paths h3 {
+    margin-bottom: 16px;
+  }
+  .club-paths p {
+    font-size: 14px;
+  }
+  .section-heading > div {
+    min-width: 0;
+    max-width: 580px;
+  }
+  .section-heading > p {
+    flex-shrink: 0;
+  }
+  .section > .actions {
+    gap: 12px 28px;
+  }
+  .learning .section-heading {
+    margin-bottom: 0;
   }
   @media (max-width: 1000px) {
     .hero {
@@ -509,6 +491,10 @@ import StartHere from '../components/StartHere.astro';
     }
   }
   @media (max-width: 700px) {
+    .club-paths {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+    }
     .hero {
       grid-template-columns: 1fr;
       padding-block: 48px;
@@ -561,22 +547,6 @@ import StartHere from '../components/StartHere.astro';
     }
     .strip-plus {
       display: none;
-    }
-    .method {
-      grid-template-columns: 1fr;
-      gap: 28px;
-      margin-top: 32px;
-    }
-    .step {
-      margin-bottom: 20px;
-    }
-    .closing {
-      align-items: start;
-      flex-direction: column;
-      padding-top: 0;
-    }
-    .closing p {
-      font-size: 22px;
     }
   }
 </style>

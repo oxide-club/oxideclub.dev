@@ -6,6 +6,7 @@ const routes = [
   '/notas',
   '/encontros',
   '/biblioteca',
+  '/como-participar/',
   '/desafios/001-wc',
   '/desafios/002-ppm',
   '/codigo-de-conduta',
@@ -142,9 +143,9 @@ test('keyboard navigation, disclosure, skip link and real destinations', async (
   await page.locator('summary').click();
   await page
     .getByRole('navigation', { name: 'Navegação móvel' })
-    .getByRole('link', { name: 'O clube', exact: true })
+    .getByRole('link', { name: 'Início', exact: true })
     .click();
-  await expect(page).toHaveURL(/\/#o-clube$/);
+  await expect(page).toHaveURL(/:\d+\/$/);
   await expect(page.locator('details')).not.toHaveAttribute('open');
 });
 test('forced colors and reduced motion preserve access', async ({ page }) => {
@@ -295,14 +296,14 @@ async function expectPublishedCatalogue(cards: Locator) {
     expect.arrayContaining(['/desafios/001-wc', '/desafios/002-ppm']),
   );
   expect(new Set(destinations).size).toBe(destinations.length);
-  expect(destinations).toEqual([...destinations].sort().reverse());
+  expect(destinations).toEqual([...destinations].sort());
   await expect(cards.filter({ visible: true })).toHaveCount(
     destinations.length,
   );
   return destinations;
 }
 
-test('challenge catalogue sorts descending and combines text and tags', async ({
+test('challenge catalogue sorts ascending and combines text and subjects', async ({
   page,
 }) => {
   await page.goto('/desafios');
@@ -318,7 +319,7 @@ test('challenge catalogue sorts descending and combines text and tags', async ({
     'href',
     '/desafios/001-wc',
   );
-  await page.getByLabel('Tag', { exact: true }).selectOption('Streams');
+  await page.getByLabel('Assunto', { exact: true }).selectOption('Streams');
   await expect(cards).toHaveCount(1);
   await query.fill('002-ppm');
   await expect(cards).toHaveCount(0);
@@ -330,10 +331,10 @@ test('challenge catalogue sorts descending and combines text and tags', async ({
   await expect(cards).toHaveCount(destinations.length);
   expect(await expectPublishedCatalogue(cards)).toEqual(destinations);
   await expect(query).toHaveValue('');
-  await expect(page.getByLabel('Tag', { exact: true })).toHaveValue('');
+  await expect(page.getByLabel('Assunto', { exact: true })).toHaveValue('');
   await query.focus();
   await page.keyboard.press('Tab');
-  await expect(page.getByLabel('Tag', { exact: true })).toBeFocused();
+  await expect(page.getByLabel('Assunto', { exact: true })).toBeFocused();
 });
 
 test('challenge catalogue remains available without JavaScript', async ({

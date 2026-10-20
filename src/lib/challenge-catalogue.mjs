@@ -1,6 +1,6 @@
 /** @template {{ id: string }} T @param {T[]} entries @returns {T[]} */
-export function descendingChallenges(entries) {
-  return [...entries].sort((a, b) => b.id.localeCompare(a.id));
+export function ascendingChallenges(entries) {
+  return [...entries].sort((a, b) => a.id.localeCompare(b.id));
 }
 
 /** @param {string} value */

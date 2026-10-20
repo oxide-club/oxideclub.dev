@@ -7,6 +7,7 @@ const routes = [
   '/notas',
   '/encontros',
   '/biblioteca',
+  '/como-participar/',
   '/desafios/001-wc',
   '/desafios/002-ppm',
   '/codigo-de-conduta',
@@ -75,9 +76,16 @@ for (const route of routes) {
             !e.classList.contains('skip')
           );
         });
-        // Text links within prose qualify for the inline exception; all standalone controls must be 24×24.
+        // Links within continuous prose qualify for the inline exception;
+        // standalone links and controls must still be 24×24.
         const undersized = targets
-          .filter((e) => !e.closest('.prose p, .prose li'))
+          .filter((e) => {
+            const paragraph = e.closest('p');
+            const inlineInParagraph =
+              paragraph &&
+              paragraph.textContent?.trim() !== e.textContent?.trim();
+            return !e.closest('.prose p, .prose li') && !inlineInParagraph;
+          })
           .filter((e) => {
             const r = e.getBoundingClientRect();
             return r.width < 24 || r.height < 24;

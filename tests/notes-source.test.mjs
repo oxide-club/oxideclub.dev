@@ -72,6 +72,39 @@ test('empty documented notes repository syncs and exports its snapshot', async (
   );
 });
 
+test('notes sync accepts repository automation without treating it as an article', async (t) => {
+  const f = await fixture(t);
+  await mkdir(join(f.repository, 'scripts/discord'), { recursive: true });
+  await writeFile(
+    join(f.repository, 'scripts/discord/contributions.mjs'),
+    '// Repository automation, not a note.\n',
+  );
+  await mkdir(join(f.repository, 'tests'));
+  await writeFile(
+    join(f.repository, 'tests/discord.test.mjs'),
+    '// Automation tests.\n',
+  );
+  await mkdir(join(f.repository, 'streams'));
+  await writeFile(join(f.repository, 'streams/index.md'), '# Streams');
+  const revision = f.commit();
+  assert.equal(await syncNotes(f), revision);
+  assert.equal(
+    await readFile(join(f.root, '.content/notes/streams/index.md'), 'utf8'),
+    '# Streams',
+  );
+});
+
+test('notes sync still rejects article directories without index.md', async (t) => {
+  const f = await fixture(t);
+  await mkdir(join(f.repository, 'unfinished-note'));
+  await writeFile(
+    join(f.repository, 'unfinished-note/README.md'),
+    '# Unfinished',
+  );
+  f.commit();
+  await assert.rejects(syncNotes(f), /unfinished-note\/index\.md/);
+});
+
 test('selected notes snapshot is reused even when remote is unavailable', async (t) => {
   const f = await fixture(t);
   await syncNotes(f);

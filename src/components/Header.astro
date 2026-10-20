@@ -1,6 +1,12 @@
 ---
 import JoinLink from './JoinLink.astro';
 const pathname = Astro.url.pathname;
+const navigation = [
+  { label: 'Início', href: '/' },
+  { label: 'Desafios', href: '/desafios' },
+  { label: 'Biblioteca', href: '/biblioteca' },
+  { label: 'Como participar', href: '/como-participar/' },
+];
 ---
 
 <header class="container header">
@@ -9,32 +15,22 @@ const pathname = Astro.url.pathname;
     <span class="brand-name">Oxide Club</span>
   </a>
   <nav aria-label="Navegação principal" class="desktop-nav">
-    <a href="/#o-clube">O clube</a>
-    <a
-      href="/encontros/"
-      aria-current={pathname.startsWith('/encontros') ? 'page' : undefined}
-    >
-      Encontros
-    </a>
-    <a
-      href="/desafios"
-      aria-current={pathname.startsWith('/desafios') ? 'page' : undefined}
-    >
-      Desafios
-    </a>
-    <a
-      href="/notas"
-      aria-current={pathname.startsWith('/notas') ? 'page' : undefined}
-    >
-      Notas
-    </a>
-    <a
-      href="/biblioteca"
-      aria-current={pathname.startsWith('/biblioteca') ? 'page' : undefined}
-    >
-      Biblioteca
-    </a>
-    <a href="/#como-participar">Como participar</a>
+    {navigation.map(({ label, href }) => (
+      <a
+        href={href}
+        aria-current={
+          (
+            href === '/'
+              ? pathname === '/'
+              : pathname.startsWith(href.replace(/\/$/, ''))
+          )
+            ? 'page'
+            : undefined
+        }
+      >
+        {label}
+      </a>
+    ))}
   </nav>
   <div class="header-join">
     <JoinLink />
@@ -44,27 +40,22 @@ const pathname = Astro.url.pathname;
       Menu <span aria-hidden="true">＋</span>
     </summary>
     <nav aria-label="Navegação móvel">
-      <a href="/#o-clube">O clube</a>
-      <a
-        href="/encontros/"
-        aria-current={pathname.startsWith('/encontros') ? 'page' : undefined}
-      >
-        Encontros
-      </a>
-      <a href="/desafios">Desafios</a>
-      <a
-        href="/notas"
-        aria-current={pathname.startsWith('/notas') ? 'page' : undefined}
-      >
-        Notas
-      </a>
-      <a
-        href="/biblioteca"
-        aria-current={pathname.startsWith('/biblioteca') ? 'page' : undefined}
-      >
-        Biblioteca
-      </a>
-      <a href="/#como-participar">Como participar</a>
+      {navigation.map(({ label, href }) => (
+        <a
+          href={href}
+          aria-current={
+            (
+              href === '/'
+                ? pathname === '/'
+                : pathname.startsWith(href.replace(/\/$/, ''))
+            )
+              ? 'page'
+              : undefined
+          }
+        >
+          {label}
+        </a>
+      ))}
       <JoinLink />
     </nav>
   </details>

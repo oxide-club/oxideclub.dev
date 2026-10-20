@@ -2,7 +2,12 @@ import { z } from 'astro/zod';
 import { resolve, isAbsolute } from 'node:path';
 
 export const noteIdentifier = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-export const reservedNoteDirectories = new Set(['templates', 'docs']);
+export const reservedNoteDirectories = new Set([
+  'templates',
+  'docs',
+  'scripts',
+  'tests',
+]);
 
 export function notesDirectory() {
   if (process.env.NOTES_SOURCE && !isAbsolute(process.env.NOTES_SOURCE))

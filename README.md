@@ -144,7 +144,7 @@ A sobrescrita é permitida apenas localmente, sendo proibida na CI e em produç�
 
 [oxide-club/notes](https://github.com/oxide-club/notes) é a fonte canônica das notas. Seu README, guia de contribuição, licença CC BY 4.0 e modelo de rascunho descrevem o processo editorial. As notas podem tratar de Ciência da Computação em geral, sem precisar estar relacionadas a um desafio.
 
-Cada nota fica em `<id-da-nota>/index.md`; o diretório em kebab-case minúsculo define `/notas/<id-da-nota>/`. Não adicione `slug`. Arquivos de documentação e os diretórios `docs/` e `templates/` ficam fora da coleção. O schema exige `title` e `summary` não vazios, além de `publishedAt` para notas publicadas. `draft` tem valor padrão `false`; `updatedAt`, `topics`, `authors` e `featured` são opcionais. Quando presente, `authors` precisa ser uma lista não vazia. Rascunhos nunca recebem páginas públicas nem rotas de anexos.
+Cada nota fica em `<id-da-nota>/index.md`; o diretório em kebab-case minúsculo define `/notas/<id-da-nota>/`. Não adicione `slug`. Arquivos de documentação e os diretórios `docs/`, `templates/`, `scripts/` e `tests/` ficam fora da coleção. O schema exige `title` e `summary` não vazios, além de `publishedAt` para notas publicadas. `draft` tem valor padrão `false`; `updatedAt`, `topics`, `authors` e `featured` são opcionais. Quando presente, `authors` precisa ser uma lista não vazia. Rascunhos nunca recebem páginas públicas nem rotas de anexos.
 
 Para escrever e visualizar uma nota antes de enviá-la:
 

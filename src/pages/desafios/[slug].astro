@@ -40,6 +40,17 @@ const { data } = challenge;
         <span class="accent">_</span>
       </h1>
       <p>{data.summary}</p>
+      <div class="actions participation-actions">
+        <JoinLink
+          href={data.discordThreadUrl}
+          label="Conversar sobre a solução no Discord"
+        />
+        {data.eventUrl && (
+          <a class="text-link" href={data.eventUrl}>
+            Ver evento no Discord <span aria-hidden="true">↗</span>
+          </a>
+        )}
+      </div>
       <p class="categories">
         Categorias:{' '}
         {data.categories
@@ -64,7 +75,10 @@ const { data } = challenge;
       <article class="prose">
         <Content />
         <ChallengeResources challengeId={challenge.id} github={data.github} />
-        <CommunityImplementations implementations={implementations} />
+        <CommunityImplementations
+          implementations={implementations}
+          discordThreadUrl={data.discordThreadUrl}
+        />
       </article>
       <aside>
         <nav aria-label="Nesta especificação">
@@ -75,26 +89,6 @@ const { data } = challenge;
               <a href={`#${heading.slug}`}>{heading.text}</a>
             ))}
         </nav>
-        <div class="discussion">
-          <h2>Leve a investigação adiante.</h2>
-          <p>
-            Compartilhe perguntas, código, medições ou observações e explique o
-            que descobriu. Discuta abordagens, limites dos testes e questões em
-            aberto com a comunidade.
-          </p>
-          {data.discordThreadUrl ? (
-            <a class="button" href={data.discordThreadUrl}>
-              Discutir este desafio ↗
-            </a>
-          ) : (
-            <JoinLink label="Conversar no Discord" />
-          )}
-          {data.eventUrl && (
-            <a class="text-link" href={data.eventUrl}>
-              Ver evento no Discord ↗
-            </a>
-          )}
-        </div>
       </aside>
     </div>
   </div>
@@ -106,6 +100,10 @@ const { data } = challenge;
   .page-intro > .categories {
     font-size: 13px;
     margin-top: 20px;
+  }
+  .participation-actions {
+    margin-top: 24px;
+    align-items: center;
   }
   .metadata {
     display: flex;
@@ -144,25 +142,6 @@ const { data } = challenge;
     text-decoration: underline;
     color: var(--color-text);
   }
-  .discussion {
-    margin-top: 32px;
-    padding: 24px;
-    background: var(--color-surface);
-    border-radius: 8px;
-  }
-  .discussion h2 {
-    font-size: 22px;
-    margin-bottom: 16px;
-  }
-  .discussion p {
-    font-size: 12px;
-    margin-bottom: 24px;
-  }
-  .discussion :global(.button) {
-    font-size: 12px;
-    padding: 12px;
-    gap: 10px;
-  }
   @media (max-width: 800px) {
     .article-layout {
       grid-template-columns: minmax(0, 1fr);
@@ -173,9 +152,6 @@ const { data } = challenge;
     }
     aside nav {
       display: none;
-    }
-    .discussion {
-      margin-top: 0;
     }
     .metadata {
       font-size: 11px;

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  descendingChallenges,
+  ascendingChallenges,
   matchesChallenge,
 } from '../src/lib/challenge-catalogue.mjs';
 
@@ -36,10 +36,10 @@ const entries = [
     },
   },
 ];
-test('catalogue orders canonical numbers descending without mutating input', () => {
+test('catalogue orders canonical numbers ascending without mutating input', () => {
   assert.deepEqual(
-    descendingChallenges(entries).map((e) => e.id),
-    ['010-shell', '002-ppm', '001-wc'],
+    ascendingChallenges(entries).map((e) => e.id),
+    ['001-wc', '002-ppm', '010-shell'],
   );
   assert.equal(entries[0].id, '001-wc');
 });

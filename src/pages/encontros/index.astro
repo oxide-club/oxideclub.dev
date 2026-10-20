@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import JoinLink from '../../components/JoinLink.astro';
 import { publishedMeetings } from '../../lib/meetings';
 import { meetingWhen, formatLabels } from '../../lib/meeting-source.mjs';
 const meetings = await publishedMeetings();
@@ -83,9 +84,13 @@ const meetings = await publishedMeetings();
         <div class="empty-meetings">
           <h3>Ainda não há encontros publicados.</h3>
           <p>
-            Este espaço reunirá a agenda, as pautas e os registros técnicos dos
-            encontros do clube.
+            Estamos organizando os primeiros encontros. Acompanhe as conversas
+            no Discord e compartilhe os assuntos que você gostaria de explorar
+            com a comunidade.
           </p>
+          <div class="actions">
+            <JoinLink label="Acompanhar a organização no Discord" />
+          </div>
         </div>
       )}
     </section>
@@ -117,6 +122,9 @@ const meetings = await publishedMeetings();
   .calendar-address {
     color: var(--color-accent-text);
     overflow-wrap: anywhere;
+  }
+  .empty-meetings .actions {
+    margin-top: 24px;
   }
   .agenda {
     border-top: 1px solid var(--color-border);
