@@ -49,7 +49,7 @@ Tipos JSON: `Entry={type:'challenge'|'note',id,title,summary,url}`;
 Chaves: `pr:<numero>` nas contribuições e `<type>:<id>` nos anúncios.
 Cada SHA de revisão deve ter 40 dígitos hexadecimais em produção.
 
-### Tarefa 1: Transporte e estado persistente
+### Task 1: Transporte e estado persistente
 
 **Interfaces:** `createClient({fetch,sleep,token,webhookUrl})` retorna
 `github(path,options)`, `paginate(path)` e `send(payload): Promise<{id:string}>`.
@@ -63,7 +63,7 @@ inicialização da branch e atualização condicional, preservando registros exi
 - [ ] Implementar módulos usando `fetch` com timeout, erros sanitizados e REST GitHub. Criar branch de estado sem checkout; Contents API usa SHA do arquivo como condição de gravação. Em conflito, reler e reaplicar somente a mutação de estado; nunca repetir o webhook dentro da mutação.
 - [ ] Reexecutar os testes e confirmar sucesso; criar commit com módulos e testes.
 
-### Tarefa 2: Propostas nos dois repositórios
+### Task 2: Propostas nos dois repositórios
 
 **Interfaces:** `selectProposals(files,kind): string[]` seleciona IDs adicionados.
 `notifyContribution({client,repository,pullRequest}): Promise<void>` consulta o
@@ -78,7 +78,7 @@ O ponto de entrada CLI lê `GITHUB_EVENT_PATH`, `GITHUB_REPOSITORY`, `GH_TOKEN` 
 - [ ] Serializar por PR com `cancel-in-progress: false`; permitir PRs distintos simultâneos com gravação condicional do estado. Validar presença do webhook somente após detectar proposta elegível.
 - [ ] Copiar os módulos para os repositórios de conteúdo; testar igualdade das cópias e configuração dos workflows. Criar commits separados por repositório.
 
-### Tarefa 3: Manifesto do conteúdo publicado
+### Task 3: Manifesto do conteúdo publicado
 
 **Interfaces:** `createManifest({challenges,notes,revisions}): Manifest` recebe
 as coleções já filtradas por `publishedChallenges()`/`publishedNotes()`.
@@ -91,7 +91,7 @@ O endpoint estático retorna esse JSON; o resultado local é
 - [ ] Acrescentar à integração existente de notas a verificação de que o manifesto e as rotas contêm os mesmos IDs publicados.
 - [ ] Verificar que `npm run deploy` gera e implanta o mesmo `dist` cujo manifesto será consumido. Não usar o build de preview anterior como fonte do anúncio. Criar commit.
 
-### Tarefa 4: Anúncios, baseline e integração do deploy
+### Task 4: Anúncios, baseline e integração do deploy
 
 **Interfaces:** `announce({client,repository,manifest,fetchPublished,renames}): Promise<void>`
 e `initialize({client,repository,manifest}): Promise<void>`; ambos injetáveis para testes.
@@ -108,7 +108,7 @@ CLI suporta `initialize`, `announce` e `record --key ... --message-id ... --url 
 - [ ] Criar workflow manual de inicialização/retomada: selecionar execução de produção bem-sucedida, baixar seu manifesto e confirmar correspondência com produção. Compartilhar grupo `production`; não refazer deploy para retomar anúncio. Validar execução, workflow, branch e conclusão usando API GitHub.
 - [ ] Testar configuração: falha/skip no deploy impede job, permissões de escrita restritas ao notificador, secrets com nomes exatos e ramo `discord-state` fora dos gatilhos de produção. Criar commit.
 
-### Tarefa 5: Operação e verificação final
+### Task 5: Operação e verificação final
 
 - [ ] Documentar configuração dos Actions Secrets, políticas de forks/`pull_request_target`, permissões da branch de estado e ordem de ativação: implantar manifesto, inicializar baseline, habilitar webhook e notificações.
 - [ ] Documentar exemplos em português e retomada após 429, indisponibilidade, falha de gravação ou resposta ambígua. Para confirmação perdida, conferir manualmente a mensagem no Discord e registrar seu ID antes de repetir. Não apresentar garantia de entrega exatamente uma vez.
