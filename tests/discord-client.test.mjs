@@ -1,9 +1,78 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createClient } from '../scripts/discord/client.mjs';
+import { findRenames } from '../scripts/discord/announcements.mjs';
 const webhookUrl = 'https://discord.com/api/webhooks/123/token-secret';
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), { status });
+test('rename discovery accepts SHA comparisons through the real GitHub client', async () => {
+  const calls = [];
+  const client = createClient({
+    token: 'github-secret',
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      return json({
+        status: 'ahead',
+        files: [
+          {
+            status: 'renamed',
+            previous_filename: '001-old/index.md',
+            filename: '002-new/index.md',
+          },
+        ],
+      });
+    },
+  });
+  for (const repository of ['oxide-club/challenges', 'oxide-club/notes']) {
+    assert.deepEqual(
+      await findRenames({
+        repository,
+        before: 'a'.repeat(40),
+        after: 'b'.repeat(40),
+        github: client.github,
+      }),
+      [
+        {
+          type: repository.endsWith('notes') ? 'note' : 'challenge',
+          from: '001-old',
+          to: '002-new',
+        },
+      ],
+    );
+  }
+  assert.equal(calls.length, 2);
+  for (const [index, repository] of ['challenges', 'notes'].entries()) {
+    assert.equal(
+      calls[index].url,
+      `https://api.github.com/repos/oxide-club/${repository}/compare/${'a'.repeat(40)}...${'b'.repeat(40)}?per_page=100&page=1`,
+    );
+    assert.equal(
+      calls[index].options.headers.Authorization,
+      'Bearer github-secret',
+    );
+    assert.equal(calls[index].options.redirect, 'error');
+  }
+});
+test('comparison support still rejects unsafe GitHub paths before requesting', async () => {
+  let requests = 0;
+  const client = createClient({
+    fetch: async () => {
+      requests++;
+      return json({});
+    },
+  });
+  for (const path of [
+    '/repos/oxide-club/notes/../secrets',
+    '/repos/oxide-club/notes/compare/../../secrets',
+    `/repos/oxide-club/notes/compare/${'a'.repeat(40)}...${'b'.repeat(40)}/../secrets`,
+    `/repos/other/notes/compare/${'a'.repeat(40)}...${'b'.repeat(40)}`,
+    '/repos/oxide-club/notes/contents/..hidden',
+    '/repos/oxide-club/notes/contents/\\secrets',
+    '/repos/oxide-club/notes/contents/secret\n',
+  ])
+    await assert.rejects(client.github(path), /Invalid GitHub path/);
+  assert.equal(requests, 0);
+});
 test('webhook confirmation, credentials isolation and disabled mentions', async () => {
   let request;
   const client = createClient({

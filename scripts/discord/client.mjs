@@ -41,9 +41,14 @@ export function createClient({
     }
   }
   async function github(path, { method = 'GET', body } = {}) {
+    // GitHub separates comparison SHAs with three dots; only this route may contain them.
+    const isCommitComparison =
+      /^\/repos\/oxide-club\/[a-z0-9-]+(?:\.[a-z0-9-]+)*\/compare\/[a-f0-9]{40}\.\.\.[a-f0-9]{40}(?:\?per_page=\d+&page=\d+)?$/.test(
+        path,
+      );
     if (
       !/^\/repos\/oxide-club\/[a-z0-9.-]+\//.test(path) ||
-      path.includes('..') ||
+      (path.includes('..') && !isCommitComparison) ||
       path.includes('\\') ||
       /[\r\n]/.test(path)
     )
