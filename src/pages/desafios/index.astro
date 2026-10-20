@@ -2,7 +2,12 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ChallengeCard from '../../components/ChallengeCard.astro';
 import { publishedChallenges } from '../../lib/challenges';
-const challenges = await publishedChallenges();
+import { descendingChallenges } from '../../lib/challenge-catalogue.mjs';
+import { categoryLabels } from '../../lib/challenge-taxonomy.mjs';
+const challenges = descendingChallenges(await publishedChallenges());
+const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
+  (a, b) => a.localeCompare(b, 'pt-BR'),
+);
 ---
 
 <BaseLayout
@@ -25,9 +30,59 @@ const challenges = await publishedChallenges();
         Discord.
       </p>
     </header>
+    <form
+      class="catalogue-filters"
+      role="search"
+      aria-label="Buscar desafios"
+      hidden
+    >
+      <div class="filter-field">
+        <label for="challenge-query">Buscar desafios</label>
+        <input
+          id="challenge-query"
+          type="search"
+          placeholder="Título, assunto ou linguagem"
+          autocomplete="off"
+        />
+      </div>
+      <div class="filter-field">
+        <label for="challenge-topic">Tag</label>
+        <select id="challenge-topic">
+          <option value="">Todas as tags</option>
+          {topics.map((topic) => (
+            <option value={topic}>{topic}</option>
+          ))}
+        </select>
+      </div>
+      <button type="reset">Limpar filtros</button>
+      <p
+        class="search-status"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      ></p>
+    </form>
+    <p class="empty-results" hidden>
+      Nenhum desafio encontrado. Tente outro termo ou remova os filtros.
+    </p>
     <section class="catalogue" aria-label="Desafios publicados">
       {challenges.map((challenge) => (
-        <ChallengeCard challenge={challenge} headingLevel="h2" />
+        <div
+          data-challenge
+          data-topics={JSON.stringify(challenge.data.topics)}
+          data-search={[
+            challenge.id,
+            challenge.data.title,
+            challenge.data.summary,
+            ...challenge.data.topics,
+            ...challenge.data.categories.map(
+              (category) => categoryLabels[category],
+            ),
+            challenge.data.recommendedLanguage ?? '',
+          ].join(' ')}
+        >
+          <ChallengeCard challenge={challenge} headingLevel="h2" />
+        </div>
       ))}
     </section>
     <div class="catalogue-note">
@@ -45,7 +100,104 @@ const challenges = await publishedChallenges();
     </div>
   </div>
 </BaseLayout>
+<script>
+  import { matchesChallenge } from '../../lib/challenge-catalogue.mjs';
+  const form = document.querySelector<HTMLFormElement>('.catalogue-filters')!;
+  const query = form.querySelector<HTMLInputElement>('#challenge-query')!;
+  const topic = form.querySelector<HTMLSelectElement>('#challenge-topic')!;
+  const status = form.querySelector<HTMLElement>('.search-status')!;
+  const empty = document.querySelector<HTMLElement>('.empty-results')!;
+  const entries = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-challenge]'),
+  ).map((element) => ({
+    element,
+    text: element.dataset.search ?? '',
+    topics: JSON.parse(element.dataset.topics ?? '[]') as string[],
+  }));
+  function update() {
+    let count = 0;
+    for (const entry of entries) {
+      const matches = matchesChallenge(
+        entry.text,
+        entry.topics,
+        query.value,
+        topic.value,
+      );
+      entry.element.hidden = !matches;
+      if (matches) count++;
+    }
+    empty.hidden = count > 0;
+    status.textContent = `${count} ${count === 1 ? 'desafio encontrado' : 'desafios encontrados'}`;
+  }
+  form.addEventListener('submit', (event) => event.preventDefault());
+  query.addEventListener('input', update);
+  topic.addEventListener('change', update);
+  form.addEventListener('reset', () => {
+    query.value = '';
+    topic.value = '';
+    update();
+  });
+  form.hidden = false;
+  update();
+</script>
 <style>
+  .catalogue-filters {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  .filter-field {
+    flex: 1 1 240px;
+    min-width: 0;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  input,
+  select,
+  button {
+    min-height: 44px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    padding: 10px 12px;
+  }
+  input,
+  select {
+    width: 100%;
+  }
+  input::placeholder {
+    color: var(--color-muted);
+  }
+  input:focus-visible,
+  select:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 4px;
+  }
+  button {
+    cursor: pointer;
+    font-size: 14px;
+  }
+  button:hover {
+    border-color: var(--color-accent-text);
+  }
+  .search-status {
+    flex-basis: 100%;
+    font-size: 13px;
+  }
+  .empty-results {
+    margin-bottom: 24px;
+  }
+
   .catalogue {
     padding-bottom: 48px;
     display: grid;

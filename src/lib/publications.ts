@@ -23,10 +23,10 @@ export async function publishedContent(): Promise<Publication[]> {
       kind: 'Desafio',
       featured: data.featured,
     })),
-    ...notes.map(({ data }) => ({
+    ...notes.map(({ id, data }) => ({
       title: data.title,
       summary: data.summary,
-      href: `/notas/${data.slug}`,
+      href: `/notas/${id}`,
       kind: 'Nota técnica',
       featured: data.featured,
     })),

@@ -1,0 +1,109 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { challengeResources } from '../lib/challenge-resources.mjs';
+interface Props {
+  challengeId: CollectionEntry<'challenges'>['id'];
+  github?: CollectionEntry<'challenges'>['data']['github'];
+}
+const { challengeId, github } = Astro.props;
+const resources = challengeResources(challengeId, github);
+const visible =
+  resources.challenge || resources.solutions.length || resources.community;
+---
+
+{visible && (
+  <section
+    class="challenge-resources"
+    aria-labelledby="challenge-resources-heading"
+  >
+    <h2 id="challenge-resources-heading">Recursos e implementações</h2>
+    <p>
+      Explore o código, consulte implementações de referência ou descubra como
+      outros participantes resolveram o desafio.
+    </p>
+    {resources.challenge && (
+      <div class="resource-row">
+        <h3>
+          <a href={resources.challenge}>
+            Enunciado e testes <span aria-hidden="true">↗</span>
+          </a>
+        </h3>
+        <p>Acesse os arquivos do desafio no GitHub.</p>
+      </div>
+    )}
+    {resources.solutions.length > 0 && (
+      <div class="resource-row">
+        <h3>Implementações de referência</h3>
+        <p>
+          Explore diferentes implementações e compare suas decisões técnicas.
+        </p>
+        <ul class="languages" aria-label="Implementações por linguagem">
+          {resources.solutions.map(({ language, label, url }) => (
+            <li>
+              <a
+                href={url}
+                aria-label={`Implementação em ${label}`}
+                data-language={language}
+              >
+                {label} <span aria-hidden="true">↗</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+    {resources.community && (
+      <div class="resource-row">
+        <h3>
+          <a href={resources.community}>
+            Soluções da comunidade <span aria-hidden="true">↗</span>
+          </a>
+        </h3>
+        <p>Compare implementações compartilhadas pelos membros.</p>
+      </div>
+    )}
+  </section>
+)}
+<style>
+  .challenge-resources {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+  }
+  .challenge-resources h2 {
+    margin: 0 0 12px;
+    font-size: 24px;
+  }
+  .challenge-resources p {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  .resource-row {
+    padding-block: 18px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .resource-row h3 {
+    font-size: 16px;
+    letter-spacing: normal;
+    margin: 0;
+  }
+  .resource-row a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+  }
+  .languages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0;
+    font: 13px var(--font-mono);
+  }
+  .languages li {
+    margin: 0;
+  }
+</style>

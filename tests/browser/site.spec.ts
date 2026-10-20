@@ -9,23 +9,71 @@ const routes = [
   '/codigo-de-conduta',
   '/404',
 ];
-test('numbered challenges expose an optional reference implementation for study', async ({
+test('ppm resources use its own canonical directory and community section', async ({
   page,
 }) => {
-  for (const id of ['001-wc', '002-ppm']) {
-    const response = await page.goto(`/desafios/${id}`);
-    expect(response?.ok()).toBe(true);
-    const note = page.locator('.reference-note');
-    await expect(note).toHaveText(
-      'Uma possível solução comentada está disponível para estudo. Recomendamos tentar o desafio antes de consultá-la, mas você pode usá-la quando achar apropriado.',
-    );
-    await expect(note.getByRole('link')).toHaveAttribute(
-      'href',
-      `https://github.com/oxide-club/solutions/tree/main/${id}/c`,
-    );
-    await expect(page.locator('article > :last-child')).toHaveClass(
-      'reference-note',
-    );
+  const response = await page.goto('/desafios/002-ppm/');
+  expect(response?.ok()).toBe(true);
+  const resources = page.getByRole('region', {
+    name: 'Recursos e implementações',
+  });
+  await expect(resources.getByRole('link')).toHaveCount(3);
+  await expect(
+    resources.getByRole('link', { name: 'Enunciado e testes' }),
+  ).toHaveAttribute(
+    'href',
+    'https://github.com/oxide-club/challenges/tree/main/002-ppm',
+  );
+  await expect(
+    resources.getByRole('link', { name: 'Implementação em C', exact: true }),
+  ).toHaveAttribute(
+    'href',
+    'https://github.com/oxide-club/solutions/tree/main/002-ppm/c',
+  );
+  await expect(
+    resources.getByRole('link', { name: 'Soluções da comunidade' }),
+  ).toHaveAttribute(
+    'href',
+    'https://github.com/oxide-club/solutions/blob/main/COMMUNITY.md#002-ppm',
+  );
+});
+test('wc resources expose only verified destinations and support keyboard focus', async ({
+  page,
+}) => {
+  await page.goto('/desafios/001-wc/');
+  const section = page.getByRole('region', {
+    name: 'Recursos e implementações',
+  });
+  await expect(section.getByRole('link')).toHaveCount(3);
+  await expect(
+    section.getByRole('link', { name: 'Enunciado e testes' }),
+  ).toHaveAttribute(
+    'href',
+    'https://github.com/oxide-club/challenges/tree/main/001-wc',
+  );
+  const implementation = section.getByRole('link', {
+    name: 'Implementação em C',
+    exact: true,
+  });
+  await expect(implementation).toHaveAttribute(
+    'href',
+    'https://github.com/oxide-club/solutions/tree/main/001-wc/c',
+  );
+  await expect(
+    section.getByRole('link', { name: 'Soluções da comunidade' }),
+  ).toHaveAttribute(
+    'href',
+    'https://github.com/oxide-club/solutions/blob/main/COMMUNITY.md#001-wc',
+  );
+  await section.getByRole('link').first().focus();
+  await page.keyboard.press('Tab');
+  await expect(implementation).toBeFocused();
+  expect(
+    await implementation.evaluate((el) => getComputedStyle(el).outlineStyle),
+  ).toBe('solid');
+  for (const width of [375, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await section.screenshot({ path: `test-results/resources-${width}.png` });
   }
 });
 for (const route of routes) {
@@ -221,5 +269,59 @@ test('keyboard focus remains visible on every page', async ({ page }) => {
       }
       expect(visited.size).toBeGreaterThan(4);
     }
+  }
+});
+
+test('challenge catalogue sorts descending and combines text and tags', async ({
+  page,
+}) => {
+  await page.goto('/desafios');
+  const cards = page.locator('[data-challenge]:visible');
+  await expect(cards).toHaveCount(2);
+  await expect(
+    cards.first().getByRole('heading').getByRole('link'),
+  ).toHaveAttribute('href', '/desafios/002-ppm');
+  const query = page.getByRole('searchbox', { name: 'Buscar desafios' });
+  await query.fill('WC SAIDA');
+  await expect(cards).toHaveCount(1);
+  await expect(cards.first()).toContainText('wc');
+  await page.getByLabel('Tag', { exact: true }).selectOption('Streams');
+  await expect(cards).toHaveCount(1);
+  await query.fill('ppm');
+  await expect(cards).toHaveCount(0);
+  await expect(
+    page.getByText('Nenhum desafio encontrado.', { exact: false }),
+  ).toBeVisible();
+  await expect(page.getByRole('status')).toHaveText('0 desafios encontrados');
+  await page.getByRole('button', { name: 'Limpar filtros' }).click();
+  await expect(cards).toHaveCount(2);
+  await expect(query).toHaveValue('');
+  await query.focus();
+  await page.keyboard.press('Tab');
+  await expect(page.getByLabel('Tag', { exact: true })).toBeFocused();
+});
+
+test('challenge catalogue remains available without JavaScript', async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({
+    javaScriptEnabled: false,
+    baseURL,
+  });
+  try {
+    const page = await context.newPage();
+    await page.goto('/desafios');
+    await expect(page.locator('[data-challenge]')).toHaveCount(2);
+    await expect(page.getByRole('search')).toBeHidden();
+    await expect(
+      page
+        .locator('[data-challenge]')
+        .first()
+        .getByRole('heading')
+        .getByRole('link'),
+    ).toHaveAttribute('href', '/desafios/002-ppm');
+  } finally {
+    await context.close();
   }
 });

@@ -1,15 +1,16 @@
 ---
-import { render, type CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import { githubUrl } from '../../config/github.mjs';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { publishedNotes, noteDate } from '../../lib/notes';
 export async function getStaticPaths() {
   return (await publishedNotes()).map((note) => ({
-    params: { slug: note.data.slug },
+    params: { slug: note.id },
     props: { note },
   }));
 }
 interface Props {
-  note: CollectionEntry<'notes'>;
+  note: Awaited<ReturnType<typeof publishedNotes>>[number];
 }
 const { note } = Astro.props;
 const { data } = note;
@@ -61,6 +62,19 @@ const sections = headings.filter(({ depth }) => depth === 2);
         <Content />
       </div>
       <footer class="note-footer">
+        <a
+          class="text-link"
+          href={githubUrl('notes', `${note.id}/index.md`, 'blob')}
+        >
+          Ver no GitHub <span aria-hidden="true">↗</span>
+        </a>
+        <p>
+          Texto disponível sob{' '}
+          <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>,
+          salvo indicação em contrário. Preserve a atribuição aos autores.
+          Código e materiais de terceiros podem ter licenças próprias, indicadas
+          na fonte.
+        </p>
         <a class="text-link" href="/notas">
           ← Voltar ao caderno
         </a>

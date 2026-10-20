@@ -1,12 +1,20 @@
 import { getCollection } from 'astro:content';
-import { selectPublished } from './content.mjs';
 
 export async function publishedNotes() {
-  return selectPublished(await getCollection('notes')).sort(
-    (a, b) =>
-      b.data.publishedAt.getTime() - a.data.publishedAt.getTime() ||
-      a.data.slug.localeCompare(b.data.slug),
-  );
+  return (await getCollection('notes'))
+    .flatMap((note) => {
+      if (note.data.draft) return [];
+      if (!note.data.publishedAt)
+        throw new Error(`Missing publication date: ${note.id}`);
+      return [
+        { ...note, data: { ...note.data, publishedAt: note.data.publishedAt } },
+      ];
+    })
+    .sort(
+      (a, b) =>
+        b.data.publishedAt.getTime() - a.data.publishedAt.getTime() ||
+        a.id.localeCompare(b.id),
+    );
 }
 
 export function noteDate(date: Date) {

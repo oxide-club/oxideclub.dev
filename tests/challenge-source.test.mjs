@@ -146,30 +146,3 @@ test('content IDs come from numbered directories and must match slugs', () => {
     /slug/i,
   );
 });
-
-test('reference links are optional and select a maintained language implementation', () => {
-  const entry = '001-wc/index.md';
-  for (const language of ['c', 'rust']) {
-    assert.equal(
-      challengeId({
-        entry,
-        data: {
-          slug: '001-wc',
-          referenceUrl: `https://github.com/oxide-club/solutions/tree/main/001-wc/${language}`,
-        },
-      }),
-      '001-wc',
-    );
-  }
-  for (const referenceUrl of [
-    'javascript:alert(1)',
-    'https://github.com/oxide-club/solutions/tree/main/002-ppm/c',
-    'https://example.com/001-wc/c',
-    'https://github.com/oxide-club/solutions/tree/main/001-wc/c?extra=1',
-  ]) {
-    assert.throws(
-      () => challengeId({ entry, data: { slug: '001-wc', referenceUrl } }),
-      /Reference URL/,
-    );
-  }
-});

@@ -6,7 +6,7 @@ Built with Astro, TypeScript, Markdown content collections and plain CSS. Pages 
 
 ## Local development
 
-Use Node.js 24, matching CI, and Git. Development, checks and builds fetch the latest public challenge definitions before starting.
+Use Node.js 24, matching CI, and Git. Development, checks and builds fetch the latest public challenge definitions and technical notes before starting.
 
 ```sh
 npm ci
@@ -55,7 +55,6 @@ Automated checks do not replace manual accessibility review. See [accessibility 
 | Path                                             | Purpose                                                               |
 | ------------------------------------------------ | --------------------------------------------------------------------- |
 | `src/pages/`                                     | Homepage, challenge and note routes, conduct page, 404 and robots.txt |
-| `src/content/`                                   | Markdown technical notes                                              |
 | `src/content.config.ts`                          | Content schemas and validation                                        |
 | `src/components/`, `src/layouts/`, `src/styles/` | Shared interface and styling                                          |
 | `src/config/`                                    | Site metadata, community links and production review acknowledgements |
@@ -68,7 +67,7 @@ Automated checks do not replace manual accessibility review. See [accessibility 
 
 Markdown is the canonical specification for challenges and notes. See [CONTRIBUTING.md](CONTRIBUTING.md) for the community's contribution process and editorial expectations.
 
-Both collections require `title`, `slug`, `summary`, `publishedAt` and `draft`. Use stable, unique, lowercase slugs with hyphens and actual publication dates in `YYYY-MM-DD` format. Optional shared fields are `updatedAt` and `featured` (defaults to false). Drafts are excluded from listings, generated routes, sitemaps and homepage highlights, including preview builds.
+Both collections require `title` and `summary`, and published entries require `publishedAt`. Challenges retain their existing `slug` and `draft` fields. Notes derive their identifier from their directory, omit `slug`, and default `draft` to false; drafts may omit the publication date. Use actual dates in `YYYY-MM-DD` format. Optional shared fields are `updatedAt` and `featured` (defaults to false). Drafts are excluded from listings, generated routes, sitemaps and homepage highlights, including preview builds.
 
 The homepage chooses one published challenge or note at build time, randomly among entries marked `featured: true`, or among all published entries if none are featured. The selection stays fixed until the next build. An empty catalogue omits the section.
 
@@ -78,35 +77,76 @@ Definitions and public tests are maintained in [oxide-club/challenges](https://g
 
 The website reads only these definition files from an ignored checkout at `.content/challenges/`; repository READMEs, tests and fixtures do not become pages. Do not edit the generated checkout. Metadata is validated by [the content schema](src/content.config.ts).
 
-When a commented implementation has been published, its optional `referenceUrl` points to `https://github.com/oxide-club/solutions/tree/main/<id>/<language>`. The page renders the study invitation at the end of the challenge. Omit this field when no implementation is available.
+#### GitHub resources
+
+The optional `github` metadata controls the compact **Recursos e implementações** section. It accepts `challenge` (boolean), `solutions` (language identifiers), and `community` (boolean); omitted fields default to false or an empty list. No metadata or an empty configuration renders no section.
+
+Declare `github` directly in the challenge's `<canonical-id>/index.md` frontmatter in [oxide-club/challenges](https://github.com/oxide-club/challenges). The fetched Markdown is the sole source for resource availability, validated by the Astro schema. There are no website-local overrides or identifier mappings.
+
+For a future challenge, verify its published resources, then configure only those resources in its frontmatter. For example, `001-wc/index.md` declares:
+
+```yaml
+github:
+  challenge: true
+  solutions: [c]
+  community: true
+```
+
+Repository organization, names, default branches and community index location live in `src/config/github.mjs`. Both default branches were verified as `main` on 2026-10-20. `challengeResources()` constructs specification URLs as `<challenges>/tree/<branch>/<entry.id>` and implementation URLs as `<solutions>/tree/<branch>/<entry.id>/<language>`. It never assumes the recommended language has an implementation.
+
+To add a published implementation, add its directory identifier to the challenge's `solutions` array. For a language not yet registered, first add its directory identifier and readable label to `languageLabels` in `src/lib/challenge-resources.mjs` (for example, `python: 'Python'`). The schema derives its allowed identifiers from that registry; the component needs no changes. Duplicate or unknown identifiers fail validation. Publish metadata changes in the challenges repository; the next website content sync picks them up. Restart a running development server after schema changes.
+
+The actual community convention is the root `COMMUNITY.md` with canonical challenge headings. Enable `community` only after verifying the corresponding heading; links use `blob/<branch>/COMMUNITY.md#<entry.id>`. Do not enable links to a generic index without a matching challenge section.
+
+Verification on 2026-10-20: challenges revision `ade7c127f68f8ee1730ac5b82ac5b3c06e85003e` contains `001-wc/` and public tests; solutions revision `c04d6341c28fa46c7718c7d32cb543cfb4311de1` contains `001-wc/c/` and `COMMUNITY.md#001-wc`. Rust and C++ directories are absent and disabled. The community section exists but has no participant submissions yet. Verification is manual; no GitHub requests occur when rendering these resources.
+
+Resource availability is declared only in challenge frontmatter. The educational Markdown and canonical routes remain unchanged. Publish the challenge frontmatter migration before deploying this website change; there is no website-local fallback.
 
 ### Technical notes
 
-Add a `.md` file under `src/content/notes/`. Notes may also include `authors`, a nonempty list of credited names; no author is inferred when omitted. Publish approved writing with author permission.
+[oxide-club/notes](https://github.com/oxide-club/notes) is the canonical source. Its README, contribution guide, CC BY 4.0 license and draft template describe the editorial process. Notes cover Computer Science broadly and need not relate to a challenge.
 
-Published notes appear at `/notas/<slug>` and in the `/notas` catalogue, newest first. With no published notes, the catalogue displays an empty state.
+Each note lives at `<note-id>/index.md`; the lowercase kebab-case directory defines `/notas/<note-id>/`. Do not add a `slug` field. Documentation, `docs/`, and `templates/` are excluded. The schema requires a nonempty `title` and `summary`, plus `publishedAt` for published notes. `draft` defaults to false; `updatedAt`, `topics`, `authors` (nonempty when present), and `featured` are optional. Drafts never receive public pages or asset routes.
 
-Start body sections at `##`: the template supplies the title and builds a table of contents from second-level headings. Use language identifiers on fenced code blocks, descriptive links and a final `## Referências` section with real sources. Heading anchors preserve accents, such as `#referências`.
+To write and preview a note before pushing it:
 
-For figures, use an HTML `<figure>` with an `<img>` and `<figcaption>`. Supply meaningful alt text and explicit image dimensions; place local assets in `public/` and use root-relative paths. Content uses Markdown, without MDX.
+```sh
+# In your notes checkout:
+mkdir -p my-investigation
+cp templates/note.md my-investigation/index.md
+# Edit the template, keeping draft: true while writing.
+
+# In the website checkout:
+NOTES_SOURCE=/absolute/path/to/notes npm run dev
+```
+
+Drafts are validated but excluded from routes even in local previews. To inspect the rendered article, temporarily use `draft: false` with a valid `publishedAt` in your local checkout; restore `draft: true` before submitting unfinished work. `NOTES_SOURCE` reads directly from the checkout, including uncommitted changes, without copying or modifying it. It is forbidden in CI and production. Use the same environment variable for `npm run check` or `npm run build` when testing local notes. Production builds always use the public repository snapshot.
+
+Use Markdown headings starting at `##`, fenced code blocks, tables, links and images with descriptive alt text. The existing article layout supplies the title, table of contents, highlighting, attribution, source link and CC BY 4.0 notice. No mathematical renderer is added; there is no current content requiring one.
+
+Place images and supplementary files in `<note-id>/assets/`. Use `![Description](./assets/diagram.png)` and `[Data](./assets/results.csv)`. Allowed file types are PNG, JPEG, WebP, GIF, AVIF, PDF, TXT, CSV and JSON; nested asset directories are supported with simple letters, digits, dots, underscores and hyphens in filenames. Diagrams can be exported to PNG/WebP. SVG, HTML, JavaScript, symlinks and raw HTML in notes are rejected. Code fences are displayed, never executed. Relative links to `../other-note/index.md#heading` become website links; root-relative site links and HTTPS links also work. Review external sources, asset contents, licenses and technical claims before merge.
+
+Only published notes' assets receive static routes at `/notas/<note-id>/assets/<file>`. Neither `.git` nor the full content checkout is copied into output. The notes Markdown plugin uses Astro's existing Sätteri processor, declared directly as a dependency to configure its native API.
+
+Published notes appear newest first in `/notas/` and can appear in the homepage's existing featured-content section. An empty repository is valid and displays the existing empty state. No placeholder articles are published.
 
 ### Community links
 
 Shared community and reporting destinations live in `src/config/links.json`. Missing destinations are omitted from the interface; add links only when the destination exists.
 
-## Fetching challenge content
+## Fetching canonical content
 
-`npm run dev`, `npm run check`, `npm run build` and `npm run build:production` fetch the latest `main` from the public challenges repository. To fetch explicitly:
+`npm run dev`, `npm run check`, `npm run build` and `npm run build:production` fetch the latest `main` from both public content repositories (`challenges` and `notes`). To fetch explicitly:
 
 ```sh
 npm run content:sync
 ```
 
-The fetch prints the exact commit used. A fetch failure stops the command; an older cached checkout is not silently substituted. Local edits in the generated checkout also stop synchronization so work is not discarded.
+The shared sync script prints each exact commit used. Challenges are cached at `.content/challenges/` and notes at `.content/notes/`; both are ignored, generated checkouts, not independently maintained content copies. A fetch failure stops the command; an older cached checkout is not silently substituted. Local edits in the generated checkout also stop synchronization so work is not discarded.
 
-CI and the deployment workflow fetch once at the start and export `CHALLENGES_COMMIT` for subsequent steps. This is a snapshot for that workflow run, not a manually maintained pin: validation, browser tests and the production build all use the same fetched content. A new workflow run picks up the latest `main` again. Standalone local commands fetch the latest by default.
+CI and the deployment workflow fetch once at the start and export `CHALLENGES_COMMIT` and `NOTES_COMMIT` for subsequent steps. This is a snapshot for that workflow run, not a manually maintained pin: validation, browser tests and the production build all use the same fetched content. A new workflow run picks up the latest `main` again. Standalone local commands fetch the latest by default.
 
-Merging content does not deploy the website by itself; the next deployment workflow publishes it. Notes remain local to this repository. Legacy challenge URLs are redirected by Cloudflare using `public/_redirects`; Astro's local preview does not emulate those edge rules.
+There is no cross-repository deployment trigger or new token. After a reviewed note is merged, a maintainer manually runs the existing **Deploy production** workflow in the website repository. Merging content does not deploy the website by itself; the next deployment workflow publishes it. Notes follow the same publication process as challenges. Legacy challenge URLs are redirected by Cloudflare using `public/_redirects`; Astro's local preview does not emulate those edge rules.
 
 ## Deployment
 
@@ -149,4 +189,4 @@ Generated assets are committed alongside the source; regeneration is a maintenan
 
 ## License
 
-Original website code is licensed under [MIT](LICENSE). Editorial content, including challenge specifications and copy embedded in Astro files, logos and artwork are outside that scope. See [LICENSING.md](LICENSING.md) for details and material provenance. Third-party materials retain their own licenses.
+Original website code is licensed under [MIT](LICENSE). Technical note prose and documentation from `oxide-club/notes` use CC BY 4.0, subject to their source notices. Challenge specifications, other editorial copy, logos and artwork remain outside the website code’s MIT scope. See [LICENSING.md](LICENSING.md) for details and material provenance. Third-party materials retain their own licenses.

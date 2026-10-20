@@ -14,16 +14,5 @@ export function challengeId({ entry, data }) {
   if (data.slug !== identifier) {
     throw new Error(`Challenge slug must match directory ${identifier}`);
   }
-  const referenceBase = `https://github.com/oxide-club/solutions/tree/main/${identifier}/`;
-  if (
-    data.referenceUrl !== undefined &&
-    (typeof data.referenceUrl !== 'string' ||
-      !data.referenceUrl.startsWith(referenceBase) ||
-      !/^[a-z][a-z0-9-]*$/.test(data.referenceUrl.slice(referenceBase.length)))
-  ) {
-    throw new Error(
-      `Reference URL must point to a language directory for ${identifier}`,
-    );
-  }
   return identifier;
 }

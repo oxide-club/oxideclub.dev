@@ -6,7 +6,7 @@ const notes = await publishedNotes();
 
 <BaseLayout
   title="Notas técnicas"
-  description="O caderno técnico público do Oxide Club: artigos, notas de laboratório e experimentos sobre programação de sistemas e fundamentos da computação."
+  description="O caderno técnico público do Oxide Club: artigos, notas de laboratório e experimentos sobre modelos, algoritmos, protocolos e sistemas de computação."
 >
   <div class="container">
     <header class="page-intro">
@@ -26,20 +26,27 @@ const notes = await publishedNotes();
       <h2 id="notes-heading">Publicações</h2>
       {notes.length ? (
         <ol class="notes-list">
-          {notes.map(({ data }) => (
+          {notes.map(({ id, data }) => (
             <li>
               <article>
                 <time datetime={data.publishedAt.toISOString()}>
                   {noteDate(data.publishedAt)}
                 </time>
                 <h3>
-                  <a href={`/notas/${data.slug}`}>{data.title}</a>
+                  <a href={`/notas/${id}`}>{data.title}</a>
                 </h3>
                 <p>{data.summary}</p>
+                {data.topics.length > 0 && (
+                  <p class="topics">
+                    {data.topics.map((topic) => (
+                      <span class="tag">{topic}</span>
+                    ))}
+                  </p>
+                )}
                 {data.authors && (
                   <p class="authors">{data.authors.join(' · ')}</p>
                 )}
-                <a class="text-link" href={`/notas/${data.slug}`}>
+                <a class="text-link" href={`/notas/${id}`}>
                   Ler nota <span aria-hidden="true">↗</span>
                   <span class="sr-only">: {data.title}</span>
                 </a>
@@ -64,6 +71,12 @@ const notes = await publishedNotes();
   </div>
 </BaseLayout>
 <style>
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
   .notebook {
     border-top: 1px solid var(--color-border);
     padding-block: 40px 80px;

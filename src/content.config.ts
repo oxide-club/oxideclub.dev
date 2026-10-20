@@ -2,6 +2,8 @@ import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 import { existsSync } from 'node:fs';
+import { notesDirectory, noteId, noteSchema } from './lib/note-source.mjs';
+import { githubResourcesSchema } from './lib/challenge-resources.mjs';
 import { challengeTaxonomySchema } from './lib/challenge-taxonomy.mjs';
 import { challengeId, challengeIdentifier } from './lib/challenge-source.mjs';
 if (!existsSync('.content/challenges')) {
@@ -37,21 +39,21 @@ const challenges = defineCollection({
     featured: z.boolean().default(false),
     discordThreadUrl: discordUrl.optional(),
     eventUrl: discordUrl.optional(),
-    referenceUrl: z.url().optional(),
+    github: githubResourcesSchema.optional(),
     environment: z.string().min(1).optional(),
   }),
 });
+if (!existsSync(notesDirectory())) {
+  throw new Error(
+    'Note content is missing. Run npm run content:sync or set NOTES_SOURCE to a local notes checkout.',
+  );
+}
 const notes = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/notes' }),
-  schema: z.object({
-    title: z.string().min(1),
-    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-    summary: z.string().min(1),
-    publishedAt: z.coerce.date(),
-    updatedAt: z.coerce.date().optional(),
-    draft: z.boolean(),
-    featured: z.boolean().default(false),
-    authors: z.array(z.string().min(1)).min(1).optional(),
+  loader: glob({
+    pattern: ['*/index.md', '!templates/**', '!docs/**'],
+    base: notesDirectory(),
+    generateId: noteId,
   }),
+  schema: noteSchema,
 });
 export const collections = { challenges, notes };
