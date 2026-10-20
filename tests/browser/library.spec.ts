@@ -1,5 +1,30 @@
 import { test, expect } from '@playwright/test';
 
+test('library index follows scrolling without changing the URL and handles deep links', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/biblioteca#redes-de-computadores');
+  const active = page.locator('.library-sidebar [aria-current="location"]');
+  await expect(active).toHaveText('Redes de computadores');
+  await page
+    .locator('.library-category')
+    .nth(1)
+    .evaluate((section) => section.scrollIntoView());
+  await expect(active).toHaveText('Programação em C');
+  await expect(page).toHaveURL(/#redes-de-computadores$/);
+  await page.evaluate(() =>
+    window.scrollTo(0, document.documentElement.scrollHeight),
+  );
+  await expect(active).toHaveText('Linguagens de programação e compiladores');
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(active).toHaveText('Fundamentos de computação');
+  await expect(
+    page.locator('.library-index [aria-current="location"]'),
+  ).toHaveText('Fundamentos de computação');
+});
+
 test('library exposes all 40 resources in their eight approved categories', async ({
   page,
 }) => {

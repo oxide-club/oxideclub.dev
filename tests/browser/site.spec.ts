@@ -82,6 +82,16 @@ for (const route of routes) {
     await page.goto(route);
     await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR');
     await expect(page.locator('h1')).toHaveCount(1);
+    // Audit settled colors, not a frame midway through the hero's entrance.
+    await page.locator('.hero').evaluateAll(async (heroes) => {
+      await Promise.all(
+        heroes.flatMap((hero) =>
+          hero
+            .getAnimations({ subtree: true })
+            .map((animation) => animation.finished.catch(() => {})),
+        ),
+      );
+    });
     const result = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
       .analyze();

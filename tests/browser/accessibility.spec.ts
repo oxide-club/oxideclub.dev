@@ -115,6 +115,16 @@ for (const route of routes) {
     await page.goto(route);
     const primary = page.locator('.header-join .button');
     await primary.hover();
+    // Entrance opacity is transient; wait for the final visible colors.
+    await page.locator('.hero').evaluateAll(async (heroes) => {
+      await Promise.all(
+        heroes.flatMap((hero) =>
+          hero
+            .getAnimations({ subtree: true })
+            .map((animation) => animation.finished.catch(() => {})),
+        ),
+      );
+    });
     expect(
       (await new AxeBuilder({ page }).withRules(['color-contrast']).analyze())
         .violations,
