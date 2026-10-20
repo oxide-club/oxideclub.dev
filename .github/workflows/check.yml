@@ -2,6 +2,7 @@ name: Check website
 on:
   push:
     branches-ignore: [main]
+  # Keep required PR checks running even for documentation-only changes.
   pull_request:
   workflow_call:
 permissions:

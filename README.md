@@ -33,7 +33,7 @@ npm run test:browser
 npm run test:notes
 ```
 
-- `npm test` checks content selection, URL validation, production gates, challenge taxonomy and fetching public challenge content. Its isolated repository fixtures require Git.
+- `npm test` automatically synchronizes canonical content before checking content selection, URL validation, production gates, challenge taxonomy and fetching public challenge content. It works in a fresh clone without an existing `.content/` cache; synchronization requires network access and its isolated repository fixtures require Git. In CI, synchronization reuses the content snapshot already selected for the job.
 - `npm run check` runs Astro and TypeScript checks.
 - `npm run test:browser` checks the built site with Playwright and axe, including navigation, internal links, keyboard behavior, reflow, enlarged text, forced colors and reduced motion.
 - `npm run test:notes` builds temporary empty, published and draft note catalogues to check visibility, rendering and homepage integration. Fixtures do not enter the working content directory.
@@ -311,7 +311,7 @@ Legacy challenge URLs are redirected by Cloudflare using `public/_redirects`; As
 
 Production is hosted at **https://oxideclub.dev**. [wrangler.jsonc](wrangler.jsonc) configures the `oxideclub-dev` Worker, custom domain and static assets from `dist/`, including custom 404 handling.
 
-Pushes to `main`, including merged pull requests, automatically run **Deploy production**. It first calls the reusable **Check website** workflow (`.github/workflows/check.yml`); the production deployment job runs only after all checks succeed. Pull requests and pushes to other branches run **Check website** independently. Maintainers and content repositories can still dispatch **Deploy production** manually, with the same required checks. The deployment job also validates its freshly fetched content snapshot with unit tests, Astro checks, the preview build, browser suite and the content integration suites before building and deploying production output.
+Pushes to `main`, including merged pull requests, automatically run **Deploy production**, except when every changed file is `README.md`, `CONTRIBUTING.md`, `LICENSING.md`, `LICENSE` or under `docs/`. A push that also changes any other file still triggers deployment. It first calls the reusable **Check website** workflow (`.github/workflows/check.yml`); the production deployment job runs only after all checks succeed. Pull requests and pushes to other branches run **Check website** independently, including documentation-only changes, so required PR checks can complete. Maintainers and content repositories can still dispatch **Deploy production** manually regardless of path filters, with the same required checks. The deployment job also validates its freshly fetched content snapshot with unit tests, Astro checks, the preview build, browser suite and the content integration suites before building and deploying production output.
 
 The workflow uses the GitHub `production` environment with these secrets:
 
@@ -348,4 +348,4 @@ Generated assets are committed alongside the source; regeneration is a maintenan
 
 ## License
 
-Original website code is licensed under [MIT](LICENSE). Technical note prose and documentation from `oxide-club/notes` use CC BY 4.0, subject to their source notices. Challenge specifications, other editorial copy, logos and artwork remain outside the website code’s MIT scope. See [LICENSING.md](LICENSING.md) for details and material provenance. Third-party materials retain their own licenses.
+Original website code is licensed under [MIT](LICENSE). Original prose and documentation from `oxide-club/notes` and `oxide-club/meetings` use CC BY 4.0, subject to their source notices. Challenge specifications, other editorial copy, logos and artwork remain outside the website code’s MIT scope. See [LICENSING.md](LICENSING.md) for details and material provenance. Third-party materials retain their own licenses.

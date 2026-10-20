@@ -12,6 +12,7 @@
     "preview": "astro preview --host 0.0.0.0",
     "precheck": "npm run content:sync",
     "check": "astro check",
+    "pretest": "npm run content:sync",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "playwright test",
     "prebuild:production": "node scripts/sync-content.mjs --production",

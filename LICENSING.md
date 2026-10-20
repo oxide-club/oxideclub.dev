@@ -16,11 +16,17 @@ Preserve créditos e avisos ao compartilhar ou adaptar o texto e indique altera�
 
 Os enunciados, explicações e textos educacionais provenientes do [repositório challenges](https://github.com/oxide-club/challenges) usam CC BY 4.0. Fixtures, dados de entrada e saídas esperadas usam CC0 1.0; testes, validadores, geradores e demais códigos executáveis usam MIT. Consulte a [política de licenciamento da fonte](https://github.com/oxide-club/challenges/blob/main/LICENSE.md) e preserve os créditos e avisos aplicáveis. Esses termos abrangem apenas os direitos que os contribuidores podem licenciar; materiais de terceiros mantêm suas próprias licenças.
 
+## Encontros — CC BY 4.0
+
+A prosa e a documentação originais das pautas e registros de encontros vêm do [repositório meetings](https://github.com/oxide-club/meetings) e são disponibilizadas sob [Creative Commons Atribuição 4.0 Internacional](https://creativecommons.org/licenses/by/4.0/), na medida dos direitos que seus contribuidores detêm ou estão autorizados a licenciar. O [LICENSE da fonte](https://github.com/oxide-club/meetings/blob/main/LICENSE) define o escopo; avisos específicos na fonte permanecem aplicáveis. As páginas identificam a fonte e exibem a licença.
+
+Ao compartilhar ou adaptar esses textos, preserve a atribuição e os avisos fornecidos, inclua uma referência à licença e indique alterações. Anexos, slides, gravações e demais materiais de terceiros mantêm seus próprios termos; não se presume CC BY 4.0 sobre eles. Código substancial utilizável como software independente fica fora dessa concessão geral e exige uma licença de software explícita e separada.
+
 ## Outros conteúdos editoriais e identidade visual
 
 A licença MIT do código **não abrange**:
 
-- Outros textos editoriais fora do escopo das notas e desafios acima, inclusive quando incorporados a arquivos `.astro`.
+- Outros textos editoriais fora do escopo das notas, desafios e encontros acima, inclusive quando incorporados a arquivos `.astro`.
 - O logo `oxide-club.svg`, suas versões derivadas, ilustrações e demais elementos de identidade visual do Oxide Club.
 
 Esses materiais permanecem sob os direitos de seus respectivos titulares. Na ausência de uma licença específica, nenhuma licença geral de reutilização é concedida por este repositório; usos permitidos por lei continuam preservados. Registre a permissão de publicação e eventual licença de reutilização junto a cada contribuição editorial ou artística.
