@@ -95,6 +95,82 @@ test('webhook confirmation, credentials isolation and disabled mentions', async 
   assert.deepEqual(JSON.parse(request.body).allowed_mentions, { parse: [] });
   assert.equal(request.redirect, 'error');
 });
+test('GitHub reads recover from transient server errors with bounded backoff', async () => {
+  for (const status of [500, 502, 503, 504]) {
+    let calls = 0;
+    const waits = [];
+    const client = createClient({
+      sleep: async (ms) => waits.push(ms),
+      fetch: async () => (++calls < 3 ? json({}, status) : json({ ok: true })),
+    });
+    assert.deepEqual(await client.github('/repos/oxide-club/notes/commits'), {
+      ok: true,
+    });
+    assert.equal(calls, 3);
+    assert.deepEqual(waits, [1000, 2000]);
+  }
+});
+test('persistent GitHub errors identify the route without exposing secrets', async () => {
+  let calls = 0;
+  const client = createClient({
+    token: 'github-secret',
+    sleep: async () => {},
+    fetch: async () => {
+      calls++;
+      return json({ message: 'private-response' }, 500);
+    },
+  });
+  await assert.rejects(
+    client.github('/repos/oxide-club/notes/commits?secret=query-secret'),
+    (error) => {
+      assert.equal(error.status, 500);
+      assert.match(
+        error.message,
+        /GitHub GET \/repos\/oxide-club\/notes\/commits HTTP 500/,
+      );
+      assert.doesNotMatch(
+        error.message,
+        /github-secret|query-secret|private-response/,
+      );
+      return true;
+    },
+  );
+  assert.equal(calls, 3);
+});
+test('server errors never automatically repeat GitHub writes or Discord deliveries', async () => {
+  for (const method of ['POST', 'PUT', 'PATCH', 'DELETE']) {
+    let calls = 0;
+    const client = createClient({
+      fetch: async () => {
+        calls++;
+        return json({}, 500);
+      },
+      sleep: async () => assert.fail('must not retry writes'),
+    });
+    await assert.rejects(
+      client.github('/repos/oxide-club/oxideclub.dev/contents/state.json', {
+        method,
+        body: {},
+      }),
+      /HTTP 500/,
+    );
+    assert.equal(calls, 1);
+  }
+  for (const status of [401, 403, 404, 422]) {
+    let calls = 0;
+    const client = createClient({
+      fetch: async () => {
+        calls++;
+        return json({}, status);
+      },
+    });
+    await assert.rejects(
+      client.github('/repos/oxide-club/notes/commits'),
+      (error) => error.status === status,
+    );
+    assert.equal(calls, 1);
+  }
+});
 test('paginates 101 files without trusting remote next links', async () => {
   const calls = [];
   const client = createClient({
