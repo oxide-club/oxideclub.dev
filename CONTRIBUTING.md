@@ -21,3 +21,11 @@ O site busca o `main` de `challenges`, `notes` e `meetings` antes de iniciar des
 Proponha pautas, registros e materiais em [oxide-club/meetings](https://github.com/oxide-club/meetings), seguindo o modelo e o guia desse repositório. Cada arquivo em `meetings/NNN-titulo.md` define uma página permanente; o website não mantém cópias editoriais. Para uma prévia local use `MEETINGS_SOURCE=/caminho/absoluto/para/meetings npm run dev`. Consulte o README para calendário, revisões, cancelamentos e publicação automática.
 
 A prosa e a documentação originais dos encontros seguem CC BY 4.0, na medida dos direitos de seus autores e conforme os avisos da fonte. Preserve atribuições, referencie a licença e indique alterações. Código substancial reutilizável como software independente exige licença de software separada; anexos e materiais de terceiros mantêm seus próprios termos. Consulte [LICENSING.md](LICENSING.md).
+
+## Divulgação das contribuições
+
+PRs prontos para revisão que adicionam desafios ou notas são divulgados no
+Discord, em `#contribuicoes`, com link do PR. Após merge e publicação
+bem-sucedida, a primeira publicação de cada página é anunciada em `#novidades`,
+com link do site. Correções em conteúdo existente não geram novas divulgações.
+Consulte a [operação das notificações](docs/DISCORD-NOTIFICATIONS.md).

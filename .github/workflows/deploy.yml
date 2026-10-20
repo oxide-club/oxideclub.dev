@@ -42,3 +42,38 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Preserve the exact production publication manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-publication-manifest
+          path: dist/publication-manifest.json
+          if-no-files-found: error
+          retention-days: 90
+  announce:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: production-publication-manifest
+          path: publication
+      - name: Announce the deployed publications
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DISCORD_ANNOUNCEMENTS_WEBHOOK_URL: ${{ secrets.DISCORD_ANNOUNCEMENTS_WEBHOOK_URL }}
+        run: |
+          if [ -z "$DISCORD_ANNOUNCEMENTS_WEBHOOK_URL" ]; then
+            echo "Discord announcements are inactive. Initialize the baseline before configuring the webhook secret."
+            exit 0
+          fi
+          node scripts/discord/announcements.mjs announce publication/publication-manifest.json

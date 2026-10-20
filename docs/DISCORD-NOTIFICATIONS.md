@@ -115,3 +115,161 @@ em contribuições e página de produção do site em novidades.
 Executar os testes e checks relevantes do site e validar a sintaxe dos
 workflows. Incluir exemplos das mensagens e instruções de ativação e retomada
 na documentação de contribuição/publicação existente.
+
+## Ativação pelos mantenedores
+
+A implementação usa Node.js 24 e não exige instalar um bot no servidor.
+Configure URLs de webhooks como **Actions Secrets de repositório**, ou secrets
+organizacionais liberados somente para os repositórios indicados. Não use
+variáveis públicas do GitHub nem coloque essas URLs em arquivos versionados.
+O job de anúncio não usa o environment `production`; seu secret deve estar
+no escopo do repositório/organização.
+
+1. Incorpore primeiro as alterações de `oxideclub.dev` em `main` e aguarde
+   **Deploy production** concluir o job `deploy`. Sem o secret de anúncios,
+   o job `announce` apenas informa que a integração está inativa.
+2. Abra **Actions → Manage Discord announcements → Run workflow**, em `main`.
+   Escolha `operation: initialize` e informe em `run_id` o número da execução
+   de produção recém-concluída (o número na URL `/actions/runs/<numero>`).
+   O workflow confere o deploy, baixa seu manifesto e verifica a produção
+   antes de registrar o catálogo atual. Não envia mensagens.
+3. Crie um webhook em `#novidades` e configure
+   `DISCORD_ANNOUNCEMENTS_WEBHOOK_URL` em `oxide-club/oxideclub.dev`.
+   Os próximos deploys anunciarão os IDs publicados que não estão no baseline.
+4. Crie um webhook em `#contribuicoes` e configure
+   `DISCORD_CONTRIBUTIONS_WEBHOOK_URL` em `oxide-club/challenges` e
+   `oxide-club/notes`. A mesma URL pode ser compartilhada nesses dois
+   repositórios. Configure o secret antes de incorporar seus workflows em `main`.
+5. Incorpore as alterações de `challenges` e `notes`. Os próximos eventos
+   elegíveis de PR passam a gerar avisos. Confira se a organização permite
+   `pull_request_target`, o uso de webhooks externos e `contents: write` para
+   esses jobs. O token precisa escrever na branch `discord-state`; não precisa
+   poder fazer push em `main`.
+
+O `WEBSITE_DEPLOY_TOKEN` continua sendo necessário para disparar o deploy do
+site entre repositórios. As credenciais Cloudflare continuam apenas no site.
+O teste real de ativação deve usar uma contribuição real, após a configuração;
+os testes automatizados usam respostas HTTP simuladas e não publicam mensagens.
+
+## Mensagens e regras de publicação
+
+Exemplo de contribuição:
+
+> Proposta de nota pronta para revisão: https://github.com/oxide-club/notes/pull/42
+>
+> **Investigando alocadores** — título clicável apontando ao mesmo PR.
+
+Exemplo de novidade:
+
+> Nova nota no Oxide Club: https://oxideclub.dev/notas/investigando-alocadores
+>
+> **Investigando alocadores** — título clicável apontando à página do site,
+> acompanhado do resumo da nota.
+
+Ambos os envios desabilitam menções. Um PR com vários arquivos novos recebe
+um aviso; uma publicação com várias páginas novas recebe um anúncio por página.
+Um PR em draft não gera aviso até ficar pronto para revisão. Uma nota com
+`draft: true` não entra no manifesto: só sua primeira publicação gera anúncio.
+Correções e páginas restauradas com o mesmo ID não são anunciadas novamente.
+
+`publication-manifest.json` é um endpoint público com metadados já publicados,
+sem URLs de webhooks ou tokens. Builds locais de produção obtêm as revisões
+diretamente dos checkouts sincronizados quando não há variáveis do CI. Ele identifica as revisões dos repositórios
+usadas naquele build. O notificador exige um manifesto de produção idêntico
+ao artefato implantado e páginas acessíveis antes de enviar qualquer anúncio.
+São feitas até seis verificações com dez segundos entre elas. A revisão do
+catálogo verificado é registrada antes do primeiro envio, junto com seus
+aliases. Assim, uma falha parcial não perde o histórico necessário para
+reconhecer renomeações no próximo deploy.
+
+Mantenha IDs publicados estáveis. Quando o GitHub identifica uma renomeação
+canônica entre as revisões registradas e publicadas, o notificador guarda um
+alias e não repete o anúncio. Comparações com 300 arquivos ou mais, histórico
+divergente e revisões indisponíveis interrompem o notificador; a API do GitHub
+limita a lista de arquivos da comparação, mesmo com commits paginados. Nesse
+caso, confira as renomeações e recupere o estado com um mantenedor antes de
+retomar. Renomeações não detectadas pelo GitHub podem aparecer como novas
+páginas; mudar um ID publicado requer essa revisão editorial.
+
+## Retomada e entregas pendentes
+
+O registro `state.json` na branch órfã `discord-state` é permanente. Não o
+apague, não expire seu histórico e não o substitua por um cache. Preserve-o
+nas configurações de limpeza de branches. Essa branch não deriva de `main` e
+não contém workflows. Cópias do notificador nos repositórios de conteúdo devem
+ser atualizadas junto com os módulos correspondentes em `oxideclub.dev`.
+
+Antes de cada POST, o notificador grava `{url, pending: true}`. Quando o Discord
+confirma a mensagem, grava seu `messageId` e remove `pending`. Uma falha de
+rede, configuração ou persistência deixa a tentativa pendente e impede o
+reenvio automático. Isso também protege o caso em que a mensagem foi aceita,
+mas a resposta se perdeu. Respostas 429 com espera de até 60 segundos podem
+ser repetidas até três tentativas; respostas ambíguas não são repetidas.
+
+Antes de reconciliar uma entrega, aguarde a execução do notificador terminar.
+Para anúncios, use **Manage Discord announcements**, sempre em `main`:
+
+- `operation: announce`, com o `run_id` da produção atual: retoma o envio
+  usando o manifesto preservado, sem executar deploy. Itens já confirmados
+  ficam de fora. O workflow aceita uma execução com resultado geral de falha
+  se seu job `deploy` concluiu com sucesso; isso permite retomar falhas do
+  próprio notificador. Manifestos antigos que não correspondem à produção
+  atual são recusadas. Os artifacts ficam disponíveis por até 90 dias, sujeito
+  ao limite de retenção da organização; se expirarem, faça um novo deploy.
+- `operation: record`, com `key` (por exemplo, `note:memoria`) e `message_id`:
+  após conferir a mensagem no Discord, confirma uma entrega pendente.
+- `operation: release`, com `key`: use **somente após confirmar no Discord
+  que a mensagem não foi enviada**. Remove apenas uma tentativa pendente,
+  permitindo uma nova tentativa posterior.
+
+Uma falha na verificação de propagação ocorre antes de qualquer POST e não
+cria pendências. Nesse caso basta retomar após a produção ficar disponível.
+Uma falha entre confirmação e persistência requer `record`. Depois de
+reconciliar, execute `announce` para o deploy atual. Não reinicialize o baseline
+para contornar erros: isso apagaria a distinção entre itens novos e antigos.
+
+Para propostas, mantenedores podem executar, no checkout confiável de `main`
+do repositório de conteúdo, com Node.js 24 e `GH_TOKEN` já configurado:
+
+```sh
+export GITHUB_REPOSITORY=oxide-club/notes
+node scripts/discord/state.mjs record pr:42 1234567890123456789
+```
+
+Ou, após confirmar que não houve mensagem:
+
+```sh
+node scripts/discord/state.mjs release pr:42
+```
+
+Em `challenges`, use `GITHUB_REPOSITORY=oxide-club/challenges`. Depois, reexecute
+**Notify Discord contributions**. Nunca execute esses comandos a partir de
+código do PR ou de um fork com acesso às credenciais.
+
+## Verificação local
+
+No site: `node --test tests/discord-*.test.mjs`, `npm test`, `npm run check`,
+`npm run build` e `npm run test:notes`. A integração de notas verifica que o
+manifesto e as rotas expõem as mesmas notas publicadas. Os testes de paridade
+entre repositórios também rodam quando os checkouts irmãos estão disponíveis;
+um clone isolado do site não depende deles.
+
+Em cada repositório de conteúdo: `node --test tests/discord-*.test.mjs`.
+O workflow **Check Discord notifications** executa esses testes em Node.js 24,
+sem secrets, em pushes e PRs. Em `challenges`, execute também `make check`.
+
+## Validação da implementação em 2026-10-20
+
+- `npm test`: 83 testes aprovados; `npm run check`: sem erros ou avisos.
+- Builds de preview e produção aprovados. O build de produção local também
+  foi executado sem variáveis de revisão do CI; seu manifesto correspondeu
+  aos commits dos checkouts sincronizados.
+- Playwright: 51 testes aprovados. Integrações de notas, comunidade e encontros
+  aprovadas; `make check` de challenges: 28 testes aprovados.
+- Notificadores dos dois repositórios de conteúdo e paridade das cópias
+  aprovados. YAML, sintaxe Node e `git diff --check` verificados.
+- A revisão independente encontrou duas falhas, corrigidas com regressões:
+  revisões ausentes no build local e repetição após falha parcial seguida de
+  renomeação. Não ficaram findings adiados.
+- Testes locais usaram Node.js 26; os workflows mantêm Node.js 24. Não houve
+  envio real ao Discord, push, merge ou alteração de configuração remota.

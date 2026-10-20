@@ -276,6 +276,15 @@ node scripts/build-branding.mjs
 
 Os arquivos gerados são versionados junto com a fonte. Gerá-los novamente é uma tarefa de manutenção, não um requisito da CI. Os avisos de licença das fontes ficam em `public/licenses/`.
 
+## Notificações no Discord
+
+Propostas de desafios e notas são divulgadas em `#contribuicoes`, com link do PR.
+Após merge e publicação bem-sucedida, `#novidades` recebe o link da página no site.
+A ativação exige os Actions Secrets `DISCORD_CONTRIBUTIONS_WEBHOOK_URL` nos
+repositórios de conteúdo e `DISCORD_ANNOUNCEMENTS_WEBHOOK_URL` neste repositório.
+Siga a [configuração, baseline e recuperação](docs/DISCORD-NOTIFICATIONS.md#ativação-pelos-mantenedores)
+antes de habilitar anúncios, para não divulgar retroativamente o catálogo atual.
+
 ## Licenças
 
 O código original do site usa a [licença MIT](LICENSE). A prosa e a documentação originais de `oxide-club/notes` e `oxide-club/meetings`, assim como os textos educacionais de `oxide-club/challenges`, usam CC BY 4.0, sujeitos aos avisos de suas fontes. Dados de teste dos desafios usam CC0 1.0; código executável dos desafios usa MIT. Outros textos editoriais, logos e ilustrações ficam fora do escopo MIT do código do site. Consulte [LICENSING.md](LICENSING.md) para o escopo completo. Materiais de terceiros mantêm suas próprias licenças.
