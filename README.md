@@ -161,7 +161,23 @@ The shared sync script prints each exact commit used. Challenges are cached at `
 
 CI and the deployment workflow fetch once at the start and export `CHALLENGES_COMMIT` and `NOTES_COMMIT` for subsequent steps. This is a snapshot for that workflow run, not a manually maintained pin: validation, browser tests and the production build all use the same fetched content. A new workflow run picks up the latest `main` again. Standalone local commands fetch the latest by default.
 
-There is no cross-repository deployment trigger or new token. After a reviewed note is merged, a maintainer manually runs the existing **Deploy production** workflow in the website repository. Merging content does not deploy the website by itself; the next deployment workflow publishes it. Notes follow the same publication process as challenges. Legacy challenge URLs are redirected by Cloudflare using `public/_redirects`; Astro's local preview does not emulate those edge rules.
+Pushes to `main` in the content repositories automatically dispatch this repository's existing **Deploy production** workflow when website inputs change:
+
+- **challenges:** `*/index.md` (definitions directly inside a challenge directory).
+- **notes:** `*/index.md` and `*/assets/**`, excluding `docs/**` and `templates/**`.
+- **solutions:** no trigger. The site links to this repository but does not fetch its contents. Resource availability is declared in the challenges' `index.md` metadata, so changing that metadata triggers deployment.
+
+These path filters cover additions, edits, deletions and renames. Documentation, challenge tests and fixtures do not trigger deployment. Draft note changes also trigger validation; drafts remain excluded from the published site. Pull requests and pushes to other branches do not dispatch production deployments.
+
+#### One-time trigger setup
+
+Create a fine-grained personal access token owned by an account with access to `oxide-club/oxideclub.dev`, restricted to that repository with **Actions: read and write** permission. Complete any organization approval required for the token. Store it as the Actions secret `WEBSITE_DEPLOY_TOKEN` in both `oxide-club/challenges` and `oxide-club/notes` (or as an organization secret available only to those two repositories). Their default `GITHUB_TOKEN` cannot dispatch a workflow in another repository. Renew the token before it expires.
+
+Merge `.github/workflows/deploy-website.yml` into `main` in each source repository. The destination's `deploy.yml` must remain available on `main` with `workflow_dispatch` enabled. No Cloudflare credentials are needed in the source repositories. Missing or invalid dispatch credentials fail the source workflow rather than silently skipping publication.
+
+The source workflow reports whether the dispatch request succeeded; follow **Deploy production** in this repository for validation and deployment results. Its existing tests, production environment rules and deployment concurrency still apply. Each run fetches the latest content snapshot, which may include newer merges than the triggering commit. Maintainers can still run **Deploy production** manually to retry a failed deployment or dispatch.
+
+Legacy challenge URLs are redirected by Cloudflare using `public/_redirects`; Astro's local preview does not emulate those edge rules.
 
 ## Deployment
 
