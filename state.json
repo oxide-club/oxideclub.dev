@@ -29,6 +29,10 @@
     "challenge:007-image-bug": {
       "url": "https://oxideclub.dev/desafios/007-image-bug",
       "messageId": "1562296903771623435"
+    },
+    "challenge:008-image-transform": {
+      "url": "https://oxideclub.dev/desafios/008-image-transform",
+      "pending": true
     }
   },
   "revisions": {
