@@ -1,5 +1,7 @@
 import { categoryLabels } from './challenge-taxonomy.mjs';
 import { challengeLanguages } from './challenge-languages.mjs';
+import { matchesChallenge } from './challenge-search.mjs';
+import { orderChallengeRows } from './challenge-list-state.mjs';
 
 export const difficultyLabels = {
   beginner: 'Iniciante',
@@ -45,3 +47,30 @@ export function groupChallengesByArea(entries, areas) {
 }
 
 export { matchesChallenge } from './challenge-search.mjs';
+
+/** @param {any[]} entries @param {{id: string, title: string}[]} areas @param {import('./challenge-list-state.mjs').ListState} state */
+export function selectChallenges(entries, areas, state) {
+  const rows = entries.filter(
+    (entry) =>
+      (!state.area || entry.data.area === state.area) &&
+      (!state.difficulty || entry.data.difficulty === state.difficulty) &&
+      matchesChallenge(
+        challengeSearchText(
+          entry,
+          areas.find((area) => area.id === entry.data.area)?.title ?? '',
+        ),
+        entry.data.topics,
+        state.q,
+        '',
+      ),
+  );
+  return orderChallengeRows(
+    rows.map((entry) => ({
+      id: entry.id,
+      title: entry.data.title,
+      difficulty: entry.data.difficulty,
+      entry,
+    })),
+    state,
+  ).map((row) => row.entry);
+}

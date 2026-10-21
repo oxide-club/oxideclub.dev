@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ChallengeCatalogueNav from '../../components/ChallengeCatalogueNav.astro';
+import ChallengeList from '../../components/ChallengeList.astro';
+import { publishedChallenges } from '../../lib/challenges';
+import {
+  ascendingChallenges,
+  groupChallengesByArea,
+} from '../../lib/challenge-catalogue.mjs';
+import { loadChallengeAreas } from '../../lib/challenge-areas.mjs';
+import { challengesDirectory } from '../../lib/challenge-source.mjs';
+const challenges = ascendingChallenges(await publishedChallenges());
+const groups = groupChallengesByArea(
+  challenges,
+  await loadChallengeAreas(challengesDirectory()),
+);
+---
+
+<BaseLayout
+  title="Lista de desafios"
+  description="Consulte todos os desafios do Oxide Club. Busque por assunto e filtre por área e dificuldade."
+>
+  <div class="container">
+    <header class="page-intro">
+      <div class="eyebrow">Desafios · Computação na prática</div>
+      <h1>Todos os desafios.</h1>
+      <p>
+        Encontre seu próximo experimento. Busque por assunto ou combine os
+        filtros para escolher um desafio.
+      </p>
+    </header>
+    <ChallengeCatalogueNav
+      active="list"
+      areaCount={groups.length}
+      challengeCount={challenges.length}
+    />
+    <ChallengeList
+      challenges={challenges}
+      areas={groups.map((group) => group.area)}
+    />
+    <p class="participation">
+      Escolha um desafio, experimente e compartilhe o que aprendeu.{' '}
+      <a href="/como-participar/">
+        Como participar <span aria-hidden="true">↗</span>
+      </a>
+    </p>
+  </div>
+</BaseLayout>
+<style>
+  .page-intro {
+    padding-block: 48px 32px;
+  }
+  h1 {
+    font-size: clamp(34px, 5vw, 56px);
+  }
+  .page-intro p {
+    margin-top: 20px;
+    max-width: 66ch;
+  }
+  .participation {
+    font-size: 14px;
+    padding-block: 28px 48px;
+  }
+  .participation a {
+    color: var(--color-accent-text);
+  }
+</style>
