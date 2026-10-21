@@ -73,6 +73,10 @@
     "challenge:018-free-list": {
       "url": "https://oxideclub.dev/desafios/018-free-list",
       "messageId": "1562297034231259147"
+    },
+    "challenge:019-rpn": {
+      "url": "https://oxideclub.dev/desafios/019-rpn",
+      "pending": true
     }
   },
   "revisions": {
