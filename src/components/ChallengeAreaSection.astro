@@ -1,0 +1,126 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { difficultyLabels } from '../lib/challenge-catalogue.mjs';
+interface Props {
+  area: import('../lib/challenge-areas.mjs').Area;
+  challenges: CollectionEntry<'challenges'>[];
+}
+const { area, challenges } = Astro.props;
+---
+
+<section
+  class="area-section"
+  id={area.slug}
+  data-area-section
+  aria-labelledby={`heading-${area.id}`}
+>
+  <header>
+    <div class="area-count">
+      {String(challenges.length).padStart(2, '0')} DESAFIOS
+    </div>
+    <h2 id={`heading-${area.id}`}>{area.title}</h2>
+    <p>{area.description}</p>
+  </header>
+  <div class="area-challenges">
+    {challenges.map(({ data }) => (
+      <article data-challenge>
+        <div class="challenge-heading">
+          <h3>
+            <a href={`/desafios/${data.slug}`}>
+              {data.title}
+              <span aria-hidden="true"> ↗</span>
+            </a>
+          </h3>
+          <span class="difficulty" data-difficulty={data.difficulty}>
+            {difficultyLabels[data.difficulty]}
+          </span>
+        </div>
+        <p>{data.summary}</p>
+      </article>
+    ))}
+  </div>
+</section>
+<style>
+  .area-section {
+    display: grid;
+    grid-template-columns: minmax(0, 29%) minmax(0, 1fr);
+    gap: 40px;
+    border-top: 1px solid var(--color-border);
+    padding-block: 36px;
+    scroll-margin-top: 24px;
+  }
+  .area-count {
+    font: 12px var(--font-mono);
+    color: var(--color-accent-text);
+    letter-spacing: 0.04em;
+  }
+  h2 {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-block: 12px 16px;
+  }
+  header p {
+    font-size: 14px;
+  }
+  article {
+    padding-block: 20px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  article:first-child {
+    padding-top: 0;
+  }
+  article:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .challenge-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+  }
+  h3 {
+    font-size: 19px;
+    line-height: 1.4;
+  }
+  h3 a {
+    text-decoration: none;
+  }
+  h3 a:hover {
+    text-decoration: underline;
+  }
+  h3 span {
+    color: var(--color-accent-text);
+    font-size: 13px;
+  }
+  .difficulty {
+    font: 12px/1.6 var(--font-mono);
+    color: var(--color-muted);
+    white-space: nowrap;
+  }
+  .difficulty[data-difficulty='beginner'] {
+    color: var(--color-accent-text);
+  }
+  article p {
+    font-size: 14px;
+    margin-top: 8px;
+    max-width: 72ch;
+  }
+  @media (max-width: 650px) {
+    .area-section {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      padding-block: 28px;
+    }
+    .challenge-heading {
+      display: block;
+    }
+    .difficulty {
+      display: block;
+      margin-top: 8px;
+    }
+    h2 {
+      max-width: 24ch;
+    }
+  }
+</style>
