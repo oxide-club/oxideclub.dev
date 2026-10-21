@@ -12,6 +12,10 @@ import { githubResourcesSchema } from './lib/challenge-resources.mjs';
 import { challengeLanguageSchema } from './lib/challenge-languages.mjs';
 import { challengeTaxonomySchema } from './lib/challenge-taxonomy.mjs';
 import {
+  loadChallengeAreas,
+  validateChallengeArea,
+} from './lib/challenge-areas.mjs';
+import {
   challengesDirectory,
   challengeId,
   challengeIdentifier,
@@ -52,6 +56,10 @@ const challenges = defineCollection({
         context.meta.set('source', challengeBase);
       }
       await challengeGlob.load(context);
+      const areas = await loadChallengeAreas(challengeBase);
+      for (const [id, entry] of context.store.entries()) {
+        validateChallengeArea(entry.data.area, areas, id);
+      }
     },
   },
   schema: challengeLanguageSchema.safeExtend({

@@ -9,6 +9,7 @@ export const categoryLabels = {
 };
 
 export const challengeTaxonomySchema = z.object({
+  area: z.string().min(1),
   difficulty: z.enum(['beginner', 'intermediate', 'advanced']),
   categories: z
     .array(z.enum(['build', 'investigate', 'debug', 'optimize', 'experiment']))
