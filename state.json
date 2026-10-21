@@ -45,6 +45,10 @@
     "challenge:011-dynamic-buffer": {
       "url": "https://oxideclub.dev/desafios/011-dynamic-buffer",
       "messageId": "1562296953142911047"
+    },
+    "challenge:012-hash-table": {
+      "url": "https://oxideclub.dev/desafios/012-hash-table",
+      "pending": true
     }
   },
   "revisions": {
