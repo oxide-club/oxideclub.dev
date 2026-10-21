@@ -77,6 +77,10 @@
     "challenge:019-rpn": {
       "url": "https://oxideclub.dev/desafios/019-rpn",
       "messageId": "1562297048508928012"
+    },
+    "challenge:020-expressions": {
+      "url": "https://oxideclub.dev/desafios/020-expressions",
+      "pending": true
     }
   },
   "revisions": {
