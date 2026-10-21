@@ -57,6 +57,10 @@
     "challenge:014-mystery-image": {
       "url": "https://oxideclub.dev/desafios/014-mystery-image",
       "messageId": "1562296988257615893"
+    },
+    "challenge:015-mystery-program": {
+      "url": "https://oxideclub.dev/desafios/015-mystery-program",
+      "pending": true
     }
   },
   "revisions": {
