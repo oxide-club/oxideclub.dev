@@ -53,6 +53,10 @@
     "challenge:013-record-inspector": {
       "url": "https://oxideclub.dev/desafios/013-record-inspector",
       "messageId": "1562296974902951977"
+    },
+    "challenge:014-mystery-image": {
+      "url": "https://oxideclub.dev/desafios/014-mystery-image",
+      "pending": true
     }
   },
   "revisions": {
