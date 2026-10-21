@@ -126,6 +126,7 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
     </p>
     <section
       id="challenge-catalogue"
+      tabindex="-1"
       class="catalogue"
       data-view="grid"
       aria-label="Desafios publicados"
@@ -140,6 +141,23 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
         </div>
       ))}
     </section>
+    <nav class="pagination" aria-label="Paginação dos desafios" hidden>
+      <button
+        type="button"
+        data-page="previous"
+        aria-controls="challenge-catalogue"
+      >
+        Anterior
+      </button>
+      <span class="page-status"></span>
+      <button
+        type="button"
+        data-page="next"
+        aria-controls="challenge-catalogue"
+      >
+        Próxima
+      </button>
+    </nav>
     <section
       class="proposal"
       id="propor-desafio"
@@ -233,30 +251,59 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
     text: element.dataset.search ?? '',
     topics: JSON.parse(element.dataset.topics ?? '[]') as string[],
   }));
+  const pagination = document.querySelector<HTMLElement>('.pagination')!;
+  const pageStatus = pagination.querySelector<HTMLElement>('.page-status')!;
+  const previous = pagination.querySelector<HTMLButtonElement>(
+    '[data-page="previous"]',
+  )!;
+  const next =
+    pagination.querySelector<HTMLButtonElement>('[data-page="next"]')!;
+  const pageSize = 12;
+  let currentPage = 1;
   function update() {
-    let count = 0;
+    const matches = entries.filter((entry) =>
+      matchesChallenge(entry.text, entry.topics, query.value, topic.value),
+    );
+    const count = matches.length;
+    const totalPages = Math.max(1, Math.ceil(count / pageSize));
+    currentPage = Math.min(currentPage, totalPages);
+    const start = (currentPage - 1) * pageSize;
+    const visible = new Set(matches.slice(start, start + pageSize));
     for (const entry of entries) {
-      const matches = matchesChallenge(
-        entry.text,
-        entry.topics,
-        query.value,
-        topic.value,
-      );
-      const newlyVisible = matches && Boolean(entry.element.hidden);
-      entry.element.hidden = !matches;
+      const newlyVisible = visible.has(entry) && Boolean(entry.element.hidden);
+      entry.element.hidden = !visible.has(entry);
       entry.element.classList.toggle('result-enter', newlyVisible);
-      if (matches) count++;
     }
     empty.hidden = count > 0;
-    status.textContent = `${count} ${count === 1 ? 'desafio encontrado' : 'desafios encontrados'}`;
+    pagination.hidden = totalPages <= 1;
+    previous.disabled = currentPage === 1;
+    next.disabled = currentPage === totalPages;
+    pageStatus.textContent = `Página ${currentPage} de ${totalPages}`;
+    status.textContent =
+      `${count} ${count === 1 ? 'desafio encontrado' : 'desafios encontrados'}` +
+      (totalPages > 1
+        ? ` · Exibindo ${start + 1}–${Math.min(start + pageSize, count)} · Página ${currentPage} de ${totalPages}`
+        : '');
   }
   form.addEventListener('submit', (event) => event.preventDefault());
-  query.addEventListener('input', update);
-  topic.addEventListener('change', update);
+  function resetPage() {
+    currentPage = 1;
+    update();
+  }
+  function changePage(delta: number) {
+    currentPage += delta;
+    update();
+    catalogue.focus({ preventScroll: true });
+    catalogue.scrollIntoView({ block: 'start' });
+  }
+  previous.addEventListener('click', () => changePage(-1));
+  next.addEventListener('click', () => changePage(1));
+  query.addEventListener('input', resetPage);
+  topic.addEventListener('change', resetPage);
   form.addEventListener('reset', () => {
     query.value = '';
     topic.value = '';
-    update();
+    resetPage();
   });
   form.hidden = false;
   update();
@@ -368,6 +415,21 @@ const topics = [...new Set(challenges.flatMap(({ data }) => data.topics))].sort(
   }
   button:hover {
     border-color: var(--color-accent-text);
+  }
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding-bottom: 32px;
+  }
+  .page-status {
+    font-size: 14px;
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: default;
   }
   .search-status {
     flex-basis: 100%;

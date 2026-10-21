@@ -285,7 +285,7 @@ test('keyboard focus remains visible on every page', async ({ page }) => {
   }
 });
 
-async function expectPublishedCatalogue(cards: Locator) {
+async function expectPublishedCatalogue(cards: Locator, paginated = false) {
   const links = cards.getByRole('heading').getByRole('link');
   const destinations = await links.evaluateAll((elements) =>
     elements.map((element) => element.getAttribute('href')!),
@@ -298,7 +298,7 @@ async function expectPublishedCatalogue(cards: Locator) {
   expect(new Set(destinations).size).toBe(destinations.length);
   expect(destinations).toEqual([...destinations].sort());
   await expect(cards.filter({ visible: true })).toHaveCount(
-    destinations.length,
+    paginated ? Math.min(12, destinations.length) : destinations.length,
   );
   return destinations;
 }
@@ -309,6 +309,7 @@ test('challenge catalogue sorts ascending and combines text and subjects', async
   await page.goto('/desafios');
   const destinations = await expectPublishedCatalogue(
     page.locator('[data-challenge]'),
+    true,
   );
   const cards = page.locator('[data-challenge]:visible');
   const query = page.getByRole('searchbox', { name: 'Buscar desafios' });
@@ -329,8 +330,10 @@ test('challenge catalogue sorts ascending and combines text and subjects', async
   ).toBeVisible();
   await expect(page.getByRole('status')).toHaveText('0 desafios encontrados');
   await page.getByRole('button', { name: 'Limpar filtros' }).click();
-  await expect(cards).toHaveCount(destinations.length);
-  expect(await expectPublishedCatalogue(cards)).toEqual(destinations);
+  await expect(cards).toHaveCount(Math.min(12, destinations.length));
+  expect(
+    await expectPublishedCatalogue(page.locator('[data-challenge]'), true),
+  ).toEqual(destinations);
   await expect(query).toHaveValue('');
   await expect(page.getByLabel('Assunto', { exact: true })).toHaveValue('');
   await query.focus();
@@ -375,9 +378,11 @@ test('accepted languages, difficulty and visible subject state remain discoverab
     await query.fill(text);
     await expect(rle).toHaveCount(1);
     const count = await cards.count();
-    await expect(page.getByRole('status')).toHaveText(
-      `${count} ${count === 1 ? 'desafio encontrado' : 'desafios encontrados'}`,
-    );
+    const status = page.getByRole('status');
+    await expect(status).toContainText(/\d+ desafios? encontrados?/);
+    const matched = Number((await status.innerText()).split(' ')[0]);
+    expect(count).toBe(Math.min(12, matched));
+    if (matched > 12) await expect(status).toContainText('Exibindo 1–12');
   }
   await expect(
     rle.getByLabel(hasRust ? 'Linguagens: C, Rust' : 'Linguagens: C', {
@@ -401,7 +406,7 @@ test('accepted languages, difficulty and visible subject state remain discoverab
   await reset.focus();
   await page.keyboard.press('Enter');
   await expect(reset).toBeFocused();
-  await expect(cards).toHaveCount(total);
+  await expect(cards).toHaveCount(Math.min(12, total));
   await expect(topic).toBeVisible();
   await expect(topic).toHaveValue('');
   await expect(page.locator('.empty-results')).toBeHidden();
