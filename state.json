@@ -21,6 +21,10 @@
     "challenge:005-base64": {
       "url": "https://oxideclub.dev/desafios/005-base64",
       "messageId": "1562296881554391091"
+    },
+    "challenge:006-stream-search": {
+      "url": "https://oxideclub.dev/desafios/006-stream-search",
+      "pending": true
     }
   },
   "revisions": {
