@@ -65,6 +65,10 @@
     "challenge:016-use-after-free": {
       "url": "https://oxideclub.dev/desafios/016-use-after-free",
       "messageId": "1562297012194639984"
+    },
+    "challenge:017-arena": {
+      "url": "https://oxideclub.dev/desafios/017-arena",
+      "pending": true
     }
   },
   "revisions": {
