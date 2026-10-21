@@ -25,6 +25,10 @@
     "challenge:006-stream-search": {
       "url": "https://oxideclub.dev/desafios/006-stream-search",
       "messageId": "1562296893118222357"
+    },
+    "challenge:007-image-bug": {
+      "url": "https://oxideclub.dev/desafios/007-image-bug",
+      "pending": true
     }
   },
   "revisions": {
