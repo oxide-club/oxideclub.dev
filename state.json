@@ -17,6 +17,10 @@
     "challenge:004-hexdump": {
       "url": "https://oxideclub.dev/desafios/004-hexdump",
       "messageId": "1562296869126803573"
+    },
+    "challenge:005-base64": {
+      "url": "https://oxideclub.dev/desafios/005-base64",
+      "pending": true
     }
   },
   "revisions": {
