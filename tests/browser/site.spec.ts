@@ -319,7 +319,7 @@ test('challenge catalogue sorts ascending and combines text and subjects', async
     'href',
     '/desafios/001-wc',
   );
-  await page.getByText('Filtrar por assunto', { exact: true }).click();
+  await expect(page.getByLabel('Assunto', { exact: true })).toBeVisible();
   await page.getByLabel('Assunto', { exact: true }).selectOption('Streams');
   await expect(cards).toHaveCount(1);
   await query.fill('002-ppm');
@@ -334,8 +334,6 @@ test('challenge catalogue sorts ascending and combines text and subjects', async
   await expect(query).toHaveValue('');
   await expect(page.getByLabel('Assunto', { exact: true })).toHaveValue('');
   await query.focus();
-  await page.keyboard.press('Tab');
-  await expect(page.locator('.topic-filter summary')).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(page.getByLabel('Assunto', { exact: true })).toBeFocused();
 });
@@ -358,7 +356,7 @@ test('challenge catalogue remains available without JavaScript', async ({
   }
 });
 
-test('accepted languages, difficulty and collapsed subject state remain discoverable', async ({
+test('accepted languages, difficulty and visible subject state remain discoverable', async ({
   page,
 }) => {
   await page.goto('/desafios/');
@@ -388,12 +386,13 @@ test('accepted languages, difficulty and collapsed subject state remain discover
   ).toHaveText(hasRust ? 'C · Rust' : 'C');
   if (hasRust) await expect(rle).toContainText('Recomendação: C');
   await expect(rle.getByRole('link')).toHaveCount(1);
-  const toggle = page.locator('.topic-filter summary');
-  await toggle.focus();
-  await page.keyboard.press('Enter');
-  await page.getByLabel('Assunto', { exact: true }).selectOption('Streams');
-  await toggle.click();
-  await expect(toggle).toContainText('Streams');
+  const topic = page.getByLabel('Assunto', { exact: true });
+  await expect(topic).toBeVisible();
+  await query.focus();
+  await page.keyboard.press('Tab');
+  await expect(topic).toBeFocused();
+  await topic.selectOption('Streams');
+  await expect(topic).toHaveValue('Streams');
   await expect(rle).toBeVisible();
   await query.fill('impossivel-nenhum-resultado');
   await expect(cards).toHaveCount(0);
@@ -403,7 +402,8 @@ test('accepted languages, difficulty and collapsed subject state remain discover
   await page.keyboard.press('Enter');
   await expect(reset).toBeFocused();
   await expect(cards).toHaveCount(total);
-  await expect(toggle).not.toContainText('Streams');
+  await expect(topic).toBeVisible();
+  await expect(topic).toHaveValue('');
   await expect(page.locator('.empty-results')).toBeHidden();
 });
 
