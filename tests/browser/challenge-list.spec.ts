@@ -55,11 +55,34 @@ test('invalid URL values fall back safely and mobile metadata fits', async ({
   await expect(page.locator('tbody tr').first()).toContainText(
     'Fundamentos de sistemas',
   );
+  await expect(page.locator('tbody tr').first().getByRole('term')).toHaveText([
+    'Área',
+    'Dificuldade',
+  ]);
+  await expect(
+    page.locator('tbody tr').first().getByRole('definition'),
+  ).toHaveText(['Fundamentos de sistemas', 'Iniciante']);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+});
+
+test('desktop exposes each area and difficulty once without mobile duplicate semantics', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/desafios/lista');
+  const row = page.locator('tbody tr').first();
+  await expect(row.getByRole('cell')).toHaveCount(4);
+  await expect(row.getByRole('term')).toHaveCount(0);
+  await expect(
+    row.getByRole('cell', { name: 'Fundamentos de sistemas', exact: true }),
+  ).toHaveCount(1);
+  await expect(
+    row.getByRole('cell', { name: 'Iniciante', exact: true }),
+  ).toHaveCount(1);
 });
 
 test('compact list remains complete without JavaScript', async ({

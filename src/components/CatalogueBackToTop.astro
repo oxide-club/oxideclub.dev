@@ -26,7 +26,8 @@ const { targetId } = Astro.props;
 
     function position() {
       frame = 0;
-      const visible = scrollY > innerHeight;
+      const visible =
+        scrollY > innerHeight && target.getBoundingClientRect().bottom < 0;
       if (!visible && document.activeElement === button)
         currentLink().focus({ preventScroll: true });
       button!.hidden = !visible;

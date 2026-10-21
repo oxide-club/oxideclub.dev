@@ -58,3 +58,34 @@ for (const path of ['/desafios', '/desafios/lista']) {
     });
   }
 }
+
+for (const path of ['/desafios', '/desafios/lista']) {
+  test(`back-to-top hides at its navigation destination with 200% text on ${path}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(path);
+    await page.evaluate(() => {
+      const elements = [
+        ...document.querySelectorAll<HTMLElement>('body,body *'),
+      ].map((element) => ({
+        element,
+        size: parseFloat(getComputedStyle(element).fontSize),
+      }));
+      for (const { element, size } of elements)
+        element.style.setProperty('font-size', `${size * 2}px`, 'important');
+      scrollTo(0, 2500);
+    });
+    const button = page.getByRole('button', {
+      name: 'Voltar ao topo do catálogo',
+    });
+    await expect(button).toBeVisible();
+    await button.click();
+    await expect(
+      page.locator('#catalogue-top a[aria-current="page"]'),
+    ).toBeFocused();
+    await expect(page.locator('#catalogue-top')).toBeInViewport();
+    await expect(button).toBeHidden();
+  });
+}

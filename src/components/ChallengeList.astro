@@ -126,12 +126,18 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
             <td class="challenge-number">{id.slice(0, 3)}</td>
             <td class="challenge-title">
               <a href={`/desafios/${data.slug}`}>{data.title}</a>
-              <div class="mobile-meta">
-                <span>{area.title}</span>
-                <span class="difficulty" data-level={data.difficulty}>
-                  {difficultyLabels[data.difficulty]}
-                </span>
-              </div>
+              <dl class="mobile-meta">
+                <div>
+                  <dt class="sr-only">Área</dt>
+                  <dd>{area.title}</dd>
+                </div>
+                <div>
+                  <dt class="sr-only">Dificuldade</dt>
+                  <dd class="difficulty" data-level={data.difficulty}>
+                    {difficultyLabels[data.difficulty]}
+                  </dd>
+                </div>
+              </dl>
             </td>
             <td class="desktop-meta area-name">{area.title}</td>
             <td class="desktop-meta">
@@ -306,6 +312,12 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
   .mobile-meta {
     display: none;
   }
+  .mobile-meta dd {
+    margin: 0;
+  }
+  .mobile-meta > div {
+    min-width: 0;
+  }
   .sr-only {
     position: absolute;
     width: 1px;
@@ -402,7 +414,7 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
       gap: 4px 12px;
       color: var(--color-muted);
       font-size: 12px;
-      margin-top: 8px;
+      margin: 8px 0 0;
     }
   }
 </style>
