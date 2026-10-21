@@ -49,6 +49,10 @@
     "challenge:012-hash-table": {
       "url": "https://oxideclub.dev/desafios/012-hash-table",
       "messageId": "1562296963976794294"
+    },
+    "challenge:013-record-inspector": {
+      "url": "https://oxideclub.dev/desafios/013-record-inspector",
+      "pending": true
     }
   },
   "revisions": {
