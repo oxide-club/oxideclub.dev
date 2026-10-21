@@ -33,6 +33,10 @@
     "challenge:008-image-transform": {
       "url": "https://oxideclub.dev/desafios/008-image-transform",
       "messageId": "1562296918070267930"
+    },
+    "challenge:009-triangle": {
+      "url": "https://oxideclub.dev/desafios/009-triangle",
+      "pending": true
     }
   },
   "revisions": {
