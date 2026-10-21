@@ -3,6 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 const routes = [
   '/',
   '/desafios',
+  '/desafios/lista',
   '/notas',
   '/encontros',
   '/biblioteca',
@@ -285,63 +286,54 @@ test('keyboard focus remains visible on every page', async ({ page }) => {
   }
 });
 
-async function expectPublishedCatalogue(cards: Locator, paginated = false) {
-  const links = cards.getByRole('heading').getByRole('link');
-  const destinations = await links.evaluateAll((elements) =>
-    elements.map((element) => element.getAttribute('href')!),
-  );
-  // Published content grows independently of the site. Keep known entries as
-  // anchors, but verify the order of every entry instead of fixing the count.
+async function expectPublishedCatalogue(rows: Locator) {
+  const destinations = await rows
+    .getByRole('link')
+    .evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute('href')!),
+    );
   expect(destinations).toEqual(
     expect.arrayContaining(['/desafios/001-wc', '/desafios/002-ppm']),
   );
   expect(new Set(destinations).size).toBe(destinations.length);
   expect(destinations).toEqual([...destinations].sort());
-  await expect(cards.filter({ visible: true })).toHaveCount(
-    paginated ? Math.min(12, destinations.length) : destinations.length,
-  );
+  await expect(rows.filter({ visible: true })).toHaveCount(destinations.length);
   return destinations;
 }
 
-test('challenge catalogue sorts ascending and combines text and subjects', async ({
+test('compact catalogue sorts canonically and combines text and area', async ({
   page,
 }) => {
-  await page.goto('/desafios');
+  await page.goto('/desafios/lista');
   const destinations = await expectPublishedCatalogue(
     page.locator('[data-challenge]'),
-    true,
   );
-  const cards = page.locator('[data-challenge]:visible');
+  const rows = page.locator('[data-challenge]:visible');
   const query = page.getByRole('searchbox', { name: 'Buscar desafios' });
-  await expect(page.getByRole('search')).toBeVisible();
   await query.fill('001-WC SAIDA');
-  await expect(cards).toHaveCount(1);
-  await expect(cards.getByRole('heading').getByRole('link')).toHaveAttribute(
+  await expect(rows).toHaveCount(1);
+  await expect(rows.getByRole('link')).toHaveAttribute(
     'href',
     '/desafios/001-wc',
   );
-  await expect(page.getByLabel('Assunto', { exact: true })).toBeVisible();
-  await page.getByLabel('Assunto', { exact: true }).selectOption('Streams');
-  await expect(cards).toHaveCount(1);
+  await page
+    .getByLabel('Área', { exact: true })
+    .selectOption('systems-fundamentals');
+  await expect(rows).toHaveCount(1);
   await query.fill('002-ppm');
-  await expect(cards).toHaveCount(0);
-  await expect(
-    page.getByText('Nenhum desafio encontrado.', { exact: false }),
-  ).toBeVisible();
+  await expect(rows).toHaveCount(0);
   await expect(page.getByRole('status')).toHaveText('0 desafios encontrados');
-  await page.getByRole('button', { name: 'Limpar filtros' }).click();
-  await expect(cards).toHaveCount(Math.min(12, destinations.length));
-  expect(
-    await expectPublishedCatalogue(page.locator('[data-challenge]'), true),
-  ).toEqual(destinations);
-  await expect(query).toHaveValue('');
-  await expect(page.getByLabel('Assunto', { exact: true })).toHaveValue('');
+  await page
+    .getByRole('button', { name: 'Limpar filtros', exact: true })
+    .first()
+    .click();
+  await expect(rows).toHaveCount(destinations.length);
   await query.focus();
   await page.keyboard.press('Tab');
-  await expect(page.getByLabel('Assunto', { exact: true })).toBeFocused();
+  await expect(page.getByLabel('Área', { exact: true })).toBeFocused();
 });
 
-test('challenge catalogue remains available without JavaScript', async ({
+test('compact catalogue remains complete without JavaScript', async ({
   browser,
   baseURL,
 }) => {
@@ -351,7 +343,7 @@ test('challenge catalogue remains available without JavaScript', async ({
   });
   try {
     const page = await context.newPage();
-    await page.goto('/desafios');
+    await page.goto('/desafios/lista');
     await expectPublishedCatalogue(page.locator('[data-challenge]'));
     await expect(page.getByRole('search')).toBeHidden();
   } finally {
@@ -359,73 +351,44 @@ test('challenge catalogue remains available without JavaScript', async ({
   }
 });
 
-test('accepted languages, difficulty and visible subject state remain discoverable', async ({
+test('accepted languages, difficulty and research topics remain searchable in the compact list', async ({
   page,
 }) => {
-  await page.goto('/desafios/');
+  await page.goto('/desafios/lista');
   const total = await page.locator('[data-challenge]').count();
-  const query = page.getByRole('searchbox', { name: 'Buscar desafios' });
-  const cards = page.locator('[data-challenge]:visible');
-  const rle = cards.filter({
-    has: page.getByRole('link', { name: /Construa um compressor RLE/ }),
-  });
-  // Run against both the published legacy metadata and an authoring preview.
-  // The unit fixture separately requires acceptedLanguages [C, Rust] to index Rust.
+  const rows = page.locator('[data-challenge]:visible');
+  const rle = page.locator('[data-id="003-rle"]');
   const hasRust = (await rle.getAttribute('data-search'))!.includes('Rust');
+  const query = page.getByRole('searchbox');
   for (const text of hasRust
     ? ['Rust', 'avançado Rust', 'avancado rust']
     : ['avançado C', 'avancado c']) {
     await query.fill(text);
-    await expect(rle).toHaveCount(1);
-    const count = await cards.count();
-    const status = page.getByRole('status');
-    await expect(status).toContainText(/\d+ desafios? encontrados?/);
-    const matched = Number((await status.innerText()).split(' ')[0]);
-    expect(count).toBe(Math.min(12, matched));
-    if (matched > 12) await expect(status).toContainText('Exibindo 1–12');
+    await expect(rle).toBeVisible();
+    const matched = Number(
+      (await page.getByRole('status').innerText()).split(' ')[0],
+    );
+    await expect(rows).toHaveCount(matched);
   }
-  await expect(
-    rle.getByLabel(hasRust ? 'Linguagens: C, Rust' : 'Linguagens: C', {
-      exact: true,
-    }),
-  ).toHaveText(hasRust ? 'C · Rust' : 'C');
-  if (hasRust) await expect(rle).toContainText('Recomendação: C');
-  await expect(rle.getByRole('link')).toHaveCount(1);
-  const topic = page.getByLabel('Assunto', { exact: true });
-  await expect(topic).toBeVisible();
-  await query.focus();
-  await page.keyboard.press('Tab');
-  await expect(topic).toBeFocused();
-  await topic.selectOption('Streams');
-  await expect(topic).toHaveValue('Streams');
-  await expect(rle).toBeVisible();
+  await query.fill('RLE compressao');
+  await expect(rows).toHaveCount(1);
   await query.fill('impossivel-nenhum-resultado');
-  await expect(cards).toHaveCount(0);
-  await expect(page.locator('.empty-results')).toBeVisible();
-  const reset = page.getByRole('button', { name: 'Limpar filtros' });
+  await expect(rows).toHaveCount(0);
+  const reset = page
+    .getByRole('button', { name: 'Limpar filtros', exact: true })
+    .first();
   await reset.focus();
   await page.keyboard.press('Enter');
   await expect(reset).toBeFocused();
-  await expect(cards).toHaveCount(Math.min(12, total));
-  await expect(topic).toBeVisible();
-  await expect(topic).toHaveValue('');
-  await expect(page.locator('.empty-results')).toBeHidden();
+  await expect(rows).toHaveCount(total);
 });
 
-test('a card opens through its native title link across the card surface', async ({
-  page,
-}) => {
-  await page.goto('/desafios/');
-  const card = page.locator('[data-challenge]').first();
-  const link = card.getByRole('link');
-  await expect(link).toHaveCount(1);
+test('grouped challenge titles keep native link behavior', async ({ page }) => {
+  await page.goto('/desafios');
+  const link = page.locator('[data-area-section] h3 a').first();
   const destination = await link.getAttribute('href');
-  await card.scrollIntoViewIfNeeded();
-  const rect = (await card.boundingBox())!;
   const opened = page.context().waitForEvent('page');
-  await page.keyboard.down('Control');
-  await page.mouse.click(rect.x + rect.width - 16, rect.y + rect.height - 16);
-  await page.keyboard.up('Control');
+  await link.click({ modifiers: ['Control'] });
   const tab = await opened;
   await expect(tab).toHaveURL(new RegExp(`${destination}/?$`));
   await tab.close();

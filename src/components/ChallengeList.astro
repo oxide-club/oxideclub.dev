@@ -161,10 +161,9 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
   }
   .catalogue-filters {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(
-        0,
-        0.8fr
-      ) auto;
+    grid-template-columns:
+      minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.8fr)
+      auto;
     gap: 16px;
     align-items: end;
     padding-block: 28px 20px;
@@ -281,6 +280,8 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
     font-variant-numeric: tabular-nums;
   }
   .challenge-title a {
+    display: inline-block;
+    min-height: 24px;
     font-weight: 500;
     text-decoration: none;
   }
@@ -294,7 +295,7 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
   .difficulty {
     font: 12px/1.6 var(--font-mono);
     color: var(--color-muted);
-    white-space: nowrap;
+    white-space: normal;
   }
   .difficulty[data-level='beginner'] {
     color: var(--color-accent-text);
@@ -335,6 +336,10 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
     background: var(--color-surface);
   }
   @media (max-width: 650px) {
+    .challenge-title a {
+      min-height: 44px;
+      align-content: center;
+    }
     .catalogue-filters {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 12px;

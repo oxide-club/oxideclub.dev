@@ -6,6 +6,20 @@ Código-fonte do [oxideclub.dev](https://oxideclub.dev), o site da comunidade Ox
 
 O projeto usa Astro, TypeScript, coleções de conteúdo em Markdown e CSS. As páginas são geradas como arquivos estáticos e hospedadas no Cloudflare Workers Static Assets; o site não tem backend em tempo de execução.
 
+## Catálogo de desafios
+
+`/desafios` organiza os exercícios publicados por uma única área principal;
+`/desafios/lista` oferece a lista compacta, com busca, área, dificuldade e
+ordenação compartilháveis pela URL. As duas páginas incluem retorno ao topo.
+O registro ordenado `areas.json` e o campo `area` de cada `index.md` pertencem
+ao repositório `challenges`. Os títulos não incluem o número; os slugs e URLs
+continuam estáveis. Áreas sem desafios publicados não aparecem no catálogo.
+
+Na integração desta migração, publique primeiro o conteúdo com `areas.json` e
+`area`, depois o site que exige esses metadados. Confirme a revisão adotada
+pela sincronização antes do deploy. Alterações no registro de áreas também
+solicitam nova publicação do site pelo workflow do repositório de conteúdo.
+
 ## Como contribuir
 
 Consulte [CONTRIBUTING.md](CONTRIBUTING.md) e siga o [código de conduta](https://oxideclub.dev/codigo-de-conduta/). Este repositório recebe alterações no código, nos estilos e nas configurações do site. O conteúdo editorial é mantido em repositórios separados:

@@ -29,8 +29,7 @@ for (const path of ['/desafios', '/desafios/lista']) {
             return [
               ...document.querySelectorAll('a,button,input,select,summary'),
             ].filter((other) => {
-              if (other === element || !other.getClientRects().length)
-                return false;
+              if (other === element || !other.checkVisibility()) return false;
               const r = other.getBoundingClientRect();
               return (
                 r.left < box.right &&

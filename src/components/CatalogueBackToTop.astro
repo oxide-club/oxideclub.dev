@@ -37,9 +37,7 @@ const { targetId } = Astro.props;
       const baseline = innerHeight - button!.getBoundingClientRect().bottom;
       const controls = Array.from(
         document.querySelectorAll<HTMLElement>('a,button,input,select,summary'),
-      ).filter(
-        (element) => element !== button && element.getClientRects().length,
-      );
+      ).filter((element) => element !== button && element.checkVisibility());
       // Move above nearby links/controls rather than making them unreachable.
       for (let offset = 0; offset < innerHeight / 2; offset += 12) {
         button!.style.bottom = `${baseline + offset}px`;

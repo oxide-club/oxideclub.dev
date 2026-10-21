@@ -84,6 +84,8 @@ const { area, challenges } = Astro.props;
     line-height: 1.4;
   }
   h3 a {
+    display: inline-block;
+    min-height: 24px;
     text-decoration: none;
   }
   h3 a:hover {
@@ -107,6 +109,10 @@ const { area, challenges } = Astro.props;
     max-width: 72ch;
   }
   @media (max-width: 650px) {
+    h3 a {
+      min-height: 44px;
+      align-content: center;
+    }
     .area-section {
       grid-template-columns: minmax(0, 1fr);
       gap: 24px;
