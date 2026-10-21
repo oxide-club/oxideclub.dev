@@ -61,6 +61,10 @@
     "challenge:015-mystery-program": {
       "url": "https://oxideclub.dev/desafios/015-mystery-program",
       "messageId": "1562297000085561456"
+    },
+    "challenge:016-use-after-free": {
+      "url": "https://oxideclub.dev/desafios/016-use-after-free",
+      "pending": true
     }
   },
   "revisions": {
