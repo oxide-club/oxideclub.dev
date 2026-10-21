@@ -41,6 +41,10 @@
     "challenge:010-fixed-buffer": {
       "url": "https://oxideclub.dev/desafios/010-fixed-buffer",
       "messageId": "1562296940123652147"
+    },
+    "challenge:011-dynamic-buffer": {
+      "url": "https://oxideclub.dev/desafios/011-dynamic-buffer",
+      "pending": true
     }
   },
   "revisions": {
