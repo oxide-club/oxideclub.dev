@@ -13,6 +13,10 @@
     "challenge:003-rle": {
       "url": "https://oxideclub.dev/desafios/003-rle",
       "baseline": true
+    },
+    "challenge:004-hexdump": {
+      "url": "https://oxideclub.dev/desafios/004-hexdump",
+      "pending": true
     }
   },
   "revisions": {
