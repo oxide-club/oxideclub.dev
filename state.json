@@ -81,6 +81,10 @@
     "challenge:020-expressions": {
       "url": "https://oxideclub.dev/desafios/020-expressions",
       "messageId": "1562297060424945776"
+    },
+    "challenge:021-bytecode": {
+      "url": "https://oxideclub.dev/desafios/021-bytecode",
+      "pending": true
     }
   },
   "revisions": {
