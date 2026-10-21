@@ -37,6 +37,10 @@
     "challenge:009-triangle": {
       "url": "https://oxideclub.dev/desafios/009-triangle",
       "messageId": "1562296928551706715"
+    },
+    "challenge:010-fixed-buffer": {
+      "url": "https://oxideclub.dev/desafios/010-fixed-buffer",
+      "pending": true
     }
   },
   "revisions": {
