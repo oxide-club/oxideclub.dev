@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CatalogueBackToTop from '../../components/CatalogueBackToTop.astro';
 import JoinLink from '../../components/JoinLink.astro';
 import ChallengeCatalogueNav from '../../components/ChallengeCatalogueNav.astro';
 import ChallengeAreaSection from '../../components/ChallengeAreaSection.astro';
@@ -126,6 +127,7 @@ const proposalGuideUrl = githubUrl('challenges', 'CONTRIBUTING.md', 'blob');
       </div>
     </section>
   </div>
+  <CatalogueBackToTop targetId="catalogue-top" />
 </BaseLayout>
 <style>
   .page-intro {

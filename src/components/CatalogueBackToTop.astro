@@ -1,0 +1,107 @@
+---
+interface Props {
+  targetId: string;
+}
+const { targetId } = Astro.props;
+---
+
+<button
+  type="button"
+  class="back-to-top"
+  data-back-top
+  data-target={targetId}
+  aria-label="Voltar ao topo do catálogo"
+  hidden
+>
+  ↑ Voltar ao topo
+</button>
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-back-top]');
+  if (button) {
+    const target = document.getElementById(button.dataset.target!)!;
+    const container = target.closest<HTMLElement>('.container')!;
+    const currentLink = () =>
+      target.querySelector<HTMLAnchorElement>('[aria-current="page"]')!;
+    let frame = 0;
+
+    function position() {
+      frame = 0;
+      const visible = scrollY > innerHeight;
+      if (!visible && document.activeElement === button)
+        currentLink().focus({ preventScroll: true });
+      button!.hidden = !visible;
+      if (!visible) return;
+      const containerBox = container.getBoundingClientRect();
+      button!.style.right = `${Math.max(16, innerWidth - containerBox.right)}px`;
+      button!.style.bottom = 'max(16px, env(safe-area-inset-bottom))';
+      const baseline = innerHeight - button!.getBoundingClientRect().bottom;
+      const controls = Array.from(
+        document.querySelectorAll<HTMLElement>('a,button,input,select,summary'),
+      ).filter(
+        (element) => element !== button && element.getClientRects().length,
+      );
+      // Move above nearby links/controls rather than making them unreachable.
+      for (let offset = 0; offset < innerHeight / 2; offset += 12) {
+        button!.style.bottom = `${baseline + offset}px`;
+        const box = button!.getBoundingClientRect();
+        const intersects = controls.some((element) => {
+          const other = element.getBoundingClientRect();
+          return (
+            other.left < box.right + 4 &&
+            other.right > box.left - 4 &&
+            other.top < box.bottom + 4 &&
+            other.bottom > box.top - 4
+          );
+        });
+        if (!intersects) break;
+      }
+    }
+    function schedule() {
+      if (!frame) frame = requestAnimationFrame(position);
+    }
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    document.addEventListener('catalogue:updated', schedule);
+    new ResizeObserver(schedule).observe(container);
+    button.addEventListener('click', () => {
+      currentLink().focus({ preventScroll: true });
+      target.scrollIntoView({
+        block: 'start',
+        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'instant'
+          : 'smooth',
+      });
+    });
+    schedule();
+  }
+</script>
+<style>
+  .back-to-top {
+    position: fixed;
+    z-index: 20;
+    right: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 1px solid #666b6e;
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-accent-text);
+    font: 500 13px/1.5 var(--font-body);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .back-to-top[hidden] {
+    display: none !important;
+  }
+  .back-to-top:hover {
+    border-color: var(--color-accent-text);
+  }
+  @media (forced-colors: active) {
+    .back-to-top {
+      border-color: ButtonText;
+      background: Canvas;
+      color: ButtonText;
+    }
+  }
+</style>

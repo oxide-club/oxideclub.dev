@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CatalogueBackToTop from '../../components/CatalogueBackToTop.astro';
 import ChallengeCatalogueNav from '../../components/ChallengeCatalogueNav.astro';
 import ChallengeList from '../../components/ChallengeList.astro';
 import { publishedChallenges } from '../../lib/challenges';
@@ -45,6 +46,7 @@ const groups = groupChallengesByArea(
       </a>
     </p>
   </div>
+  <CatalogueBackToTop targetId="catalogue-top" />
 </BaseLayout>
 <style>
   .page-intro {
