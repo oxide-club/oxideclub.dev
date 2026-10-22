@@ -324,3 +324,34 @@ antes de habilitar anúncios, para não divulgar retroativamente o catálogo atu
 ## Licenças
 
 O código original do site usa a [licença MIT](LICENSE). A prosa e a documentação originais de `oxide-club/notes` e `oxide-club/meetings`, assim como os textos educacionais de `oxide-club/challenges`, usam CC BY 4.0, sujeitos aos avisos de suas fontes. Dados de teste dos desafios usam CC0 1.0; código executável dos desafios usa MIT. Outros textos editoriais, logos e ilustrações ficam fora do escopo MIT do código do site. Consulte [LICENSING.md](LICENSING.md) para o escopo completo. Materiais de terceiros mantêm suas próprias licenças.
+
+## Laboratórios
+
+O catálogo `/laboratórios/` lê `oxide-club/labs` em `.content/labs/`. Cada
+`NNN-nome/index.md` contém as oito seções: O que vamos investigar; Antes de
+começar; Materiais; Etapas da investigação; Critérios de conclusão; Extensões
+opcionais; Participação no clube; Referências e atividades relacionadas.
+Os diretórios auxiliares (`templates`, `scripts`, `tests`, `docs`, `licenses`)
+não geram páginas. Rascunhos não geram rotas, downloads ou entradas no sitemap.
+
+Use `LABS_SOURCE=/caminho/absoluto/labs npm run dev` para uma prévia local.
+A sobrescrita é proibida em CI e produção; `LABS_COMMIT` fixa uma revisão
+sincronizada. A home mantém seu sorteio de desafios e notas, com um acesso
+estável separado ao catálogo de laboratórios.
+
+O build gera `/<slug>/materiais.zip` dentro de `/laboratórios/`, contendo roteiro,
+materiais, checks, relato-modelo, licenças e `SOURCE.txt`. O pacote usa a mesma
+fonte da página e não inclui soluções de referência nem executáveis compilados.
+Arquivos individuais ficam em `/<slug>/assets/`. O template e as licenças
+necessárias são descritos no guia do repositório de conteúdo.
+
+Execute `npm run test:labs` após sincronizar as fontes. As suítes de navegador
+incluem navegação, acessibilidade, viewport estreita e downloads de laboratórios.
+
+### Ordem de ativação
+
+Publique primeiro o repositório `oxide-club/labs`, branch `main`, com o conteúdo
+validado. Depois sincronize sem `LABS_SOURCE`, confira a revisão e integre o site.
+Não publique o consumidor enquanto a fonte remota não existir. Anúncios
+Discord de laboratórios não fazem parte desta integração. Após o deploy,
+confira acesso direto à rota acentuada, sitemap e ZIP na hospedagem.

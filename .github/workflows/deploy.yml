@@ -28,7 +28,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Fetch latest public challenges, solutions, notes and meetings for this deployment
+      - name: Fetch latest public challenges, solutions, notes, meetings and labs for this deployment
         run: npm run content:sync
       - run: npm test
       - run: npm run check

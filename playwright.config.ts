@@ -11,7 +11,7 @@ export default defineConfig({
   webServer: livePreviewUrl
     ? undefined
     : {
-        command: 'npm run preview -- --port 4321',
+        command: 'npm run preview -- --port 4321 --ignore-lock',
         url: 'http://127.0.0.1:4321',
         reuseExistingServer: true,
       },

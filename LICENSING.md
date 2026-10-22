@@ -38,3 +38,11 @@ A disponibilização do código não concede autorização para apresentar um pr
 Dependências, fontes e outros materiais de terceiros mantêm suas próprias licenças. Preserve os avisos exigidos por elas. As fontes Inter e IBM Plex Mono utilizadas no site são distribuídas pelos respectivos pacotes Fontsource sob SIL Open Font License; consulte os arquivos de licença desses pacotes.
 
 O campo `license` de `package.json` identifica a licença do código original do site; não substitui as distinções descritas neste documento.
+
+## Laboratórios
+
+A fonte `oxide-club/labs` declara CC BY 4.0 para roteiros originais, MIT para
+código original e CC0 1.0 para dados de teste originais. Cada pacote gerado pelo
+site inclui `LICENSING.md` e os textos das três licenças da mesma fonte.
+A biblioteca fflate, usada no build para gerar ZIPs, usa licença MIT; seu texto
+acompanha a dependência. Não é enviada como JavaScript ao navegador.

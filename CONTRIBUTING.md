@@ -29,3 +29,18 @@ Discord, em `#contribuicoes`, com link do PR. Após merge e publicação
 bem-sucedida, a primeira publicação de cada página é anunciada em `#novidades`,
 com link do site. Correções em conteúdo existente não geram novas divulgações.
 Consulte a [operação das notificações](docs/DISCORD-NOTIFICATIONS.md).
+
+## Laboratórios
+
+Roteiros e materiais pertencem a `oxide-club/labs`. O site exige um título no
+formato “Laboratório de X”, pergunta central, resumo, pré-requisitos, ferramentas,
+ambiente, assuntos, dificuldade e estado de publicação. `slug` deve coincidir
+com o diretório `NNN-nome`; `publishedAt` é obrigatório quando publicado.
+Use as oito seções do template, na ordem estabelecida. Relacione atividades pelos
+identificadores de `relatedLabs` e `relatedChallenges`; destinos devem estar publicados.
+
+Os materiais aceitam Markdown, texto, C, headers, Python, JSON e CSV, dentro de
+`materials/` ou `checks/`, além de `report-template.md`. Não inclua symlinks,
+artefatos compilados ou dependências. Links relativos são validados e convertidos
+para downloads. Conferências expansíveis aceitam somente `details` e `summary`
+sem atributos; mantenha as instruções essenciais fora desses blocos.

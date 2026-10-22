@@ -44,3 +44,10 @@ References: [WCAG text spacing](https://www.w3.org/WAI/WCAG22/Understanding/text
 ## Owner-authorized release exception
 
 On 19 October 2026, the owner explicitly instructed publication without the pending accessibility reviews. `manualAccessibilityReviewDeferred: true` records that exception. The three manual-review flags remain false; no completed review or full WCAG conformance is claimed. Automated checks remain required by CI. The manual checks above remain follow-up work, rather than blockers for this owner-authorized release.
+
+## Laboratórios
+
+A nova coleção usa sumário lateral no desktop e `details` no celular, cabeçalhos
+semânticos e conferências expansíveis com `summary`. A suíte `labs.spec.ts`
+verifica axe, teclado, downloads, 320/390/1280px e ampliação de texto.
+Uma revisão manual com leitor de tela da nova coleção permanece pendente.

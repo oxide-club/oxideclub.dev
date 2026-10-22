@@ -23,6 +23,7 @@ test('meetings: static agenda, permanent articles, safe assets, calendar and res
     for (const path of [
       'src',
       '.content/challenges',
+      '.content/labs',
       '.content/solutions',
       '.content/notes',
       'public',
@@ -63,6 +64,7 @@ test('meetings: static agenda, permanent articles, safe assets, calendar and res
           timeout: 60000,
           env: {
             ...process.env,
+            LABS_SOURCE: undefined,
             SITE_RELEASE: 'production',
             CHALLENGES_COMMIT: process.env.CHALLENGES_COMMIT || 'a'.repeat(40),
             NOTES_COMMIT: process.env.NOTES_COMMIT || 'b'.repeat(40),
