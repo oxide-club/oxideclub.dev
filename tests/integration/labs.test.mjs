@@ -93,6 +93,24 @@ test('labs publish independently, distribute matching files and remove drafts on
     decodeURI(await readFile(join(root, 'dist/sitemap-0.xml'), 'utf8')),
     /laboratórios\/001-teste/,
   );
+  await rm(join(lab, 'materials/trace.txt'));
+  assert.throws(build, /trace\.txt/);
+  await writeFile(join(lab, 'materials/trace.txt'), 'L 0x00\n');
+  build();
+  const alternate = join(root, 'alternate-source');
+  await mkdir(alternate);
+  env.LABS_SOURCE = alternate;
+  build();
+  assert.match(
+    await readFile(catalog, 'utf8'),
+    /Ainda não há laboratórios publicados/,
+  );
+  await assert.rejects(
+    access(join(root, 'dist/laboratórios/001-teste/materiais.zip')),
+  );
+  env.LABS_SOURCE = source;
+  build();
+  await access(join(root, 'dist/laboratórios/001-teste/index.html'));
   await writeFile(join(lab, 'index.md'), fixture(true));
   build();
   await assert.rejects(

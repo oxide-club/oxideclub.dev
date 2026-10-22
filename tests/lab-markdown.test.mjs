@@ -4,6 +4,7 @@ import { markdownToHtml } from 'satteri';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import markdownLabs from '../src/lib/markdown-labs.mjs';
+import { labsDirectory } from '../src/lib/lab-source.mjs';
 import {
   labSections,
   validateLabRelations,
@@ -12,7 +13,7 @@ const document = () =>
   labSections.map((s) => '## ' + s + '\n\nTexto.').join('\n\n');
 const compile = async (source) =>
   markdownToHtml(source, {
-    fileURL: pathToFileURL(resolve('.content/labs/005-cache/index.md')),
+    fileURL: pathToFileURL(resolve(labsDirectory(), '005-cache/index.md')),
     mdastPlugins: [markdownLabs],
   });
 test('lab structure is read from Markdown nodes, not code examples', async () => {

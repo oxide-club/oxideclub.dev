@@ -61,7 +61,30 @@ for (const width of [320, 390, 1280])
       await page.keyboard.press('Escape');
       await expect(page.locator('.mobile-nav')).not.toHaveAttribute('open', '');
     }
-    await page.addStyleTag({ content: 'html{font-size:200% !important}' });
+    await page
+      .locator('.prose details')
+      .evaluateAll((elements) =>
+        elements.forEach((el) => el.setAttribute('open', '')),
+      );
+    const targets = 'body, .mobile-nav summary, .desktop-nav a, .prose td';
+    const beforeSizes = await page
+      .locator(targets)
+      .evaluateAll((elements) =>
+        elements.map((el) => parseFloat(getComputedStyle(el).fontSize)),
+      );
+    await page.evaluate(() => {
+      const values = [
+        ...document.querySelectorAll<HTMLElement>('body, body *'),
+      ].map((el) => ({ el, size: parseFloat(getComputedStyle(el).fontSize) }));
+      for (const { el, size } of values)
+        el.style.setProperty('font-size', `${size * 2}px`, 'important');
+    });
+    const afterSizes = await page
+      .locator(targets)
+      .evaluateAll((elements) =>
+        elements.map((el) => parseFloat(getComputedStyle(el).fontSize)),
+      );
+    expect(afterSizes).toEqual(beforeSizes.map((size) => size * 2));
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

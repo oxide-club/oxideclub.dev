@@ -1,3 +1,5 @@
+import { pathToFileURL } from 'node:url';
+import { join } from 'node:path';
 import { labsDirectory, labId, labSchema } from './lib/lab-source.mjs';
 import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
@@ -137,6 +139,13 @@ const labs = defineCollection({
         context.meta.set('source', labBase);
       }
       await labGlob.load(context);
+      // A material can disappear without changing the Markdown digest. Validate
+      // every source body against current files even when glob reused its render.
+      for (const [id, entry] of context.store.entries()) {
+        await context.renderMarkdown(entry.body ?? '', {
+          fileURL: pathToFileURL(join(labBase, id, 'index.md')),
+        });
+      }
     },
   },
   schema: labSchema,
