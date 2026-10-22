@@ -4,6 +4,7 @@ export const github = {
   repositories: {
     challenges: { name: 'challenges', branch: 'main' },
     solutions: { name: 'solutions', branch: 'main' },
+    labs: { name: 'labs', branch: 'main' },
     notes: { name: 'notes', branch: 'main' },
     meetings: { name: 'meetings', branch: 'main' },
   },

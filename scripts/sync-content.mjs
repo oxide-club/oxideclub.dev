@@ -1,3 +1,4 @@
+import { syncLabs } from './sync-labs.mjs';
 import { syncSolutions } from './sync-solutions.mjs';
 import { syncChallenges } from './sync-challenges.mjs';
 import { syncNotes } from './sync-notes.mjs';
@@ -9,7 +10,8 @@ try {
     process.env.SITE_RELEASE === 'production' ||
     process.env.npm_lifecycle_event === 'build:production';
   if (
-    (process.env.CHALLENGES_SOURCE !== undefined ||
+    (process.env.LABS_SOURCE !== undefined ||
+      process.env.CHALLENGES_SOURCE !== undefined ||
       process.env.SOLUTIONS_SOURCE !== undefined ||
       process.env.NOTES_SOURCE !== undefined ||
       process.env.MEETINGS_SOURCE !== undefined) &&
@@ -19,6 +21,8 @@ try {
       'Local content source overrides are forbidden in CI and production',
     );
   }
+  const labs = await syncLabs({ expectedRevision: process.env.LABS_COMMIT, production, githubEnv: process.env.GITHUB_ENV });
+  console.log(labs ? `[content] oxide-club/labs main @ ${labs}` : '[content] labs local source validated');
   const challenges = await syncChallenges({
     expectedRevision: process.env.CHALLENGES_COMMIT,
     production,
