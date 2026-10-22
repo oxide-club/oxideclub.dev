@@ -1,0 +1,77 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { labUrl } from '../lib/lab-urls.mjs';
+interface Props {
+  lab: CollectionEntry<'labs'>;
+}
+const { lab } = Astro.props;
+---
+
+<article class="lab-card">
+  <div class="eyebrow">Investigação · {lab.data.topics.join(' / ')}</div>
+  <h2>
+    <a href={labUrl(lab.id)}>{lab.data.title}</a>
+  </h2>
+  <p class="question">{lab.data.question}</p>
+  <p>{lab.data.summary}</p>
+  <dl>
+    <div>
+      <dt>Antes de começar</dt>
+      <dd>{lab.data.prerequisites.join(' · ')}</dd>
+    </div>
+    <div>
+      <dt>Ambiente</dt>
+      <dd>{lab.data.environment}</dd>
+    </div>
+  </dl>
+  <a class="text-link" href={labUrl(lab.id)}>
+    Explorar laboratório <span aria-hidden="true">→</span>
+  </a>
+</article>
+<style>
+  .lab-card {
+    padding: 32px 0;
+    border-top: 1px solid var(--color-border);
+    max-width: 80ch;
+    min-width: 0;
+  }
+  .lab-card h2 {
+    font-size: clamp(25px, 4vw, 34px);
+    margin: 16px 0;
+  }
+  .lab-card h2 a {
+    text-decoration: none;
+  }
+  .lab-card h2 a:hover {
+    text-decoration: underline;
+  }
+  .question {
+    color: var(--color-text);
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  .lab-card p {
+    max-width: 68ch;
+  }
+  .lab-card dl {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 24px 0;
+  }
+  .lab-card dt {
+    font: 12px var(--font-mono);
+    color: var(--color-muted);
+    margin-bottom: 8px;
+  }
+  .lab-card dd {
+    margin: 0;
+    font-size: 14px;
+  }
+  @media (max-width: 600px) {
+    .lab-card dl {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+</style>

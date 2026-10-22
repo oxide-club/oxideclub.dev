@@ -1,0 +1,53 @@
+---
+import { labAssetUrl, labPackageUrl } from '../lib/lab-urls.mjs';
+interface Props {
+  labId: string;
+  files: Array<{ path: string; type: string }>;
+}
+const { labId, files } = Astro.props;
+---
+
+<div class="materials-download">
+  <a class="button" href={labPackageUrl(labId)} download>
+    Baixar materiais <span aria-hidden="true">↓</span>
+  </a>
+  <details>
+    <summary>Arquivos do laboratório</summary>
+    <ul>
+      {files
+        .filter((f) => f.path !== 'index.md')
+        .map((file) => (
+          <li>
+            <a href={labAssetUrl(labId, file.path)}>{file.path}</a>
+          </li>
+        ))}
+    </ul>
+  </details>
+</div>
+<style>
+  .materials-download {
+    margin-top: 24px;
+  }
+  details {
+    margin-top: 16px;
+    max-width: 70ch;
+  }
+  summary {
+    cursor: pointer;
+    min-height: 44px;
+    display: list-item;
+    padding-block: 10px;
+    font-size: 14px;
+  }
+  ul {
+    padding-left: 20px;
+  }
+  li {
+    margin: 8px 0;
+    font: 13px var(--font-mono);
+    overflow-wrap: anywhere;
+  }
+  a {
+    overflow-wrap: anywhere;
+  }
+</style>

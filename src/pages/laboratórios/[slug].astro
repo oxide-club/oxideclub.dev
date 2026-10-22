@@ -1,0 +1,198 @@
+---
+import { render, getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import { join } from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LabIndex from '../../components/LabIndex.astro';
+import LabMaterials from '../../components/LabMaterials.astro';
+import JoinLink from '../../components/JoinLink.astro';
+import { publishedLabs } from '../../lib/labs';
+import { labsDirectory } from '../../lib/lab-source.mjs';
+import { labFiles } from '../../lib/lab-files.mjs';
+import { labUrl } from '../../lib/lab-urls.mjs';
+import { difficultyLabels } from '../../lib/challenges';
+export async function getStaticPaths() {
+  return (await publishedLabs()).map((lab) => ({
+    params: { slug: lab.id },
+    props: { lab },
+  }));
+}
+interface Props {
+  lab: CollectionEntry<'labs'>;
+}
+const { lab } = Astro.props;
+const { data } = lab;
+const { Content, headings } = await render(lab);
+const links = headings
+  .filter((h) => h.depth === 2)
+  .map((h) => ({ href: '#' + h.slug, text: h.text }));
+const files = await labFiles(join(labsDirectory(), lab.id));
+const related = [
+  ...(await publishedLabs())
+    .filter((x) => data.relatedLabs.includes(x.id))
+    .map((x) => ({ title: x.data.title, url: labUrl(x.id) })),
+  ...(await getCollection('challenges'))
+    .filter((x) => data.relatedChallenges.includes(x.id) && !x.data.draft)
+    .map((x) => ({ title: x.data.title, url: '/desafios/' + x.id + '/' })),
+];
+---
+
+<BaseLayout title={data.title} description={data.summary}>
+  <div class="container">
+    <header class="page-intro">
+      <a class="text-link" href={labUrl()}>
+        ← Todos os laboratórios
+      </a>
+      <div class="eyebrow">
+        Investigação · Núcleo {difficultyLabels[data.difficulty].toLowerCase()}
+      </div>
+      <h1>
+        {data.title}
+        <span class="accent">_</span>
+      </h1>
+      <p class="central-question">{data.question}</p>
+      <p>{data.summary}</p>
+      <div class="metadata">
+        <span>{data.environment}</span>
+        <span>
+          Publicado em{' '}
+          {data.publishedAt!.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
+        </span>
+        {data.updatedAt && (
+          <span>
+            Atualizado em{' '}
+            {data.updatedAt.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
+          </span>
+        )}
+      </div>
+      <LabMaterials labId={lab.id} files={files} />
+    </header>
+    <details class="mobile-contents">
+      <summary>Neste laboratório</summary>
+      <LabIndex links={links} />
+    </details>
+    <div class="article-layout">
+      <article class="prose">
+        <Content />
+        {related.length > 0 && (
+          <div class="related">
+            <p>
+              <strong>Continue a investigação</strong>
+            </p>
+            <ul>
+              {related.map((item) => (
+                <li>
+                  <a href={item.url}>{item.title}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </article>
+      <aside>
+        <div class="contents">
+          <span class="eyebrow">Neste laboratório</span>
+          <LabIndex links={links} />
+        </div>
+      </aside>
+    </div>
+    <div class="conversation">
+      <JoinLink
+        href={data.discordThreadUrl}
+        label="Conversar sobre a investigação"
+      />
+    </div>
+  </div>
+</BaseLayout>
+<style>
+  .page-intro {
+    padding-block: 40px;
+  }
+  .page-intro > .text-link {
+    margin-bottom: 24px;
+  }
+  .page-intro h1 {
+    max-width: 24ch;
+    font-size: clamp(34px, 5vw, 52px);
+    margin: 20px 0;
+  }
+  .page-intro p {
+    max-width: 70ch;
+    margin-top: 16px;
+  }
+  .central-question {
+    font-size: 22px;
+    color: var(--color-text);
+  }
+  .metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    font: 12px/1.7 var(--font-mono);
+    color: var(--color-muted);
+    margin-top: 20px;
+  }
+  .article-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 56px;
+    border-top: 1px solid var(--color-border);
+  }
+  article {
+    min-width: 0;
+  }
+  aside {
+    padding-top: 40px;
+  }
+  .contents {
+    position: sticky;
+    top: 24px;
+  }
+  .contents > .eyebrow {
+    margin-bottom: 16px;
+  }
+  .mobile-contents {
+    display: none;
+  }
+  .conversation {
+    padding-block: 24px 64px;
+    border-top: 1px solid var(--color-border);
+  }
+  :global(.prose details) {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-block: 24px;
+  }
+  :global(.prose details summary) {
+    cursor: pointer;
+    color: var(--color-text);
+    min-height: 44px;
+    padding: 10px 0;
+  }
+  :global(.prose h3) {
+    scroll-margin-top: 24px;
+  }
+  .related {
+    margin-bottom: 24px;
+  }
+  @media (max-width: 800px) {
+    .article-layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    .article-layout aside {
+      display: none;
+    }
+    .mobile-contents {
+      display: block;
+      border-top: 1px solid var(--color-border);
+      padding-block: 16px;
+    }
+    .mobile-contents summary {
+      min-height: 44px;
+      padding-block: 10px;
+      cursor: pointer;
+    }
+  }
+</style>

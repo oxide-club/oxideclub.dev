@@ -1,9 +1,10 @@
 ---
 import JoinLink from './JoinLink.astro';
-const pathname = Astro.url.pathname;
+const pathname = decodeURI(Astro.url.pathname);
 const navigation = [
   { label: 'Início', href: '/' },
   { label: 'Desafios', href: '/desafios' },
+  { label: 'Laboratórios', href: '/laboratórios/' },
   { label: 'Notas', href: '/notas/' },
   { label: 'Biblioteca', href: '/biblioteca' },
   { label: 'Como participar', href: '/como-participar/' },
@@ -151,7 +152,7 @@ const navigation = [
       gap: 18px;
     }
   }
-  @media (max-width: 900px) {
+  @media (max-width: 1050px) {
     .header {
       min-height: 80px;
       justify-content: space-between;
