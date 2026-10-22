@@ -1,4 +1,9 @@
-import { lstat, readdir } from 'node:fs/promises';
+import { lstat, readdir, readFile } from 'node:fs/promises';
+import { parseDocument } from 'yaml';
+import {
+  loadChallengeAreas,
+  validateChallengeArea,
+} from '../src/lib/challenge-areas.mjs';
 import { isAbsolute, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { challengeIdentifier } from '../src/lib/challenge-source.mjs';
@@ -6,6 +11,7 @@ import { github, repositoryUrl } from '../src/config/github.mjs';
 import { syncRepository } from './sync-repository.mjs';
 
 async function validateDefinitions(directory) {
+  const areas = await loadChallengeAreas(directory);
   const numbers = new Set();
   let count = 0;
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -14,6 +20,14 @@ async function validateDefinitions(directory) {
     if (!definition.isFile() || definition.isSymbolicLink()) {
       throw new Error(`Missing challenge definition: ${entry.name}/index.md`);
     }
+    const path = join(directory, entry.name, 'index.md');
+    const text = await readFile(path, 'utf8');
+    const frontmatter = text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+    if (!frontmatter) throw new Error(`${path}: missing frontmatter`);
+    const document = parseDocument(frontmatter[1]);
+    if (document.errors.length)
+      throw new Error(`${path}: ${document.errors[0].message}`);
+    validateChallengeArea(document.toJS()?.area, areas, path);
     const number = entry.name.split('-')[0];
     if (numbers.has(number))
       throw new Error(`Duplicate challenge number: ${number}`);

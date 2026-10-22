@@ -1,0 +1,47 @@
+---
+interface Props {
+  active: 'areas' | 'list';
+  areaCount: number;
+  challengeCount: number;
+}
+const { active, areaCount, challengeCount } = Astro.props;
+---
+
+<nav id="catalogue-top" aria-label="Explorar desafios" class="catalogue-nav">
+  <a href="/desafios" aria-current={active === 'areas' ? 'page' : undefined}>
+    Por área <span>{String(areaCount).padStart(2, '0')}</span>
+  </a>
+  <a
+    href="/desafios/lista"
+    aria-current={active === 'list' ? 'page' : undefined}
+  >
+    Lista <span>{String(challengeCount).padStart(2, '0')}</span>
+  </a>
+</nav>
+<style>
+  .catalogue-nav {
+    display: flex;
+    gap: 32px;
+    border-bottom: 1px solid var(--color-border);
+    scroll-margin-top: 24px;
+  }
+  a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    padding: 12px 0;
+    border-bottom: 2px solid transparent;
+    text-decoration: none;
+    font-size: 15px;
+    color: var(--color-muted);
+  }
+  a[aria-current] {
+    border-color: var(--color-accent-text);
+    color: var(--color-text);
+  }
+  span {
+    font: 12px var(--font-mono);
+    color: var(--color-muted);
+  }
+</style>

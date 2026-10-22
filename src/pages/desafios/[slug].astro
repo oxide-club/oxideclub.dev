@@ -12,6 +12,8 @@ import JoinLink from '../../components/JoinLink.astro';
 import { challengeLanguages } from '../../lib/challenge-languages.mjs';
 import { categoryLabels } from '../../lib/challenge-taxonomy.mjs';
 import { publishedChallenges, difficultyLabels } from '../../lib/challenges';
+import { loadChallengeAreas } from '../../lib/challenge-areas.mjs';
+import { challengesDirectory } from '../../lib/challenge-source.mjs';
 export async function getStaticPaths() {
   const catalogues = await loadCommunity();
   return (await publishedChallenges()).map((challenge) => ({
@@ -26,6 +28,9 @@ interface Props {
 const { challenge, implementations } = Astro.props;
 const { Content, headings } = await render(challenge);
 const { data } = challenge;
+const area = (await loadChallengeAreas(challengesDirectory())).find(
+  (area) => area.id === data.area,
+)!;
 const resources = challengeResources(challenge.id, data.github);
 const indexLinks = [
   ...headings
@@ -64,6 +69,9 @@ const indexLinks = [
         <span class="accent">_</span>
       </h1>
       <p>{data.summary}</p>
+      <p class="challenge-area">
+        Área: <a href={`/desafios#${area.slug}`}>{area.title}</a>
+      </p>
       {data.recommendedLanguage && challengeLanguages(data).length > 1 && (
         <p class="language-recommendation">
           Recomendação: {data.recommendedLanguage}

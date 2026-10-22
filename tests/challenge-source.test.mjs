@@ -30,6 +30,17 @@ async function fixture(t) {
   const root = join(directory, 'site');
   await mkdir(repository);
   await mkdir(root);
+  await writeFile(
+    join(repository, 'areas.json'),
+    JSON.stringify([
+      {
+        id: 'systems',
+        slug: 'sistemas',
+        title: 'Sistemas',
+        description: 'Explore sistemas.',
+      },
+    ]),
+  );
   git(repository, 'init', '-b', 'main');
   await mkdir(join(repository, '001-wc'));
   const definition = join(repository, '001-wc/index.md');
@@ -47,7 +58,10 @@ async function fixture(t) {
     );
     return git(repository, 'rev-parse', 'HEAD');
   };
-  await writeFile(definition, "---\nslug: '001-wc'\n---\nOriginal\n");
+  await writeFile(
+    definition,
+    "---\nslug: '001-wc'\narea: systems\n---\nOriginal\n",
+  );
   const revision = commit();
   return { directory, repository, root, definition, commit, revision };
 }
@@ -61,7 +75,10 @@ test('each fresh sync adopts latest main and records the fetched revision', asyn
     await readFile(githubEnv, 'utf8'),
     `CHALLENGES_COMMIT=${first}\n`,
   );
-  await writeFile(f.definition, "---\nslug: '001-wc'\n---\nUpdated\n");
+  await writeFile(
+    f.definition,
+    "---\nslug: '001-wc'\narea: systems\n---\nUpdated\n",
+  );
   const next = f.commit();
   assert.notEqual(next, first);
   assert.equal(await syncChallenges(f), next);

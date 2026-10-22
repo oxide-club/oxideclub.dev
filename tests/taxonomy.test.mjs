@@ -17,6 +17,7 @@ test('each category accepts every difficulty, including overlapping categories',
       assert.equal(
         challengeTaxonomySchema.safeParse({
           difficulty,
+          area: 'systems',
           categories: [category],
         }).success,
         true,
@@ -26,6 +27,7 @@ test('each category accepts every difficulty, including overlapping categories',
     assert.equal(
       challengeTaxonomySchema.safeParse({
         difficulty,
+        area: 'systems',
         categories: ['build', 'debug', 'optimize'],
       }).success,
       true,
