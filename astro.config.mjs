@@ -1,3 +1,4 @@
+import markdownLabs from './src/lib/markdown-labs.mjs';
 import { defineConfig } from 'astro/config';
 import markdownNotes from './src/lib/markdown-notes.mjs';
 import markdownMeetings from './src/lib/markdown-meetings.mjs';
@@ -6,9 +7,12 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://oxideclub.dev',
   output: 'static',
+  cacheDir: './.astro/cache',
   integrations: [sitemap()],
   markdown: {
-    processor: satteri({ mdastPlugins: [markdownNotes, markdownMeetings] }),
+    processor: satteri({
+      mdastPlugins: [markdownNotes, markdownMeetings, markdownLabs],
+    }),
     shikiConfig: {
       theme: 'github-dark',
       transformers: [

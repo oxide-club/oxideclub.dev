@@ -21,8 +21,16 @@ try {
       'Local content source overrides are forbidden in CI and production',
     );
   }
-  const labs = await syncLabs({ expectedRevision: process.env.LABS_COMMIT, production, githubEnv: process.env.GITHUB_ENV });
-  console.log(labs ? `[content] oxide-club/labs main @ ${labs}` : '[content] labs local source validated');
+  const labs = await syncLabs({
+    expectedRevision: process.env.LABS_COMMIT,
+    production,
+    githubEnv: process.env.GITHUB_ENV,
+  });
+  console.log(
+    labs
+      ? `[content] oxide-club/labs main @ ${labs}`
+      : '[content] labs local source validated',
+  );
   const challenges = await syncChallenges({
     expectedRevision: process.env.CHALLENGES_COMMIT,
     production,

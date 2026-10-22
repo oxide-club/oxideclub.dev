@@ -2,12 +2,16 @@ import { lstat, readdir } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { github, repositoryUrl } from '../src/config/github.mjs';
-import {
-  labIdentifier,
-} from '../src/lib/lab-source.mjs';
+import { labIdentifier } from '../src/lib/lab-source.mjs';
 import { syncRepository } from './sync-repository.mjs';
 
-const reservedLabDirectories = new Set(['templates','scripts','tests','docs','licenses']);
+const reservedLabDirectories = new Set([
+  'templates',
+  'scripts',
+  'tests',
+  'docs',
+  'licenses',
+]);
 
 async function regularFile(directory, path) {
   const stat = await lstat(join(directory, path)).catch(() => null);

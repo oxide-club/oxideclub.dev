@@ -1,3 +1,4 @@
+import { labsDirectory, labId, labSchema } from './lib/lab-source.mjs';
 import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
@@ -110,4 +111,34 @@ const meetings = defineCollection({
   }),
   schema: meetingSchema,
 });
-export const collections = { challenges, notes, meetings };
+const labBase = labsDirectory();
+if (!existsSync(labBase))
+  throw new Error(
+    'Labs content is missing. Run content:sync or set LABS_SOURCE.',
+  );
+const labGlob = glob({
+  pattern: [
+    '*/index.md',
+    '!templates/**',
+    '!docs/**',
+    '!scripts/**',
+    '!tests/**',
+    '!licenses/**',
+  ],
+  base: labBase,
+  generateId: labId,
+});
+const labs = defineCollection({
+  loader: {
+    name: 'lab-definitions',
+    async load(context) {
+      if (context.meta.get('source') !== labBase) {
+        context.store.clear();
+        context.meta.set('source', labBase);
+      }
+      await labGlob.load(context);
+    },
+  },
+  schema: labSchema,
+});
+export const collections = { challenges, notes, meetings, labs };
