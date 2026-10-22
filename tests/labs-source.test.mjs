@@ -10,7 +10,7 @@ test('local labs validate without remote access and reject unsafe trees', async 
   for (const dir of [
     'templates',
     'licenses',
-    '005-cache-e-localidade/materials',
+    '005-cache-lab/materials',
   ])
     await mkdir(join(root, dir), { recursive: true });
   for (const file of [
@@ -22,7 +22,7 @@ test('local labs validate without remote access and reject unsafe trees', async 
     'licenses/CC0-1.0.txt',
     'templates/index.md',
     'templates/report-template.md',
-    '005-cache-e-localidade/index.md',
+    '005-cache-lab/index.md',
   ])
     await writeFile(join(root, file), 'fixture');
   assert.equal(
@@ -30,6 +30,6 @@ test('local labs validate without remote access and reject unsafe trees', async 
     null,
   );
   await assert.rejects(syncLabs({ localSource: root, ci: true }), /forbidden/);
-  await symlink('/tmp', join(root, '005-cache-e-localidade/materials/escape'));
+  await symlink('/tmp', join(root, '005-cache-lab/materials/escape'));
   await assert.rejects(validateLabs(root), /Symbolic/);
 });
