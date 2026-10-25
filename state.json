@@ -153,6 +153,10 @@
     "lab:017-gpu-lab": {
       "url": "https://oxideclub.dev/labs/017-gpu-lab",
       "messageId": "1563849768286035969"
+    },
+    "lab:018-attention-lab": {
+      "url": "https://oxideclub.dev/labs/018-attention-lab",
+      "pending": true
     }
   },
   "revisions": {
