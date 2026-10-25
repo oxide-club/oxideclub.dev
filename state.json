@@ -137,6 +137,10 @@
     "lab:013-syscalls-lab": {
       "url": "https://oxideclub.dev/labs/013-syscalls-lab",
       "messageId": "1563849716335120445"
+    },
+    "lab:014-dynamic-linking-lab": {
+      "url": "https://oxideclub.dev/labs/014-dynamic-linking-lab",
+      "pending": true
     }
   },
   "revisions": {
