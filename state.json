@@ -89,6 +89,10 @@
     "lab:005-cache-lab": {
       "url": "https://oxideclub.dev/labs/005-cache-lab",
       "messageId": "1563796551317332040"
+    },
+    "lab:001-binary-lab": {
+      "url": "https://oxideclub.dev/labs/001-binary-lab",
+      "pending": true
     }
   },
   "revisions": {
