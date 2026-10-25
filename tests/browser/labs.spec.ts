@@ -7,7 +7,16 @@ test('laboratories are discoverable and downloads match the investigation', asyn
   request,
 }) => {
   await page.goto(catalogue);
-  await page.getByRole('link', { name: 'Explorar laboratório' }).click();
+  await page
+    .locator('article')
+    .filter({
+      has: page.getByRole('heading', {
+        name: 'Laboratório de Cache e Localidade',
+        exact: true,
+      }),
+    })
+    .getByRole('link', { name: 'Explorar laboratório' })
+    .click();
   await expect(page.locator('h1')).toContainText(
     'Laboratório de Cache e Localidade',
   );
