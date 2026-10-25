@@ -101,6 +101,10 @@
     "lab:003-memory-safety-lab": {
       "url": "https://oxideclub.dev/labs/003-memory-safety-lab",
       "messageId": "1563849603353415681"
+    },
+    "lab:004-arena-lab": {
+      "url": "https://oxideclub.dev/labs/004-arena-lab",
+      "pending": true
     }
   },
   "revisions": {
