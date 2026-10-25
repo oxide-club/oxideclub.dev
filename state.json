@@ -145,6 +145,10 @@
     "lab:015-async-lab": {
       "url": "https://oxideclub.dev/labs/015-async-lab",
       "messageId": "1563849741232775179"
+    },
+    "lab:016-isolation-lab": {
+      "url": "https://oxideclub.dev/labs/016-isolation-lab",
+      "pending": true
     }
   },
   "revisions": {
