@@ -5,6 +5,11 @@ on:
   # Keep required PR checks running even for documentation-only changes.
   pull_request:
   workflow_call:
+    inputs:
+      production:
+        description: Build and preserve the production site for deployment
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -22,12 +27,26 @@ jobs:
       - run: npm test
       - run: npm run check
       - run: npm run build
+        if: ${{ !inputs.production }}
+      - run: npm run build:production
+        if: ${{ inputs.production }}
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+        env:
+          SITE_RELEASE: ${{ inputs.production && 'production' || 'preview' }}
       - run: npm run test:community
       - run: npm run test:notes
       - run: npm run test:meetings
       - run: npm run test:labs
+      - name: Preserve the tested production site
+        if: ${{ inputs.production }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tested-site
+          path: dist/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

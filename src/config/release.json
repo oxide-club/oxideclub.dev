@@ -2,10 +2,10 @@
   "brandingApproved": true,
   "linksVerified": true,
   "contentApproved": true,
-  "keyboardReviewed": false,
-  "screenReaderReviewed": false,
-  "accessibilityReviewed": false,
+  "keyboardReviewed": true,
+  "screenReaderReviewed": true,
+  "accessibilityReviewed": true,
   "licensesAndHistoryReviewed": true,
   "domainVerified": true,
-  "manualAccessibilityReviewDeferred": true
+  "manualAccessibilityReviewDeferred": false
 }
