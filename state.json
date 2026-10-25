@@ -105,6 +105,10 @@
     "lab:004-arena-lab": {
       "url": "https://oxideclub.dev/labs/004-arena-lab",
       "messageId": "1563849615663439954"
+    },
+    "lab:006-processes-lab": {
+      "url": "https://oxideclub.dev/labs/006-processes-lab",
+      "pending": true
     }
   },
   "revisions": {
