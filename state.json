@@ -173,6 +173,10 @@
     "lab:022-page-protection-lab": {
       "url": "https://oxideclub.dev/labs/022-page-protection-lab",
       "messageId": "1564055747111686187"
+    },
+    "lab:023-elf-hardening-lab": {
+      "url": "https://oxideclub.dev/labs/023-elf-hardening-lab",
+      "pending": true
     }
   },
   "revisions": {
