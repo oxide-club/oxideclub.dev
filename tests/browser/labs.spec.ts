@@ -11,21 +11,21 @@ test('laboratories are discoverable and downloads match the investigation', asyn
     .locator('article')
     .filter({
       has: page.getByRole('heading', {
-        name: 'Cache e Localidade',
+        name: 'Cache e Locality',
         exact: true,
       }),
     })
     .getByRole('link', { name: 'Explorar laboratório' })
     .click();
   await expect(page.locator('h1')).toContainText(
-    'Laboratório de Cache e Localidade',
+    'Laboratório de Cache e Locality',
   );
   await expect(page.locator('article h2')).toHaveCount(8);
   await expect(page.locator('.desktop-nav a[aria-current]')).toHaveText(
     'Laboratórios',
   );
   await page.goto(encodeURI(lab));
-  await expect(page.locator('h1')).toContainText('Cache e Localidade');
+  await expect(page.locator('h1')).toContainText('Cache e Locality');
   const file = await request.get(
     encodeURI(lab + 'assets/materials/inputs/trace-a.txt'),
   );
