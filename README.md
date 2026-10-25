@@ -360,7 +360,7 @@ O script informa o commit de cada fonte. O Git ignora os checkouts gerados:
 
 Esses checkouts não são cópias para edição. Se a busca falhar, o comando termina com erro, sem usar silenciosamente uma versão anterior em cache. Se houver alterações locais no checkout gerado, a sincronização é interrompida para preservá-las.
 
-Cada job de verificação ou deploy sincroniza o conteúdo no início e exporta as variáveis da tabela para as etapas seguintes. Assim, a validação, os testes e o build de produção do mesmo job usam as mesmas revisões. Os jobs podem selecionar revisões diferentes. Por isso, o job de deploy repete todas as suítes antes de publicar.
+O job de verificação sincroniza o conteúdo no início e exporta as variáveis da tabela para as etapas seguintes. Assim, a validação, os testes e o build usam as mesmas revisões. No workflow de produção, esse job gera e testa a versão de produção. O job de deploy recebe o `dist/` como artefato da mesma execução e publica esses arquivos, sem sincronizar o conteúdo ou gerar outro build.
 
 Uma nova execução busca novamente a `main` mais recente. Comandos locais independentes também buscam a versão mais recente por padrão.
 
@@ -410,14 +410,14 @@ Mantenedores e repositórios de conteúdo também podem acionar **Deploy product
 
 O workflow de produção segue esta sequência:
 
-1. Executa **Check website**, definido em `.github/workflows/check.yml`.
-2. Se as verificações passarem, inicia o job de deploy e sincroniza o conteúdo para esse job.
-3. Executa os testes unitários, as verificações do Astro e o build de prévia.
-4. Executa os testes de navegador e as quatro suítes de integração sobre as revisões selecionadas pelo job.
-5. Se essas etapas passarem, gera o build de produção e publica o site.
-6. Compara as respostas públicas com os arquivos de `dist/`. Se a verificação falhar, o job falha e os anúncios no Discord não executam.
+1. Executa **Check website**, definido em `.github/workflows/check.yml`, com a opção `production` ativada.
+2. No job de verificação, sincroniza o conteúdo, executa os testes unitários e as verificações do Astro, valida os requisitos de publicação e gera o build de produção.
+3. Executa os testes de navegador sobre esse build e as quatro suítes de integração em diretórios isolados.
+4. Se todas as verificações passarem, disponibiliza `dist/` no artefato `tested-site`, com retenção de sete dias.
+5. O job de deploy baixa esse artefato da mesma execução e publica com o Wrangler. Não sincroniza conteúdo, repete testes ou gera outro build.
+6. Compara as respostas públicas com os arquivos recebidos em `dist/`. Se a verificação falhar, o job falha e os anúncios no Discord não executam.
 
-As etapas seguintes à sincronização reutilizam os commits selecionados no início do job, inclusive durante o build de produção.
+As etapas seguintes à sincronização reutilizam os commits selecionados no início do job de verificação. Em PRs e pushes para outras branches, **Check website** gera uma prévia e não disponibiliza o artefato de produção. O artefato serve à transferência entre jobs; não é um arquivo permanente de publicações.
 
 O workflow usa o ambiente `production` do GitHub com estes secrets:
 

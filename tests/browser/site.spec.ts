@@ -163,7 +163,7 @@ test('forced colors and reduced motion preserve access', async ({ page }) => {
     fullPage: true,
   });
 });
-test('internal links resolve and preview is non-indexable', async ({
+test('internal links resolve and indexing matches the release mode', async ({
   page,
   request,
 }) => {
@@ -171,7 +171,9 @@ test('internal links resolve and preview is non-indexable', async ({
     await page.goto(route);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       'content',
-      'noindex, nofollow',
+      process.env.SITE_RELEASE === 'production' && route !== '/404'
+        ? 'index, follow'
+        : 'noindex, nofollow',
     );
     const hrefs = await page
       .locator('a[href^="/"]')
