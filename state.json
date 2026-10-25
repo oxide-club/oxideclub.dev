@@ -100,7 +100,7 @@
     },
     "lab:003-memory-safety-lab": {
       "url": "https://oxideclub.dev/labs/003-memory-safety-lab",
-      "pending": true
+      "messageId": "1563849603353415681"
     }
   },
   "revisions": {
