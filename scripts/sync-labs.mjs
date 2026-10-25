@@ -1,4 +1,6 @@
-import { lstat, readdir } from 'node:fs/promises';
+import { parseDocument } from 'yaml';
+import { loadAreas, validateArea } from '../src/lib/content-areas.mjs';
+import { lstat, readdir, readFile } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { github, repositoryUrl } from '../src/config/github.mjs';
@@ -46,6 +48,7 @@ export async function validateLabs(directory) {
   ]) {
     await regularFile(directory, path);
   }
+  const areas = await loadAreas(directory);
   const templates = await lstat(join(directory, 'templates'));
   if (!templates.isDirectory() || templates.isSymbolicLink())
     throw new Error('Labs templates must be a regular directory');
@@ -65,6 +68,14 @@ export async function validateLabs(directory) {
     if (!labIdentifier.test(entry.name))
       throw new Error(`Invalid note directory identifier: ${entry.name}`);
     await regularFile(directory, `${entry.name}/index.md`);
+    const path = join(directory, entry.name, 'index.md');
+    const text = await readFile(path, 'utf8');
+    const frontmatter = text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+    if (!frontmatter) throw new Error(`${path}: missing frontmatter`);
+    const document = parseDocument(frontmatter[1]);
+    if (document.errors.length)
+      throw new Error(`${path}: ${document.errors[0].message}`);
+    validateArea(document.toJS()?.area, areas, path);
     await rejectSymlinks(join(directory, entry.name));
   }
 }

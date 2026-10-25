@@ -11,7 +11,7 @@ test('laboratories are discoverable and downloads match the investigation', asyn
     .locator('article')
     .filter({
       has: page.getByRole('heading', {
-        name: 'Laboratório de Cache e Localidade',
+        name: 'Cache e Localidade',
         exact: true,
       }),
     })
@@ -100,3 +100,26 @@ for (const width of [320, 390, 1280])
       ),
     ).toBe(true);
   });
+
+test('lab area index links to open sections with compact cards', async ({
+  page,
+}) => {
+  await page.goto(catalogue);
+  const sections = page.locator('[data-lab-area]');
+  await expect(sections).toHaveCount(5);
+  await expect(page.locator('[data-lab]')).toHaveCount(18);
+  const links = page
+    .getByRole('navigation', { name: 'Áreas dos laboratórios' })
+    .getByRole('link');
+  await expect(links).toHaveCount(5);
+  for (const link of await links.all()) {
+    const href = await link.getAttribute('href');
+    await link.click();
+    await expect(page.locator(href!)).toBeVisible();
+    expect(new URL(page.url()).hash).toBe(href);
+  }
+  await expect(page.locator('[data-lab] h3').first()).toHaveText(
+    'Representação Binária',
+  );
+  await expect(page.locator('[data-lab] dl')).toHaveCount(0);
+});

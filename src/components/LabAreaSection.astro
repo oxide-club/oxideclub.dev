@@ -1,0 +1,60 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import LabCard from './LabCard.astro';
+interface Props {
+  area: import('../lib/content-areas.mjs').Area;
+  labs: CollectionEntry<'labs'>[];
+}
+const { area, labs } = Astro.props;
+---
+
+<section
+  class="area-section"
+  id={area.slug}
+  aria-labelledby={`heading-${area.id}`}
+  data-lab-area
+>
+  <header>
+    <div class="area-count">
+      {String(labs.length).padStart(2, '0')}{' '}
+      {labs.length === 1 ? 'LABORATÓRIO' : 'LABORATÓRIOS'}
+    </div>
+    <h2 id={`heading-${area.id}`}>{area.title}</h2>
+    <p>{area.description}</p>
+  </header>
+  <div>
+    {labs.map((lab) => (
+      <LabCard lab={lab} />
+    ))}
+  </div>
+</section>
+<style>
+  .area-section {
+    display: grid;
+    grid-template-columns: minmax(0, 29%) minmax(0, 1fr);
+    gap: 40px;
+    border-top: 1px solid var(--color-border);
+    padding-block: 36px;
+    scroll-margin-top: 24px;
+  }
+  .area-count {
+    font: 12px var(--font-mono);
+    color: var(--color-accent-text);
+    letter-spacing: 0.04em;
+  }
+  h2 {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-block: 12px 16px;
+  }
+  header p {
+    font-size: 14px;
+  }
+  @media (max-width: 650px) {
+    .area-section {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      padding-block: 28px;
+    }
+  }
+</style>

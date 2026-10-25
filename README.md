@@ -496,3 +496,12 @@ O código original do site usa a [licença MIT](LICENSE).
 Os textos e a documentação originais de `oxide-club/notes` e `oxide-club/meetings` usam CC BY 4.0. Essa licença também se aplica aos textos educacionais de `oxide-club/challenges`, conforme os avisos do repositório de origem. Os dados de teste dos desafios usam CC0 1.0, e seu código executável usa MIT.
 
 Outros textos editoriais, logos e ilustrações ficam fora do escopo da licença MIT do código do site. Materiais de terceiros mantêm suas próprias licenças. Consulte [LICENSING.md](LICENSING.md) para conferir o escopo completo.
+
+### Áreas dos laboratórios
+
+`labs/areas.json` define a ordem editorial, IDs, slugs, títulos e descrições.
+Cada roteiro, inclusive draft, exige `area` conhecida. O catálogo agrupa apenas
+publicados, ordena por ID e omite áreas vazias. Os cards mostram título compacto,
+dificuldade e pergunta; a página individual preserva os detalhes.
+Publique primeiro o registro e os metadados em labs; depois atualize o website
+que exige esse contrato. Não edite `.content/labs` manualmente.

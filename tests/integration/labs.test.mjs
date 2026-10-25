@@ -16,7 +16,7 @@ import { execFileSync } from 'node:child_process';
 import { unzipSync, strFromU8 } from 'fflate';
 import { labSections } from '../../src/lib/lab-structure.mjs';
 const fixture = (draft = false) =>
-  `---\ntitle: Laboratório de Teste\nslug: 001-teste\nsummary: Evidências do experimento\nquestion: O que muda?\ndraft: ${draft}\npublishedAt: 2026-10-21\ntopics: [Cache]\nprerequisites: [C]\ntools: [cc]\nenvironment: Linux\ndifficulty: intermediate\n---\n\n` +
+  `---\ntitle: Laboratório de Teste\nslug: 001-teste\nsummary: Evidências do experimento\nquestion: O que muda?\ndraft: ${draft}\npublishedAt: 2026-10-21\ntopics: [Cache]\nprerequisites: [C]\ntools: [cc]\nenvironment: Linux\ndifficulty: intermediate\narea: memory\n---\n\n` +
   labSections
     .map(
       (s) =>
@@ -42,6 +42,21 @@ test('labs publish independently, distribute matching files and remove drafts on
   const source = join(root, 'lab-source');
   await mkdir(join(source, 'licenses'), { recursive: true });
   await mkdir(join(source, 'templates'));
+  const areas = [
+    {
+      id: 'memory',
+      slug: 'memoria',
+      title: 'Memória',
+      description: 'Explore memória.',
+    },
+    {
+      id: 'empty',
+      slug: 'vazia',
+      title: 'Vazia',
+      description: 'Sem laboratórios.',
+    },
+  ];
+  await writeFile(join(source, 'areas.json'), JSON.stringify(areas));
   await writeFile(
     join(source, 'templates/index.md'),
     '# Template, não uma atividade',
@@ -89,6 +104,11 @@ test('labs publish independently, distribute matching files and remove drafts on
       url: 'https://oxideclub.dev/labs/001-teste',
     },
   ]);
+  const catalogueHtml = await readFile(catalog, 'utf8');
+  assert.match(catalogueHtml, /id="memoria"/);
+  assert.match(catalogueHtml, /href="#memoria"/);
+  assert.doesNotMatch(catalogueHtml, /id="vazia"/);
+  assert.doesNotMatch(catalogueHtml, /Laboratório de Teste/);
   assert.match(html, /Laboratório de Teste/);
   assert.match(html, /Baixar materiais/);
   assert.match(decodeURI(html), /https:\/\/oxideclub.dev\/labs\/001-teste\//);
@@ -114,6 +134,10 @@ test('labs publish independently, distribute matching files and remove drafts on
   build();
   const alternate = join(root, 'alternate-source');
   await mkdir(alternate);
+  await writeFile(
+    join(alternate, 'areas.json'),
+    JSON.stringify([{ ...areas[0], title: 'Outra fonte' }]),
+  );
   env.LABS_SOURCE = alternate;
   build();
   assert.match(
@@ -124,6 +148,11 @@ test('labs publish independently, distribute matching files and remove drafts on
   env.LABS_SOURCE = source;
   build();
   await access(join(root, 'dist/labs/001-teste/index.html'));
+  await writeFile(
+    join(lab, 'index.md'),
+    fixture(true).replace('area: memory', 'area: unknown'),
+  );
+  assert.throws(build, /area must reference/);
   await writeFile(join(lab, 'index.md'), fixture(true));
   build();
   await assert.rejects(access(join(root, 'dist/labs/001-teste/index.html')));

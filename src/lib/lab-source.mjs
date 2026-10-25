@@ -34,6 +34,7 @@ export const labSchema = z
       .refine((v) => v.length > 'Laboratório de '.length),
     slug: z.string().regex(labIdentifier),
     summary: text,
+    area: text,
     question: text,
     draft: z.boolean(),
     publishedAt: date.optional(),

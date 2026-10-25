@@ -13,10 +13,13 @@ const valid = {
   tools: ['cc'],
   environment: 'Linux',
   difficulty: 'intermediate',
+  area: 'memory',
 };
 test('published labs require meaningful metadata and real dates', () => {
   assert.equal(labSchema.safeParse(valid).success, true);
   for (const patch of [
+    { area: undefined },
+    { area: ' ' },
     { title: 'Cache' },
     { publishedAt: undefined },
     { publishedAt: '2026-02-30' },

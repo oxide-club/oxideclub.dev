@@ -7,11 +7,7 @@ import { syncLabs, validateLabs } from '../scripts/sync-labs.mjs';
 test('local labs validate without remote access and reject unsafe trees', async (t) => {
   const root = await mkdtemp(join(tmpdir(), 'labs-source-'));
   t.after(() => rm(root, { recursive: true, force: true }));
-  for (const dir of [
-    'templates',
-    'licenses',
-    '005-cache-lab/materials',
-  ])
+  for (const dir of ['templates', 'licenses', '005-cache-lab/materials'])
     await mkdir(join(root, dir), { recursive: true });
   for (const file of [
     'README.md',
@@ -25,11 +21,27 @@ test('local labs validate without remote access and reject unsafe trees', async 
     '005-cache-lab/index.md',
   ])
     await writeFile(join(root, file), 'fixture');
+  await writeFile(
+    join(root, 'areas.json'),
+    JSON.stringify([
+      {
+        id: 'memory',
+        slug: 'memoria',
+        title: 'Memória',
+        description: 'Explore memória.',
+      },
+    ]),
+  );
+  const definition = join(root, '005-cache-lab/index.md');
+  await writeFile(definition, '---\narea: memory\ndraft: true\n---\n');
   assert.equal(
     await syncLabs({ localSource: root, ci: false, production: false }),
     null,
   );
   await assert.rejects(syncLabs({ localSource: root, ci: true }), /forbidden/);
+  await writeFile(definition, '---\narea: unknown\ndraft: true\n---\n');
+  await assert.rejects(validateLabs(root), /area.*known/);
+  await writeFile(definition, '---\narea: memory\ndraft: true\n---\n');
   await symlink('/tmp', join(root, '005-cache-lab/materials/escape'));
   await assert.rejects(validateLabs(root), /Symbolic/);
 });

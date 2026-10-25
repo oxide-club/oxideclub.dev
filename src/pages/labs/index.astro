@@ -1,8 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import LabCard from '../../components/LabCard.astro';
+import LabAreaSection from '../../components/LabAreaSection.astro';
+import { loadAreas } from '../../lib/content-areas.mjs';
+import { labsDirectory } from '../../lib/lab-source.mjs';
+import { groupLabsByArea } from '../../lib/lab-catalogue.mjs';
 import { publishedLabs } from '../../lib/labs';
 const labs = await publishedLabs();
+const groups = groupLabsByArea(labs, await loadAreas(labsDirectory()));
 ---
 
 <BaseLayout
@@ -18,9 +22,8 @@ const labs = await publishedLabs();
         Vários experimentos.
       </h1>
       <p>
-        Escolha uma pergunta sobre computação. Faça os experimentos do roteiro.
-        Registre o que você observou. Explique os resultados com o apoio do
-        código. Cada laboratório inclui os materiais necessários.
+        Escolha uma área e investigue uma pergunta sobre computação. Faça os
+        experimentos, registre suas observações e explique os resultados.
       </p>
       <p class="method">
         Prever <span aria-hidden="true">→</span> Observar{' '}
@@ -29,9 +32,22 @@ const labs = await publishedLabs();
         <span aria-hidden="true">→</span> Verificar
       </p>
     </header>
+    {groups.length > 0 && (
+      <nav class="area-index" aria-label="Áreas dos laboratórios">
+        {groups.map(({ area, labs }) => (
+          <a href={`#${area.slug}`}>
+            {area.title}
+            <span>
+              {String(labs.length).padStart(2, '0')}{' '}
+              <span aria-hidden="true">↓</span>
+            </span>
+          </a>
+        ))}
+      </nav>
+    )}
     <div class="catalogue">
       {labs.length ? (
-        labs.map((lab) => <LabCard lab={lab} />)
+        groups.map((group) => <LabAreaSection {...group} />)
       ) : (
         <p>
           Ainda não há laboratórios publicados. Novas investigações aparecerão
@@ -74,6 +90,38 @@ const labs = await publishedLabs();
   }
   .method span {
     padding-inline: 5px;
+  }
+  .area-index {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 28px;
+    padding-block: 20px 28px;
+  }
+  .area-index > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 60px;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 14px;
+    text-decoration: none;
+  }
+  .area-index > a:hover {
+    text-decoration: underline;
+  }
+  .area-index > a > span {
+    font: 12px var(--font-mono);
+    color: var(--color-muted);
+    white-space: nowrap;
+  }
+  @media (max-width: 650px) {
+    .area-index {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .area-index > a {
+      min-height: 48px;
+    }
   }
   .catalogue {
     padding-bottom: 24px;
