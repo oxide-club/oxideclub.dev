@@ -106,12 +106,12 @@ test('lab area index links to open sections with compact cards', async ({
 }) => {
   await page.goto(catalogue);
   const sections = page.locator('[data-lab-area]');
-  await expect(sections).toHaveCount(5);
+  await expect(sections).toHaveCount(6);
   await expect(page.locator('[data-lab]')).toHaveCount(18);
   const links = page
     .getByRole('navigation', { name: 'Áreas dos laboratórios' })
     .getByRole('link');
-  await expect(links).toHaveCount(5);
+  await expect(links).toHaveCount(6);
   for (const link of await links.all()) {
     const href = await link.getAttribute('href');
     await link.click();
