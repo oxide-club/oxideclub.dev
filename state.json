@@ -109,6 +109,10 @@
     "lab:006-processes-lab": {
       "url": "https://oxideclub.dev/labs/006-processes-lab",
       "messageId": "1563849628095352844"
+    },
+    "lab:007-compilation-lab": {
+      "url": "https://oxideclub.dev/labs/007-compilation-lab",
+      "pending": true
     }
   },
   "revisions": {
