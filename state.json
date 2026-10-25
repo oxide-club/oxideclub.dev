@@ -121,6 +121,10 @@
     "lab:009-vm-lab": {
       "url": "https://oxideclub.dev/labs/009-vm-lab",
       "messageId": "1563849664669687860"
+    },
+    "lab:010-concurrency-lab": {
+      "url": "https://oxideclub.dev/labs/010-concurrency-lab",
+      "pending": true
     }
   },
   "revisions": {
