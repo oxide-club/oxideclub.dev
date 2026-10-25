@@ -93,6 +93,10 @@
     "lab:001-binary-lab": {
       "url": "https://oxideclub.dev/labs/001-binary-lab",
       "messageId": "1563849578049044643"
+    },
+    "lab:002-reverse-engineering-lab": {
+      "url": "https://oxideclub.dev/labs/002-reverse-engineering-lab",
+      "pending": true
     }
   },
   "revisions": {
