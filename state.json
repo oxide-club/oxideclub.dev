@@ -124,7 +124,7 @@
     },
     "lab:010-concurrency-lab": {
       "url": "https://oxideclub.dev/labs/010-concurrency-lab",
-      "pending": true
+      "messageId": "1563849677105799172"
     }
   },
   "revisions": {
