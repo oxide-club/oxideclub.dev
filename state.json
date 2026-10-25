@@ -85,6 +85,10 @@
     "challenge:021-bytecode": {
       "url": "https://oxideclub.dev/desafios/021-bytecode",
       "messageId": "1562297072059687003"
+    },
+    "lab:005-cache-lab": {
+      "url": "https://oxideclub.dev/labs/005-cache-lab",
+      "pending": true
     }
   },
   "revisions": {
