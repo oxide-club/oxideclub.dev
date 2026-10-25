@@ -8,13 +8,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import LabIndex from '../../components/LabIndex.astro';
 import LabMaterials from '../../components/LabMaterials.astro';
 import JoinLink from '../../components/JoinLink.astro';
-import { publishedLabs } from '../../lib/labs';
+import { availableLabs, publishedLabs } from '../../lib/labs';
 import { labsDirectory } from '../../lib/lab-source.mjs';
 import { labFiles } from '../../lib/lab-files.mjs';
 import { labUrl } from '../../lib/lab-urls.mjs';
 import { difficultyLabels } from '../../lib/challenges';
 export async function getStaticPaths() {
-  return (await publishedLabs()).map((lab) => ({
+  return (await availableLabs()).map((lab) => ({
     params: { slug: lab.id },
     props: { lab },
   }));
@@ -51,6 +51,19 @@ const related = [
         {data.title}
         <span class="accent">_</span>
       </h1>
+      {data.supersededBy && (
+        <aside class="retirement" aria-label="Laboratório consolidado">
+          <strong>Este laboratório foi consolidado em um desafio.</strong>
+          <p>
+            Continue a atividade no{' '}
+            <a href={'/desafios/' + data.supersededBy + '/'}>
+              desafio {data.supersededBy}
+            </a>
+            . Este roteiro e seus materiais permanecem disponíveis para consulta
+            histórica.
+          </p>
+        </aside>
+      )}
       <p class="central-question">{data.question}</p>
       <p>{data.summary}</p>
       <div class="metadata">
@@ -109,6 +122,11 @@ const related = [
   .page-intro p {
     max-width: 70ch;
     margin-top: var(--space-4);
+  }
+  .retirement {
+    border-left: 3px solid var(--color-accent);
+    padding: var(--space-4);
+    margin-block: var(--space-5);
   }
   .central-question {
     font-size: 22px;

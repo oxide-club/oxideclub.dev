@@ -9,3 +9,10 @@ export function groupLabsByArea(entries, areas) {
     }))
     .filter((group) => group.labs.length > 0);
 }
+
+/** @template {{data: {draft: boolean, supersededBy?: string}}} T @param {T[]} entries */
+export function activeLabs(entries) {
+  return entries.filter(
+    (entry) => !entry.data.draft && !entry.data.supersededBy,
+  );
+}

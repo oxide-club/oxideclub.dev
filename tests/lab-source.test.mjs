@@ -49,3 +49,20 @@ test('local overrides cannot enter CI even if empty', () => {
     process.env = prior;
   }
 });
+test('supersededBy accepts only a challenge identifier and preserves it', () => {
+  assert.equal(
+    labSchema.parse({ ...valid, supersededBy: '017-arena' }).supersededBy,
+    '017-arena',
+  );
+  for (const supersededBy of [
+    '',
+    '000-template',
+    '../017-arena',
+    'https://example.com',
+    '017-arena/',
+  ])
+    assert.equal(
+      labSchema.safeParse({ ...valid, supersededBy }).success,
+      false,
+    );
+});

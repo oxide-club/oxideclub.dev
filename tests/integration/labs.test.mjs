@@ -140,6 +140,38 @@ test('labs publish independently, distribute matching files and remove drafts on
     decodeURI(await readFile(join(root, 'dist/sitemap-0.xml'), 'utf8')),
     /labs\/001-teste/,
   );
+  await writeFile(
+    join(lab, 'index.md'),
+    fixture().replace('draft: false', 'draft: false\nsupersededBy: 017-arena'),
+  );
+  build();
+  const retiredHtml = await readFile(
+    join(root, 'dist/labs/001-teste/index.html'),
+    'utf8',
+  );
+  assert.match(retiredHtml, /Este laboratório foi consolidado em um desafio/);
+  assert.match(retiredHtml, /href="\/desafios\/017-arena\/"/);
+  assert.deepEqual(await labEntries(), []);
+  assert.doesNotMatch(await readFile(catalog, 'utf8'), /\/labs\/001-teste\//);
+  assert.doesNotMatch(
+    await readFile(join(root, 'dist/index.html'), 'utf8'),
+    /\/labs\/001-teste\//,
+  );
+  assert.equal(
+    await readFile(
+      join(root, 'dist/labs/001-teste/assets/materials/trace.txt'),
+      'utf8',
+    ),
+    'L 0x00\n',
+  );
+  const retiredArchive = unzipSync(
+    await readFile(join(root, 'dist/labs/001-teste/materiais.zip')),
+  );
+  assert.equal(
+    strFromU8(retiredArchive['001-teste/materials/trace.txt']),
+    'L 0x00\n',
+  );
+  await writeFile(join(lab, 'index.md'), fixture());
   await rm(join(lab, 'materials/trace.txt'));
   assert.throws(build, /trace\.txt/);
   await writeFile(join(lab, 'materials/trace.txt'), 'L 0x00\n');

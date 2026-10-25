@@ -1,4 +1,5 @@
 import { z } from 'astro/zod';
+import { challengeIdentifier } from './challenge-source.mjs';
 import { resolve, isAbsolute } from 'node:path';
 export const labIdentifier = /^\d{3}-[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export function labsDirectory() {
@@ -37,6 +38,7 @@ export const labSchema = z
     area: text,
     question: text,
     draft: z.boolean(),
+    supersededBy: z.string().regex(challengeIdentifier).optional(),
     publishedAt: date.optional(),
     updatedAt: date.optional(),
     topics: list,

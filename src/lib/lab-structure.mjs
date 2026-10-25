@@ -26,8 +26,13 @@ export function validateLabRelations(labs, challenges) {
     for (const [field, ids] of [
       ['relatedLabs', labIds],
       ['relatedChallenges', challengeIds],
+      ['supersededBy', challengeIds],
     ])
-      for (const id of lab.data[field] ?? [])
+      for (const id of field === 'supersededBy'
+        ? lab.data.supersededBy
+          ? [lab.data.supersededBy]
+          : []
+        : (lab.data[field] ?? []))
         if (!ids.has(id))
           throw new Error(
             `${lab.id}: missing or unpublished ${field} reference ${id}`,
