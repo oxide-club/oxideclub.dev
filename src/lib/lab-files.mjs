@@ -32,7 +32,7 @@ export async function labFiles(directory) {
       } else if (
         entry.isFile() &&
         (extensions.has(extname(name)) || ['Makefile', 'go.mod'].includes(entry.name)) &&
-        (prefix || ['index.md', 'README.md', 'references.md', 'report-template.md'].includes(name))
+        (prefix || ['Makefile', 'index.md', 'README.md', 'references.md', 'report-template.md'].includes(name))
       ) {
         files.push({
           path: name,
