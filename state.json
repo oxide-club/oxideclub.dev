@@ -161,6 +161,10 @@
     "lab:019-atomics-lab": {
       "url": "https://oxideclub.dev/labs/019-atomics-lab",
       "messageId": "1564055714669002875"
+    },
+    "lab:020-dispatch-lab": {
+      "url": "https://oxideclub.dev/labs/020-dispatch-lab",
+      "pending": true
     }
   },
   "revisions": {
