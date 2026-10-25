@@ -157,6 +157,10 @@
     "lab:018-attention-lab": {
       "url": "https://oxideclub.dev/labs/018-attention-lab",
       "messageId": "1563849781476855899"
+    },
+    "lab:019-atomics-lab": {
+      "url": "https://oxideclub.dev/labs/019-atomics-lab",
+      "pending": true
     }
   },
   "revisions": {
