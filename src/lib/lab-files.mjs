@@ -1,6 +1,6 @@
 import { lstat, readdir } from 'node:fs/promises';
 import { resolve, join, extname, parse, relative } from 'node:path';
-const extensions = new Set(['.md', '.txt', '.c', '.h', '.py', '.json', '.csv']);
+const extensions = new Set(['.md', '.txt', '.c', '.h', '.py', '.json', '.csv', '.rs', '.S', '.s', '.cu', '.toml', '.go']);
 export async function assertRegularPath(path, directory = false) {
   const absolute = resolve(path);
   let current = parse(absolute).root;
@@ -25,14 +25,14 @@ export async function labFiles(directory) {
       if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(entry.name)) continue;
       if (entry.isDirectory()) {
         if (
-          (!prefix && ['materials', 'checks'].includes(entry.name)) ||
-          (prefix && !['node_modules', '__pycache__'].includes(entry.name))
+          (!prefix && ['materials', 'checks', 'experiments'].includes(entry.name)) ||
+          (prefix && !['node_modules', '__pycache__', 'target', 'build', 'dist', 'solutions'].includes(entry.name))
         )
           await visit(join(path, entry.name), name + '/');
       } else if (
         entry.isFile() &&
-        extensions.has(extname(name)) &&
-        (prefix || ['index.md', 'report-template.md'].includes(name))
+        (extensions.has(extname(name)) || ['Makefile', 'go.mod'].includes(entry.name)) &&
+        (prefix || ['index.md', 'README.md', 'references.md', 'report-template.md'].includes(name))
       ) {
         files.push({
           path: name,

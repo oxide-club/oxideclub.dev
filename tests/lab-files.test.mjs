@@ -26,3 +26,17 @@ test('distribution excludes artifacts and refuses traversal and symlinks', async
   await symlink('/tmp', join(dir, 'materials/escape'));
   await assert.rejects(labFiles(dir), /Unsafe/);
 });
+
+test('distribution includes study guides, experiments and native source files only', async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), 'lab-study-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const included = ['index.md', 'README.md', 'references.md', 'experiments/run.py',
+    'materials/starter/go/protocol.go', 'materials/starter/go/go.mod', 'materials/starter/executor.rs', 'materials/starter/calls.S', 'materials/starter/kernel.cu', 'materials/Makefile'];
+  const excluded = ['solutions/answer.py', 'materials/starter/target/debug/deps/info.json',
+    'materials/starter/go/build/protocol', 'materials/starter/go/random.mod', 'materials/starter/kernel.o', 'experiments/results.tmp'];
+  for (const path of [...included, ...excluded]) {
+    await mkdir(join(dir, path, '..'), { recursive: true });
+    await writeFile(join(dir, path), path);
+  }
+  assert.deepEqual((await labFiles(dir)).map((f) => f.path), included.sort());
+});
