@@ -2,7 +2,7 @@ import { labIdentifier } from './lab-source.mjs';
 export function labUrl(id) {
   if (id !== undefined && !labIdentifier.test(id))
     throw new Error('Invalid lab URL identifier');
-  return `/laboratórios/${id === undefined ? '' : id + '/'}`;
+  return `/labs/${id === undefined ? '' : id + '/'}`;
 }
 export function labAssetUrl(id, path) {
   if (!path.split('/').every((p) => /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(p)))

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-const catalogue = '/laboratórios/';
+const catalogue = '/labs/';
 const lab = catalogue + '005-cache-lab/';
 test('laboratories are discoverable and downloads match the investigation', async ({
   page,

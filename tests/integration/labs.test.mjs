@@ -57,7 +57,7 @@ test('labs publish independently, distribute matching files and remove drafts on
       { cwd: root, env, encoding: 'utf8', timeout: 60000, stdio: 'pipe' },
     );
   build();
-  const catalog = join(root, 'dist/laboratórios/index.html');
+  const catalog = join(root, 'dist/labs/index.html');
   assert.match(
     await readFile(catalog, 'utf8'),
     /Ainda não há laboratórios publicados/,
@@ -68,30 +68,27 @@ test('labs publish independently, distribute matching files and remove drafts on
   await writeFile(join(lab, 'materials/trace.txt'), 'L 0x00\n');
   build();
   const html = await readFile(
-    join(root, 'dist/laboratórios/001-teste/index.html'),
+    join(root, 'dist/labs/001-teste/index.html'),
     'utf8',
   );
   assert.match(html, /Laboratório de Teste/);
   assert.match(html, /Baixar materiais/);
-  assert.match(
-    decodeURI(html),
-    /https:\/\/oxideclub.dev\/laboratórios\/001-teste\//,
-  );
+  assert.match(decodeURI(html), /https:\/\/oxideclub.dev\/labs\/001-teste\//);
   assert.equal(
     await readFile(
-      join(root, 'dist/laboratórios/001-teste/assets/materials/trace.txt'),
+      join(root, 'dist/labs/001-teste/assets/materials/trace.txt'),
       'utf8',
     ),
     'L 0x00\n',
   );
   const archive = unzipSync(
-    await readFile(join(root, 'dist/laboratórios/001-teste/materiais.zip')),
+    await readFile(join(root, 'dist/labs/001-teste/materiais.zip')),
   );
   assert.equal(strFromU8(archive['001-teste/materials/trace.txt']), 'L 0x00\n');
   assert.ok(archive['001-teste/licenses/MIT.txt']);
   assert.match(
     decodeURI(await readFile(join(root, 'dist/sitemap-0.xml'), 'utf8')),
-    /laboratórios\/001-teste/,
+    /labs\/001-teste/,
   );
   await rm(join(lab, 'materials/trace.txt'));
   assert.throws(build, /trace\.txt/);
@@ -105,24 +102,16 @@ test('labs publish independently, distribute matching files and remove drafts on
     await readFile(catalog, 'utf8'),
     /Ainda não há laboratórios publicados/,
   );
-  await assert.rejects(
-    access(join(root, 'dist/laboratórios/001-teste/materiais.zip')),
-  );
+  await assert.rejects(access(join(root, 'dist/labs/001-teste/materiais.zip')));
   env.LABS_SOURCE = source;
   build();
-  await access(join(root, 'dist/laboratórios/001-teste/index.html'));
+  await access(join(root, 'dist/labs/001-teste/index.html'));
   await writeFile(join(lab, 'index.md'), fixture(true));
   build();
+  await assert.rejects(access(join(root, 'dist/labs/001-teste/index.html')));
+  await assert.rejects(access(join(root, 'dist/labs/001-teste/materiais.zip')));
   await assert.rejects(
-    access(join(root, 'dist/laboratórios/001-teste/index.html')),
-  );
-  await assert.rejects(
-    access(join(root, 'dist/laboratórios/001-teste/materiais.zip')),
-  );
-  await assert.rejects(
-    access(
-      join(root, 'dist/laboratórios/001-teste/assets/materials/trace.txt'),
-    ),
+    access(join(root, 'dist/labs/001-teste/assets/materials/trace.txt')),
   );
   assert.doesNotMatch(
     await readFile(join(root, 'dist/sitemap-0.xml'), 'utf8'),

@@ -327,7 +327,7 @@ O código original do site usa a [licença MIT](LICENSE). A prosa e a documenta�
 
 ## Laboratórios
 
-O catálogo `/laboratórios/` lê `oxide-club/labs` em `.content/labs/`. Cada
+O catálogo `/labs/` lê `oxide-club/labs` em `.content/labs/`. Cada
 `NNN-nome/index.md` contém as oito seções: O que vamos investigar; Antes de
 começar; Materiais; Etapas da investigação; Critérios de conclusão; Extensões
 opcionais; Participação no clube; Referências e atividades relacionadas.
@@ -339,7 +339,7 @@ A sobrescrita é proibida em CI e produção; `LABS_COMMIT` fixa uma revisão
 sincronizada. A home mantém seu sorteio de desafios e notas, com um acesso
 estável separado ao catálogo de laboratórios.
 
-O build gera `/<slug>/materiais.zip` dentro de `/laboratórios/`, contendo roteiro,
+O build gera `/<slug>/materiais.zip` dentro de `/labs/`, contendo roteiro,
 materiais, checks, relato-modelo, licenças e `SOURCE.txt`. O pacote usa a mesma
 fonte da página e não inclui soluções de referência nem executáveis compilados.
 Arquivos individuais ficam em `/<slug>/assets/`. O template e as licenças
