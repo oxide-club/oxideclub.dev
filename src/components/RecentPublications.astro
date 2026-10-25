@@ -1,0 +1,142 @@
+---
+import type { Publication } from '../lib/publications';
+import { noteDate } from '../lib/notes';
+interface Props {
+  publications: Publication[];
+}
+const { publications } = Astro.props;
+---
+
+{publications.length > 0 && (
+  <section class="section" id="recentes" aria-labelledby="recent-heading">
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow">Novos materiais</div>
+        <h2 id="recent-heading">Publicações recentes</h2>
+      </div>
+      <nav class="catalogue-links" aria-label="Catálogos de materiais">
+        <a class="text-link" href="/labs/">
+          Laboratórios <span aria-hidden="true">→</span>
+        </a>
+        <a class="text-link" href="/desafios">
+          Desafios <span aria-hidden="true">→</span>
+        </a>
+        <a class="text-link" href="/notas/">
+          Notas <span aria-hidden="true">→</span>
+        </a>
+      </nav>
+    </div>
+    <ul class="recent-list" role="list">
+      {publications.map((publication) => (
+        <li>
+          <a class="recent-row" href={publication.href}>
+            <span class="publication-kind">{publication.kind}</span>
+            <div class="recent-copy">
+              <h3>{publication.title}</h3>
+              <p>{publication.summary}</p>
+            </div>
+            <time datetime={publication.publishedAt.toISOString().slice(0, 10)}>
+              {noteDate(publication.publishedAt)}
+            </time>
+            <span class="arrow" aria-hidden="true">
+              →
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .section-heading > div {
+    min-width: 0;
+  }
+  .catalogue-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+  .catalogue-links .text-link {
+    font-size: 13px;
+    gap: 8px;
+  }
+  .recent-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--color-border);
+  }
+  li {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .recent-row {
+    display: grid;
+    grid-template-columns: 115px minmax(0, 1fr) 100px 16px;
+    align-items: start;
+    gap: 20px;
+    padding-block: 23px;
+    min-height: 84px;
+    text-decoration: none;
+  }
+  .publication-kind,
+  time {
+    font: 11px/1.8 var(--font-mono);
+    padding-top: 3px;
+  }
+  .publication-kind,
+  .arrow {
+    color: var(--color-accent-text);
+  }
+  time {
+    color: var(--color-muted);
+  }
+  h3 {
+    font-size: 18px;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+  p {
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 80ch;
+  }
+  .recent-row:hover h3 {
+    text-decoration: underline;
+  }
+  @media (max-width: 700px) {
+    .recent-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px 14px;
+      padding-block: 20px;
+    }
+    .publication-kind {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    time {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .recent-copy {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .arrow {
+      display: none;
+    }
+  }
+  @media (max-width: 380px) {
+    .recent-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    time {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    .recent-copy {
+      grid-row: 3;
+    }
+  }
+</style>

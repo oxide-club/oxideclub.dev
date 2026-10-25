@@ -121,7 +121,23 @@ Use datas reais no formato `YYYY-MM-DD`. Os campos `updatedAt` e `featured` são
 
 Rascunhos ficam fora das listagens, rotas geradas, sitemaps e destaques da página inicial, inclusive nas prévias. Encontros e laboratórios têm metadados próprios, descritos nas respectivas seções.
 
-Durante o build, o site sorteia um desafio ou uma nota publicada para destacar na página inicial. O sorteio considera os itens com `featured: true`. Se nenhum item tiver essa marcação, todos os desafios e notas publicados participam do sorteio. O destaque permanece fixo até o próximo build. Se não houver itens publicados, a página inicial omite a seção.
+### Destaques e publicações recentes da home
+
+Edite `src/config/home.json` para escolher até três destaques, em ordem. O primeiro é o principal; os demais são secundários. Use referências `labs:<id>`, `challenges:<id>` ou `notes:<id>`, sempre com o identificador do diretório do conteúdo. Por exemplo:
+
+```json
+{
+  "featured": [
+    "labs:003-memory-safety-lab",
+    "challenges:004-hexdump",
+    "challenges:009-triangle"
+  ]
+}
+```
+
+O build rejeita referências duplicadas, inexistentes, em rascunho ou listas com mais de três itens. Para remover ou tornar um destaque rascunho na fonte, retire primeiro sua referência desta configuração. Uma lista vazia omite a seção. O card principal usa título, resumo e, quando disponíveis, assuntos e dificuldade do conteúdo; não exige ilustrações específicas. O campo `featured` das fontes continua aceito por compatibilidade, mas não controla a seleção da home.
+
+As publicações recentes são calculadas automaticamente a cada build: até seis laboratórios, desafios ou notas, ordenados por `publishedAt` decrescente, sem repetir os destaques. Empates usam a referência do conteúdo em ordem alfabética. Alterações em `updatedAt` não reposicionam conteúdos. As datas são exibidas em português e UTC. Sem itens elegíveis, a seção é omitida. Os fluxos de publicação existentes atualizam a lista; não há consulta ao vivo no navegador.
 
 ### Desafios
 
@@ -315,7 +331,7 @@ LABS_SOURCE=/caminho/absoluto/labs npm run dev
 
 A CI e a produção rejeitam `LABS_SOURCE`. A variável `LABS_COMMIT` identifica a revisão sincronizada que as etapas seguintes devem reutilizar.
 
-A página inicial mantém o sorteio de desafios e notas. O acesso ao catálogo de laboratórios aparece em um link separado, que não depende desse sorteio.
+A página inicial inclui laboratórios nos destaques editoriais e nas publicações recentes, além dos links para o catálogo. Consulte a seção de configuração da home acima.
 
 O build gera `/labs/<slug>/materiais.zip` com roteiro, materiais, verificações, modelo de relato, licenças e `SOURCE.txt`. O pacote usa a mesma fonte da página. Ele não inclui soluções de referência nem executáveis compilados.
 
@@ -462,7 +478,7 @@ Para repetir a checagem após um deploy local, preserve o `dist/` que foi public
 npm run verify:deployment
 ```
 
-Não gere outro build para usar como referência: a seleção do destaque da página inicial pode mudar. O comando rejeita builds de prévia e consulta `https://oxideclub.dev` sem credenciais de deploy. Ele verifica uma amostra das páginas, não todos os links externos nem toda a experiência de navegação.
+Não gere outro build para usar como referência: os conteúdos ou a configuração editorial podem mudar. O comando rejeita builds de prévia e consulta `https://oxideclub.dev` sem credenciais de deploy. Ele verifica uma amostra das páginas, não todos os links externos nem toda a experiência de navegação.
 
 Mantenha os registros de revisão fiéis ao que foi verificado. As revisões manuais de acessibilidade foram confirmadas pelo responsável em 25 de outubro de 2026; a exceção `manualAccessibilityReviewDeferred` está desativada. A confirmação e o histórico estão registrados em [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md).
 

@@ -39,6 +39,9 @@ test('labs publish independently, distribute matching files and remove drafts on
   ])
     await cp(path, join(root, path), { recursive: true });
   await symlink(resolve('node_modules'), join(root, 'node_modules'), 'dir');
+  // This fixture replaces the lab catalogue, so it owns its editorial references.
+  const homeConfig = join(root, 'src/config/home.json');
+  await writeFile(homeConfig, JSON.stringify({ featured: [] }));
   const source = join(root, 'lab-source');
   await mkdir(join(source, 'licenses'), { recursive: true });
   await mkdir(join(source, 'templates'));
@@ -90,7 +93,16 @@ test('labs publish independently, distribute matching files and remove drafts on
   await mkdir(join(lab, 'materials'), { recursive: true });
   await writeFile(join(lab, 'index.md'), fixture());
   await writeFile(join(lab, 'materials/trace.txt'), 'L 0x00\n');
+  await writeFile(homeConfig, JSON.stringify({ featured: ['labs:001-teste'] }));
   build();
+  const home = await readFile(join(root, 'dist/index.html'), 'utf8');
+  assert.match(home, /id="destaques"/);
+  assert.match(home, /Abrir o laboratório: Laboratório de Teste/);
+  assert.doesNotMatch(
+    home.match(/<section[^>]*id="recentes"[\s\S]*?<\/section>/)?.[0] || '',
+    /\/labs\/001-teste\//,
+  );
+  await writeFile(homeConfig, JSON.stringify({ featured: [] }));
   const html = await readFile(
     join(root, 'dist/labs/001-teste/index.html'),
     'utf8',

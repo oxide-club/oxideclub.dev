@@ -33,17 +33,3 @@ export function validateLinks(links) {
   }
   return links;
 }
-
-/** Select once at build time; never changes in the browser.
- * @template {{featured: boolean}} T
- * @param {T[]} entries
- * @param {() => number} random
- * @returns {T | undefined}
- */
-export function selectFeatured(entries, random = Math.random) {
-  const editorial = entries.filter((entry) => entry.featured);
-  const eligible = editorial.length ? editorial : entries;
-  return eligible.length
-    ? eligible[Math.floor(random() * eligible.length)]
-    : undefined;
-}

@@ -164,7 +164,22 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
       await readFile(join(root, 'dist/desafios/002-ppm/index.html'), 'utf8'),
       /id="challenge-resources-heading"/,
     );
+    await writeFile(
+      join(root, 'src/config/home.json'),
+      JSON.stringify({ featured: ['notes:fixture-publica'] }),
+    );
     build();
+    const home = await readFile(join(root, 'dist/index.html'), 'utf8');
+    const featuredHome = home.match(
+      /<section[^>]*id="destaques"[\s\S]*?<\/section>/,
+    )?.[0];
+    assert.ok(featuredHome);
+    assert.match(featuredHome, /Ler a nota: Fixture de teste editorial/);
+    assert.doesNotMatch(featuredHome, /<dl|fixture-rascunho/);
+    assert.doesNotMatch(
+      home.match(/<section[^>]*id="recentes"[\s\S]*?<\/section>/)?.[0] || '',
+      /\/notas\/fixture-publica/,
+    );
     const manifest = JSON.parse(
       await readFile(join(root, 'dist/publication-manifest.json'), 'utf8'),
     );

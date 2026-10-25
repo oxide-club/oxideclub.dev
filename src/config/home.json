@@ -1,0 +1,7 @@
+{
+  "featured": [
+    "labs:003-memory-safety-lab",
+    "challenges:004-hexdump",
+    "challenges:009-triangle"
+  ]
+}

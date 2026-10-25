@@ -1,73 +1,205 @@
 ---
-import { publishedContent } from '../lib/publications';
-import { selectFeatured } from '../lib/content.mjs';
-const publication = selectFeatured(await publishedContent());
+import type { Publication } from '../lib/publications';
+interface Props {
+  publications: Publication[];
+}
+const { publications } = Astro.props;
+const [primary, ...secondary] = publications;
 ---
 
-{publication && (
-  <section class="section" id="do-laboratorio" aria-labelledby="lab-heading">
+{primary && (
+  <section class="section" id="destaques" aria-labelledby="featured-heading">
     <div class="section-heading">
       <div>
-        <div class="eyebrow">02 / Conteúdo publicado</div>
-        <h2 id="lab-heading">Do laboratório</h2>
+        <div class="eyebrow">Para investigar</div>
+        <h2 id="featured-heading">Em destaque</h2>
       </div>
-      <div class="catalogue-links">
-        <a class="text-link" href="/desafios">
-          Ver os desafios <span aria-hidden="true">→</span>
-        </a>
-        <a class="text-link" href="/notas">
-          Ver as notas <span aria-hidden="true">→</span>
-        </a>
-      </div>
+      <p>
+        Experimentos e desafios para olhar mais de perto o que acontece dentro
+        dos programas.
+      </p>
     </div>
-    <article class="featured">
-      <span class="tag">{publication.kind}</span>
-      <div>
-        <h3>{publication.title}</h3>
-        <p>{publication.summary}</p>
-      </div>
-      <a class="text-link" href={publication.href}>
-        Ler conteúdo <span aria-hidden="true">→</span>
-      </a>
-    </article>
+    <div
+      class:list={['featured-grid', { 'has-secondary': secondary.length > 0 }]}
+    >
+      <article class="featured-main">
+        <div class="featured-label">
+          <span>{primary.kind}</span>
+          <span>Seleção do clube</span>
+        </div>
+        <div class="featured-copy">
+          <h3>{primary.title}</h3>
+          <p>{primary.summary}</p>
+        </div>
+        {(primary.topics.length > 0 || primary.difficulty) && (
+          <dl class="featured-meta">
+            {primary.topics.length > 0 && (
+              <div>
+                <dt>Assuntos</dt>
+                <dd>{primary.topics.join(' · ')}</dd>
+              </div>
+            )}
+            {primary.difficulty && (
+              <div>
+                <dt>Nível</dt>
+                <dd>{primary.difficulty}</dd>
+              </div>
+            )}
+          </dl>
+        )}
+        <a
+          class="text-link"
+          href={primary.href}
+          aria-label={`${primary.action}: ${primary.title}`}
+        >
+          {primary.action} <span aria-hidden="true">→</span>
+        </a>
+      </article>
+      {secondary.length > 0 && (
+        <div class="featured-secondary">
+          {secondary.map((publication) => (
+            <article>
+              <div class="featured-label">
+                <span>{publication.kind}</span>
+              </div>
+              <h3>{publication.title}</h3>
+              <p>{publication.summary}</p>
+              <a
+                class="text-link"
+                href={publication.href}
+                aria-label={`${publication.action}: ${publication.title}`}
+              >
+                {publication.action} <span aria-hidden="true">→</span>
+              </a>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
   </section>
 )}
+
 <style>
-  .catalogue-links {
+  .featured-grid {
+    display: grid;
+    gap: 20px;
+  }
+  .featured-grid.has-secondary {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+  article {
+    min-width: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  .featured-main {
+    padding: 32px;
+    background: var(--color-surface);
+    border-color: #66503f;
+  }
+  .featured-label {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px 24px;
+    gap: 12px 16px;
+    font: 11px/1.7 var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-accent-text);
   }
-  .featured {
-    display: flex;
-    align-items: start;
-    gap: 28px;
-    padding: 28px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+  .featured-label span + span {
+    color: var(--color-muted);
   }
-  .tag {
-    flex-shrink: 0;
-  }
-  .featured > div {
-    flex: 1;
-    min-width: 0;
+  .featured-copy {
+    width: 100%;
+    margin-block: auto;
+    padding-block: 28px 32px;
   }
   h3 {
-    margin-bottom: 12px;
+    font-size: 24px;
+    line-height: 1.25;
+    margin-block: 16px 12px;
+  }
+  .featured-main h3 {
+    margin-block: 0 20px;
+    font-size: 35px;
+    line-height: 1.17;
+    max-width: 490px;
   }
   p {
     font-size: 14px;
-    max-width: 70ch;
   }
-  .text-link {
-    flex-shrink: 0;
+  .featured-main p {
+    font-size: 16px;
+    line-height: 1.75;
+    max-width: 65ch;
+  }
+  .featured-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    width: 100%;
+    border-top: 1px solid var(--color-border);
+    padding-top: 20px;
+    margin: 0 0 10px;
+  }
+  .featured-meta > div {
+    min-width: 0;
+  }
+  .featured-meta > div:first-child {
+    flex: 1 1 200px;
+  }
+  dt {
+    font: 10px/1.6 var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+    margin-bottom: 7px;
+  }
+  dd {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .featured-secondary {
+    display: grid;
+    grid-auto-rows: 1fr;
+    gap: 20px;
+    min-width: 0;
+  }
+  .featured-secondary p {
+    margin-bottom: 16px;
+  }
+  .featured-secondary .text-link {
+    margin-top: auto;
+  }
+  .section-heading > div {
+    min-width: 0;
   }
   @media (max-width: 700px) {
-    .featured {
-      flex-direction: column;
-      gap: 20px;
+    .featured-grid.has-secondary {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    article,
+    .featured-main {
       padding: 24px;
+    }
+    .featured-main h3 {
+      font-size: 29px;
+    }
+    .featured-main p {
+      font-size: 15px;
+    }
+    .featured-secondary {
+      grid-auto-rows: auto;
+    }
+  }
+  @media (forced-colors: active) {
+    .featured-main {
+      border-color: CanvasText;
     }
   }
 </style>
