@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../../components/ui/Button.astro';
+import ButtonLink from '../../components/ui/ButtonLink.astro';
+import TextLink from '../../components/ui/TextLink.astro';
+import Input from '../../components/ui/Input.astro';
+import Select from '../../components/ui/Select.astro';
+import DifficultyBadge from '../../components/ui/DifficultyBadge.astro';
+import CatalogueSection from '../../components/ui/CatalogueSection.astro';
+
+export function getStaticPaths() {
+  return import.meta.env.DEV ? [{ params: { page: 'design-system' } }] : [];
+}
+const area = {
+  id: 'example',
+  slug: 'exemplo-catalogo',
+  title: 'Seção de catálogo',
+  description: 'Área editorial com metadados, título e descrição.',
+};
+---
+
+<BaseLayout title="Design system" noindex>
+  <div class="container reference">
+    <header class="page-intro">
+      <div class="eyebrow">Referência interna</div>
+      <h1>Design system</h1>
+      <p>
+        Componentes reais do Oxide Club. Esta página existe somente em
+        desenvolvimento.
+      </p>
+    </header>
+    <section class="section" aria-labelledby="foundations">
+      <h2 id="foundations">Fundamentos</h2>
+      <p>
+        Inter para leitura; IBM Plex Mono para metadados. Grafite, cobre e texto
+        claro.
+      </p>
+      <div class="swatches">
+        {[
+          'bg',
+          'surface',
+          'text',
+          'muted',
+          'accent',
+          'accent-text',
+          'border',
+          'focus',
+        ].map((color) => (
+          <div>
+            <span
+              class="swatch"
+              style={`background: var(--color-${color})`}
+            ></span>
+            <code>{color}</code>
+          </div>
+        ))}
+      </div>
+      <div class="notice">
+        Avisos usam texto explícito e uma borda de destaque.
+      </div>
+    </section>
+    <section class="section" aria-labelledby="actions">
+      <h2 id="actions">Ações</h2>
+      <div class="actions">
+        <ButtonLink href="/desafios">
+          Explorar desafios <span aria-hidden="true">→</span>
+        </ButtonLink>
+        <ButtonLink href="/labs/" variant="secondary">
+          Explorar laboratórios
+        </ButtonLink>
+        <TextLink href="/biblioteca">
+          Consultar biblioteca <span aria-hidden="true">→</span>
+        </TextLink>
+        <Button disabled>Indisponível</Button>
+      </div>
+      <ButtonLink href="/como-participar/" variant="secondary">
+        Uma ação com um texto comprido para verificar a quebra de linha em telas
+        pequenas
+      </ButtonLink>
+    </section>
+    <section class="section" aria-labelledby="metadata">
+      <h2 id="metadata">Metadados</h2>
+      <div class="examples">
+        {(['beginner', 'intermediate', 'advanced'] as const).map((level) => (
+          <DifficultyBadge level={level} />
+        ))}
+        <DifficultyBadge
+          level="intermediate"
+          variant="badge"
+          context="experiência com ponteiros e memória"
+        />
+        <span class="tag">Sistemas operacionais</span>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="filters">
+      <h2 id="filters">Campos e filtros</h2>
+      <form aria-label="Exemplo de filtros" class="example-form">
+        <label for="example-query">Busca</label>
+        <Input
+          id="example-query"
+          name="q"
+          type="search"
+          placeholder="Título, número ou assunto"
+        />
+        <label for="example-level">Nível</label>
+        <Select id="example-level" name="level">
+          <option value="">Todos os níveis</option>
+          <option value="advanced">Avançado</option>
+        </Select>
+        <div class="actions">
+          <Button variant="quiet">Ação local</Button>
+          <Button type="reset" variant="quiet">
+            Limpar filtros
+          </Button>
+        </div>
+        <label for="example-disabled">Campo indisponível</label>
+        <Input id="example-disabled" disabled value="Indisponível" />
+      </form>
+    </section>
+    <CatalogueSection
+      area={area}
+      count={1}
+      singular="EXEMPLO"
+      plural="EXEMPLOS"
+    >
+      <article>
+        <h3>
+          Item editorial com um título longo sobre arquitetura de computadores e
+          sistemas operacionais
+        </h3>
+        <p>
+          O componente de domínio define o conteúdo; a seção compartilhada
+          define o agrupamento e sua adaptação ao espaço disponível.
+        </p>
+        <TextLink href="/desafios">
+          Abrir catálogo <span aria-hidden="true">→</span>
+        </TextLink>
+      </article>
+    </CatalogueSection>
+  </div>
+</BaseLayout>
+<style>
+  .reference {
+    padding-bottom: var(--space-16);
+  }
+  .section > h2 {
+    margin-bottom: var(--space-6);
+  }
+  .section > .actions {
+    margin-bottom: var(--space-6);
+  }
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr));
+    gap: var(--space-4);
+    margin-block: var(--space-6);
+  }
+  .swatch {
+    display: block;
+    height: 64px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  code {
+    font: var(--text-sm) var(--font-mono);
+  }
+  .examples {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .example-form {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 40rem;
+  }
+  .example-form .actions {
+    margin-block: var(--space-3);
+  }
+  article p {
+    margin-top: var(--space-4);
+  }
+</style>

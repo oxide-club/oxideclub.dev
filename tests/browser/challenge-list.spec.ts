@@ -62,6 +62,15 @@ test('invalid URL values fall back safely and mobile metadata fits', async ({
   await expect(
     page.locator('tbody tr').first().getByRole('definition'),
   ).toHaveText(['Fundamentos de sistemas', 'Iniciante']);
+  await expect(page.getByRole('searchbox')).toBeVisible();
+  await page.getByRole('searchbox').fill('ALOCACAO ARENA');
+  await expect(page.locator('tbody tr:visible')).toHaveCount(1);
+  await page
+    .getByRole('button', { name: 'Limpar filtros', exact: true })
+    .first()
+    .click();
+  await expect(page.getByRole('searchbox')).toHaveValue('');
+  await expect(page.locator('tbody tr:visible')).toHaveCount(21);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

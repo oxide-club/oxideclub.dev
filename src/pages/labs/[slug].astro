@@ -1,4 +1,6 @@
 ---
+import TextLink from '../../components/ui/TextLink.astro';
+import ReadingLayout from '../../components/ui/ReadingLayout.astro';
 import { render, getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { join } from 'node:path';
@@ -40,9 +42,7 @@ const related = [
 <BaseLayout title={data.title} description={data.summary}>
   <div class="container">
     <header class="page-intro">
-      <a class="text-link" href={labUrl()}>
-        ← Todos os laboratórios
-      </a>
+      <TextLink href={labUrl()}>← Todos os laboratórios</TextLink>
       <div class="eyebrow">
         Etapas obrigatórias · Nível{' '}
         {difficultyLabels[data.difficulty].toLowerCase()}
@@ -68,35 +68,24 @@ const related = [
       </div>
       <LabMaterials labId={lab.id} files={files} />
     </header>
-    <details class="mobile-contents">
-      <summary>Neste laboratório</summary>
-      <LabIndex links={links} />
-    </details>
-    <div class="article-layout">
-      <article class="prose">
-        <Content />
-        {related.length > 0 && (
-          <div class="related">
-            <p>
-              <strong>Continue a investigação</strong>
-            </p>
-            <ul>
-              {related.map((item) => (
-                <li>
-                  <a href={item.url}>{item.title}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </article>
-      <aside>
-        <div class="contents">
-          <span class="eyebrow">Neste laboratório</span>
-          <LabIndex links={links} />
+    <ReadingLayout label="Neste laboratório" variant="lab">
+      <LabIndex links={links} slot="index" />
+      <Content />
+      {related.length > 0 && (
+        <div class="related">
+          <p>
+            <strong>Continue a investigação</strong>
+          </p>
+          <ul>
+            {related.map((item) => (
+              <li>
+                <a href={item.url}>{item.title}</a>
+              </li>
+            ))}
+          </ul>
         </div>
-      </aside>
-    </div>
+      )}
+    </ReadingLayout>
     <div class="conversation">
       <JoinLink
         href={data.discordThreadUrl}
@@ -107,19 +96,19 @@ const related = [
 </BaseLayout>
 <style>
   .page-intro {
-    padding-block: 40px;
+    padding-block: var(--space-10);
   }
   .page-intro > .text-link {
-    margin-bottom: 24px;
+    margin-bottom: var(--space-6);
   }
   .page-intro h1 {
     max-width: 24ch;
     font-size: clamp(34px, 5vw, 52px);
-    margin: 20px 0;
+    margin: var(--space-5) 0;
   }
   .page-intro p {
     max-width: 70ch;
-    margin-top: 16px;
+    margin-top: var(--space-4);
   }
   .central-question {
     font-size: 22px;
@@ -128,72 +117,31 @@ const related = [
   .metadata {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px 24px;
+    gap: var(--space-3) var(--space-6);
     font: 12px/1.7 var(--font-mono);
     color: var(--color-muted);
-    margin-top: 20px;
-  }
-  .article-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 240px;
-    gap: 56px;
-    border-top: 1px solid var(--color-border);
-  }
-  article {
-    min-width: 0;
-  }
-  aside {
-    padding-top: 40px;
-  }
-  .contents {
-    position: sticky;
-    top: 24px;
-  }
-  .contents > .eyebrow {
-    margin-bottom: 16px;
-  }
-  .mobile-contents {
-    display: none;
+    margin-top: var(--space-5);
   }
   .conversation {
-    padding-block: 24px 64px;
+    padding-block: var(--space-6) var(--space-16);
     border-top: 1px solid var(--color-border);
   }
   :global(.prose details) {
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    padding: 12px 16px;
-    margin-block: 24px;
+    padding: var(--space-3) var(--space-4);
+    margin-block: var(--space-6);
   }
   :global(.prose details summary) {
     cursor: pointer;
     color: var(--color-text);
-    min-height: 44px;
+    min-height: var(--control-height);
     padding: 10px 0;
   }
   :global(.prose h3) {
-    scroll-margin-top: 24px;
+    scroll-margin-top: var(--space-6);
   }
   .related {
-    margin-bottom: 24px;
-  }
-  @media (max-width: 800px) {
-    .article-layout {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0;
-    }
-    .article-layout aside {
-      display: none;
-    }
-    .mobile-contents {
-      display: block;
-      border-top: 1px solid var(--color-border);
-      padding-block: 16px;
-    }
-    .mobile-contents summary {
-      min-height: 44px;
-      padding-block: 10px;
-      cursor: pointer;
-    }
+    margin-bottom: var(--space-6);
   }
 </style>

@@ -482,6 +482,10 @@ Não gere outro build para usar como referência: os conteúdos ou a configuraç
 
 Mantenha os registros de revisão fiéis ao que foi verificado. As revisões manuais de acessibilidade foram confirmadas pelo responsável em 25 de outubro de 2026; a exceção `manualAccessibilityReviewDeferred` está desativada. A confirmação e o histórico estão registrados em [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md).
 
+## Design system
+
+Consulte [o guia de componentes, tokens e padrões](docs/DESIGN-SYSTEM.md). A referência visual está em `/internal/design-system` durante `npm run dev` e não é incluída no build publicado.
+
 ## Identidade visual
 
 O arquivo vetorial original é `oxide-club.svg`. Cabeçalho e rodapé usam `public/branding/oxide-core.svg`, cujo `viewBox` remove margens externas preservando os caminhos e as cores originais. Os arquivos gerados incluem ícones PNG, um ICO e uma imagem de compartilhamento de 1200 × 630 pixels.

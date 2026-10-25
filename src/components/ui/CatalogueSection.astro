@@ -1,0 +1,69 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+interface Props extends HTMLAttributes<'section'> {
+  area: { id: string; slug: string; title: string; description: string };
+  count: number;
+  singular: string;
+  plural: string;
+}
+const {
+  area,
+  count,
+  singular,
+  plural,
+  class: className,
+  ...attributes
+} = Astro.props;
+---
+
+<section
+  {...attributes}
+  class:list={['area-section', className]}
+  id={area.slug}
+  aria-labelledby={`heading-${area.id}`}
+>
+  <header>
+    <div class="area-count">
+      {String(count).padStart(2, '0')} {count === 1 ? singular : plural}
+    </div>
+    <h2 id={`heading-${area.id}`}>{area.title}</h2>
+    <p>{area.description}</p>
+  </header>
+  <div>
+    <slot />
+  </div>
+</section>
+<style>
+  .area-section {
+    display: grid;
+    grid-template-columns: minmax(0, 29%) minmax(0, 1fr);
+    gap: var(--space-10);
+    border-top: 1px solid var(--color-border);
+    padding-block: var(--space-9);
+    scroll-margin-top: var(--space-6);
+  }
+  .area-count {
+    font: var(--text-xs) var(--font-mono);
+    color: var(--color-accent-text);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  h2 {
+    font-size: var(--text-section-title);
+    line-height: 1.2;
+    margin-block: var(--space-3) var(--space-4);
+  }
+  header p {
+    font-size: var(--text-control);
+  }
+  @media (max-width: 650px) {
+    .area-section {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-6);
+      padding-block: var(--space-7);
+    }
+    h2 {
+      max-width: 24ch;
+    }
+  }
+</style>

@@ -54,17 +54,17 @@ const visible = resources.challenge || resources.solutions.length;
 )}
 <style>
   .challenge-resources {
-    margin-top: 40px;
-    padding-top: 24px;
+    margin-top: var(--space-10);
+    padding-top: var(--space-6);
     border-top: 1px solid var(--color-border);
   }
   .challenge-resources h2 {
-    margin: 0 0 12px;
-    font-size: 24px;
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-card-title);
   }
   .challenge-resources p {
-    margin: 8px 0 0;
-    font-size: 14px;
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-control);
     color: var(--color-muted);
   }
   .resource-row {
@@ -72,23 +72,23 @@ const visible = resources.challenge || resources.solutions.length;
     border-bottom: 1px solid var(--color-border);
   }
   .resource-row h3 {
-    font-size: 16px;
+    font-size: var(--text-base);
     letter-spacing: normal;
     margin: 0;
   }
   .resource-row a {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    min-height: 44px;
+    gap: var(--space-2);
+    min-height: var(--control-height);
   }
   .languages {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 20px;
+    gap: var(--space-2) var(--space-5);
     list-style: none;
     padding: 0;
-    margin: 8px 0 0;
+    margin: var(--space-2) 0 0;
     font: 13px var(--font-mono);
   }
   .languages li {

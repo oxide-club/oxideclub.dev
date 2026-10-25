@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { difficultyLabels } from '../lib/challenge-catalogue.mjs';
+import DifficultyBadge from './ui/DifficultyBadge.astro';
+import CatalogueSection from './ui/CatalogueSection.astro';
 interface Props {
   area: import('../lib/challenge-areas.mjs').Area;
   challenges: CollectionEntry<'challenges'>[];
@@ -8,62 +9,31 @@ interface Props {
 const { area, challenges } = Astro.props;
 ---
 
-<section
-  class="area-section"
-  id={area.slug}
+<CatalogueSection
+  area={area}
+  count={challenges.length}
+  singular="DESAFIO"
+  plural="DESAFIOS"
   data-area-section
-  aria-labelledby={`heading-${area.id}`}
 >
-  <header>
-    <div class="area-count">
-      {String(challenges.length).padStart(2, '0')} DESAFIOS
-    </div>
-    <h2 id={`heading-${area.id}`}>{area.title}</h2>
-    <p>{area.description}</p>
-  </header>
-  <div class="area-challenges">
-    {challenges.map(({ data }) => (
-      <article data-challenge>
-        <div class="challenge-heading">
-          <h3>
-            <a href={`/desafios/${data.slug}`}>
-              {data.title}
-              <span aria-hidden="true"> ↗</span>
-            </a>
-          </h3>
-          <span class="difficulty" data-difficulty={data.difficulty}>
-            {difficultyLabels[data.difficulty]}
-          </span>
-        </div>
-        <p>{data.summary}</p>
-      </article>
-    ))}
-  </div>
-</section>
+  {challenges.map(({ data }) => (
+    <article data-challenge>
+      <div class="challenge-heading">
+        <h3>
+          <a href={`/desafios/${data.slug}`}>
+            {data.title}
+            <span aria-hidden="true"> ↗</span>
+          </a>
+        </h3>
+        <DifficultyBadge level={data.difficulty} />
+      </div>
+      <p>{data.summary}</p>
+    </article>
+  ))}
+</CatalogueSection>
 <style>
-  .area-section {
-    display: grid;
-    grid-template-columns: minmax(0, 29%) minmax(0, 1fr);
-    gap: 40px;
-    border-top: 1px solid var(--color-border);
-    padding-block: 36px;
-    scroll-margin-top: 24px;
-  }
-  .area-count {
-    font: 12px var(--font-mono);
-    color: var(--color-accent-text);
-    letter-spacing: 0.04em;
-  }
-  h2 {
-    font-size: 28px;
-    line-height: 1.2;
-    margin-block: 12px 16px;
-  }
-  header p {
-    font-size: 14px;
-  }
   article {
-    padding-block: 20px;
+    padding-block: var(--space-5);
     border-bottom: 1px solid var(--color-border);
   }
   article:first-child {
@@ -77,10 +47,10 @@ const { area, challenges } = Astro.props;
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    gap: 20px;
+    gap: var(--space-5);
   }
   h3 {
-    font-size: 19px;
+    font-size: var(--text-item-title);
     line-height: 1.4;
   }
   h3 a {
@@ -93,40 +63,24 @@ const { area, challenges } = Astro.props;
   }
   h3 span {
     color: var(--color-accent-text);
-    font-size: 13px;
-  }
-  .difficulty {
-    font: 12px/1.6 var(--font-mono);
-    color: var(--color-muted);
-    white-space: nowrap;
-  }
-  .difficulty[data-difficulty='beginner'] {
-    color: var(--color-accent-text);
+    font-size: var(--text-sm);
   }
   article p {
-    font-size: 14px;
-    margin-top: 8px;
-    max-width: 72ch;
+    font-size: var(--text-control);
+    margin-top: var(--space-2);
+    max-width: var(--reading-width);
   }
   @media (max-width: 650px) {
-    h3 a {
-      min-height: 44px;
-      align-content: center;
+    .challenge-heading :global(.difficulty) {
+      display: block;
+      margin-top: var(--space-2);
     }
-    .area-section {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 24px;
-      padding-block: 28px;
+    h3 a {
+      min-height: var(--control-height);
+      align-content: center;
     }
     .challenge-heading {
       display: block;
-    }
-    .difficulty {
-      display: block;
-      margin-top: 8px;
-    }
-    h2 {
-      max-width: 24ch;
     }
   }
 </style>

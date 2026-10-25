@@ -1,7 +1,7 @@
 ---
+import DifficultyBadge from './ui/DifficultyBadge.astro';
 import type { CollectionEntry } from 'astro:content';
 import { challengeLanguages } from '../lib/challenge-languages.mjs';
-import { difficultyLabels } from '../lib/challenges';
 interface Props {
   challenge: CollectionEntry<'challenges'>;
   headingLevel?: 'h2' | 'h3';
@@ -13,10 +13,11 @@ const { data } = challenge;
 <article class="challenge-card">
   <div class="challenge-info">
     <div class="challenge-meta">
-      <span class="level">
-        {difficultyLabels[data.difficulty]}
-        {data.difficultyContext && ` (${data.difficultyContext})`}
-      </span>
+      <DifficultyBadge
+        level={data.difficulty}
+        context={data.difficultyContext}
+        variant="badge"
+      />
       <span
         class="mono"
         aria-label={`Linguagens: ${challengeLanguages(data).join(', ')}`}
@@ -53,7 +54,7 @@ const { data } = challenge;
     min-width: 0;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    transition: border-color 160ms ease;
+    transition: border-color var(--motion-fast) var(--motion-easing);
   }
   .challenge-card:is(:hover, :focus-within) {
     border-color: var(--color-accent);
@@ -62,27 +63,20 @@ const { data } = challenge;
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 28px 24px;
+    padding: var(--space-7) var(--space-6);
   }
   .challenge-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 12px;
+    gap: var(--space-2) var(--space-3);
     align-items: center;
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--color-muted);
-    margin-bottom: 20px;
-  }
-  .level {
-    color: var(--color-accent-text);
-    border: 1px solid #71503d;
-    padding: 3px 9px;
-    border-radius: 3px;
-    font: 13px/1.6 var(--font-mono);
+    margin-bottom: var(--space-5);
   }
   .challenge-title {
-    font-size: 28px;
-    margin-bottom: 16px;
+    font-size: var(--text-section-title);
+    margin-bottom: var(--space-4);
   }
   .challenge-title a {
     text-decoration: none;
@@ -97,52 +91,52 @@ const { data } = challenge;
     text-decoration: underline;
   }
   .recommendation {
-    font-size: 13px;
-    margin-top: 12px;
+    font-size: var(--text-sm);
+    margin-top: var(--space-3);
   }
   .tag {
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
 
   p {
-    font-size: 15px;
+    font-size: var(--text-summary);
     max-width: 70ch;
   }
   .topics {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-block: 24px;
+    gap: var(--space-2);
+    margin-block: var(--space-6);
   }
   .card-action {
     display: inline-flex;
     align-items: center;
-    gap: 16px;
-    min-height: 44px;
-    font-size: 14px;
+    gap: var(--space-4);
+    min-height: var(--control-height);
+    font-size: var(--text-control);
     color: var(--color-text);
     font-weight: 550;
     margin-top: auto;
     align-self: flex-start;
   }
   :global(.catalogue[data-view='list']) .challenge-info {
-    padding: 20px 24px;
+    padding: var(--space-5) var(--space-6);
   }
   :global(.catalogue[data-view='list']) .challenge-meta {
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
   }
   :global(.catalogue[data-view='list']) .challenge-title {
-    font-size: 24px;
-    margin-bottom: 8px;
+    font-size: var(--text-card-title);
+    margin-bottom: var(--space-2);
   }
   :global(.catalogue[data-view='list']) .topics {
-    margin-block: 16px 8px;
+    margin-block: var(--space-4) var(--space-2);
   }
   @media (min-width: 900px) {
     :global(.catalogue[data-view='list']) .challenge-info {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(180px, 30%);
-      column-gap: 32px;
+      column-gap: var(--space-8);
       align-content: start;
     }
     :global(.catalogue[data-view='list']) .challenge-info > * {

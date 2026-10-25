@@ -1,7 +1,8 @@
 ---
+import TextLink from './ui/TextLink.astro';
+import DifficultyBadge from './ui/DifficultyBadge.astro';
 import type { CollectionEntry } from 'astro:content';
 import { labUrl } from '../lib/lab-urls.mjs';
-import { difficultyLabels } from '../lib/challenge-catalogue.mjs';
 interface Props {
   lab: CollectionEntry<'labs'>;
 }
@@ -14,20 +15,16 @@ const title = lab.data.title.replace(/^Laboratório de /, '');
     <h3>
       <a href={labUrl(lab.id)}>{title}</a>
     </h3>
-    <span class="difficulty">{difficultyLabels[lab.data.difficulty]}</span>
+    <DifficultyBadge level={lab.data.difficulty} />
   </div>
   <p>{lab.data.question}</p>
-  <a
-    class="text-link"
-    href={labUrl(lab.id)}
-    aria-label={`Explorar laboratório: ${title}`}
-  >
+  <TextLink href={labUrl(lab.id)} aria-label={`Explorar laboratório: ${title}`}>
     Explorar laboratório <span aria-hidden="true">→</span>
-  </a>
+  </TextLink>
 </article>
 <style>
   .lab-card {
-    padding-block: 24px;
+    padding-block: var(--space-6);
     border-bottom: 1px solid var(--color-border);
     min-width: 0;
   }
@@ -42,10 +39,10 @@ const title = lab.data.title.replace(/^Laboratório de /, '');
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    gap: 20px;
+    gap: var(--space-5);
   }
   h3 {
-    font-size: 19px;
+    font-size: var(--text-item-title);
     line-height: 1.4;
   }
   h3 a {
@@ -54,34 +51,29 @@ const title = lab.data.title.replace(/^Laboratório de /, '');
   h3 a:hover {
     text-decoration: underline;
   }
-  .difficulty {
-    font: 12px/1.6 var(--font-mono);
-    color: var(--color-muted);
-    white-space: nowrap;
-  }
   p {
-    font-size: 15px;
-    margin-block: 12px;
+    font-size: var(--text-summary);
+    margin-block: var(--space-3);
     max-width: 68ch;
   }
   .text-link {
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
-    font-size: 14px;
+    min-height: var(--control-height);
+    font-size: var(--text-control);
   }
   @media (max-width: 650px) {
+    .lab-heading :global(.difficulty) {
+      display: block;
+      margin-top: var(--space-2);
+    }
     .lab-heading {
       display: block;
     }
     h3 a {
       display: inline-block;
-      min-height: 44px;
+      min-height: var(--control-height);
       align-content: center;
-    }
-    .difficulty {
-      display: block;
-      margin-top: 8px;
     }
   }
 </style>

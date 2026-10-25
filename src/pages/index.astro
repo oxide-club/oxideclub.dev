@@ -1,4 +1,6 @@
 ---
+import TextLink from '../components/ui/TextLink.astro';
+import ButtonLink from '../components/ui/ButtonLink.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import JoinLink from '../components/JoinLink.astro';
 import StartHere from '../components/StartHere.astro';
@@ -33,15 +35,13 @@ const exploreHref = featured.length
           suas descobertas com a comunidade.
         </p>
         <div class="actions">
-          <a class="button" href={exploreHref}>
+          <ButtonLink href={exploreHref}>
             Explorar os materiais <span aria-hidden="true">↓</span>
-          </a>
+          </ButtonLink>
           <JoinLink secondary />
         </div>
         <p>
-          <a class="text-link" href="/labs/">
-            Conheça os laboratórios →
-          </a>
+          <TextLink href="/labs/">Conheça os laboratórios →</TextLink>
         </p>
         <div class="hero-note">
           <span aria-hidden="true">↳</span> Online, gratuito e aberto a
@@ -148,9 +148,9 @@ const exploreHref = featured.length
             Construa pequenos programas, teste seu comportamento e compare
             abordagens com outras pessoas.
           </p>
-          <a class="text-link" href="/desafios">
+          <TextLink href="/desafios">
             Explorar os desafios <span aria-hidden="true">→</span>
-          </a>
+          </TextLink>
         </article>
         <article>
           <h3>Laboratórios</h3>
@@ -158,9 +158,9 @@ const exploreHref = featured.length
             Siga roteiros de experimentos, observe o comportamento dos sistemas
             e compartilhe suas descobertas com a comunidade.
           </p>
-          <a class="text-link" href="/labs/">
+          <TextLink href="/labs/">
             Explorar os laboratórios <span aria-hidden="true">→</span>
-          </a>
+          </TextLink>
         </article>
         <article>
           <h3>Estudos e discussões</h3>
@@ -168,9 +168,9 @@ const exploreHref = featured.length
             Traga uma referência ou uma pergunta e investigue um assunto com a
             comunidade.
           </p>
-          <a class="text-link" href="/biblioteca">
+          <TextLink href="/biblioteca">
             Explorar a biblioteca <span aria-hidden="true">→</span>
-          </a>
+          </TextLink>
         </article>
         <article>
           <h3>Notas e textos técnicos</h3>
@@ -179,18 +179,18 @@ const exploreHref = featured.length
             participa do clube pode contribuir com textos para o site, com
             crédito de autoria.
           </p>
-          <a class="text-link" href="/notas/#contribuir">
+          <TextLink href="/notas/#contribuir">
             Como contribuir com um texto <span aria-hidden="true">→</span>
-          </a>
+          </TextLink>
         </article>
       </div>
       <p class="club-planning">
-        <a class="text-link" href="/encontros/">
+        <TextLink href="/encontros/">
           {meetings.length
             ? 'Conheça os encontros do clube'
             : 'Conheça os encontros em preparação'}{' '}
           <span aria-hidden="true">→</span>
-        </a>
+        </TextLink>
       </p>
     </section>
     <StartHere />
@@ -250,9 +250,9 @@ const exploreHref = featured.length
   .hero {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
-    gap: 48px;
+    gap: var(--space-12);
     align-items: center;
-    padding-block: 64px 56px;
+    padding-block: var(--space-16) var(--space-14);
   }
   @media (prefers-reduced-motion: no-preference) {
     .hero-copy > :is(h1, p, .actions) {
@@ -279,8 +279,8 @@ const exploreHref = featured.length
     }
   }
   .hero .eyebrow {
-    font-size: 12px;
-    margin-bottom: 28px;
+    font-size: var(--text-xs);
+    margin-bottom: var(--space-7);
   }
   .hero h1 {
     font-size: clamp(42px, 5.2vw, 66px);
@@ -291,9 +291,9 @@ const exploreHref = featured.length
     color: var(--color-accent-text);
   }
   .hero-copy > p {
-    font-size: 16px;
+    font-size: var(--text-base);
     max-width: 510px;
-    margin: 28px 0 32px;
+    margin: var(--space-7) 0 var(--space-8);
     line-height: 1.75;
   }
   .hero-note {
@@ -314,7 +314,7 @@ const exploreHref = featured.length
   .study-bottom {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--space-3);
     font: 13px/1.6 var(--font-mono);
     color: var(--color-muted);
     letter-spacing: 0.05em;
@@ -322,16 +322,16 @@ const exploreHref = featured.length
   .word {
     font: 34px var(--font-mono);
     letter-spacing: -1.5px;
-    padding: 38px 0 24px;
+    padding: 38px 0 var(--space-6);
   }
   .cursor {
     color: var(--color-accent);
   }
   .byte-bracket {
     height: 16px;
-    border: 1px solid #71503d;
+    border: 1px solid var(--color-accent-border);
     border-bottom: 0;
-    margin-bottom: 16px;
+    margin-bottom: var(--space-4);
   }
   .hex-grid {
     display: grid;
@@ -340,7 +340,7 @@ const exploreHref = featured.length
   }
   .byte {
     border: 1px solid var(--color-border);
-    padding: 10px 2px 8px;
+    padding: 10px 2px var(--space-2);
     text-align: center;
     background: #1c1f21;
     font: 16px var(--font-mono);
@@ -350,14 +350,14 @@ const exploreHref = featured.length
     min-width: 0;
     animation: byte-scan 360ms ease-out var(--byte-delay) 1;
     transition:
-      border-color 160ms ease,
-      background-color 160ms ease,
-      color 160ms ease;
+      border-color var(--motion-fast) var(--motion-easing),
+      background-color var(--motion-fast) var(--motion-easing),
+      color var(--motion-fast) var(--motion-easing);
   }
   @keyframes byte-scan {
     45% {
       border-color: var(--color-accent);
-      background-color: #38271e;
+      background-color: var(--color-highlight);
       color: var(--color-accent-text);
     }
   }
@@ -366,27 +366,27 @@ const exploreHref = featured.length
   }
   .byte[data-active] {
     border-color: var(--color-accent);
-    background-color: #38271e;
+    background-color: var(--color-highlight);
     color: var(--color-accent-text);
   }
   .word [data-letter] {
     transition:
-      color 160ms ease,
-      background-color 160ms ease;
+      color var(--motion-fast) var(--motion-easing),
+      background-color var(--motion-fast) var(--motion-easing);
   }
   .word [data-active] {
     color: var(--color-accent-text);
-    background-color: #38271e;
+    background-color: var(--color-highlight);
     box-shadow: 0 2px var(--color-accent);
   }
   .byte small {
     display: block;
     color: var(--color-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
     margin-top: 7px;
   }
   .byte.newline {
-    border-color: #71503d;
+    border-color: var(--color-accent-border);
     color: var(--color-accent-text);
     background: #28221e;
   }
@@ -401,25 +401,25 @@ const exploreHref = featured.length
     letter-spacing: 0;
     min-height: 2.5em;
     text-align: center;
-    margin-block: 10px 24px;
+    margin-block: 10px var(--space-6);
   }
   .study-bottom {
     border-top: 1px solid var(--color-border);
-    padding-top: 12px;
-    font-size: 13px;
+    padding-top: var(--space-3);
+    font-size: var(--text-sm);
   }
   .study-topics {
-    margin-bottom: 32px;
+    margin-bottom: var(--space-8);
   }
   .study-topics h3 {
-    font-size: 18px;
+    font-size: var(--text-lead);
     letter-spacing: -0.02em;
-    margin-bottom: 16px;
+    margin-bottom: var(--space-4);
   }
   .study-topics ul {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px 28px;
+    gap: var(--space-3) var(--space-7);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -429,7 +429,7 @@ const exploreHref = featured.length
     align-items: baseline;
     gap: 10px;
     min-width: 0;
-    font-size: 15px;
+    font-size: var(--text-summary);
   }
   .study-topics li::before {
     content: '';
@@ -447,28 +447,28 @@ const exploreHref = featured.length
   }
   .club-planning {
     max-width: 75ch;
-    margin-top: 20px;
-    font-size: 14px;
+    margin-top: var(--space-5);
+    font-size: var(--text-control);
   }
   .club-paths {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 32px;
+    gap: var(--space-8);
   }
   .club-paths article {
     min-width: 0;
     border-top: 1px solid var(--color-border);
-    padding-top: 20px;
+    padding-top: var(--space-5);
   }
   .club-paths h3 {
-    margin-bottom: 16px;
+    margin-bottom: var(--space-4);
   }
   .club-paths .text-link {
-    margin-top: 16px;
-    font-size: 14px;
+    margin-top: var(--space-4);
+    font-size: var(--text-control);
   }
   .club-paths p {
-    font-size: 14px;
+    font-size: var(--text-control);
   }
   .section-heading > div {
     min-width: 0;
@@ -478,17 +478,17 @@ const exploreHref = featured.length
     flex-shrink: 0;
   }
   .section > .actions {
-    gap: 12px 28px;
+    gap: var(--space-3) var(--space-7);
   }
   @media (max-width: 1000px) {
     .hero {
-      gap: 32px;
+      gap: var(--space-8);
     }
     .hero h1 {
       font-size: 48px;
     }
     .word {
-      font-size: 28px;
+      font-size: var(--text-section-title);
     }
     .binary {
       letter-spacing: 0;
@@ -498,27 +498,27 @@ const exploreHref = featured.length
     .study-topics ul {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px 20px;
+      gap: var(--space-3) var(--space-5);
     }
 
     .club-paths {
       grid-template-columns: minmax(0, 1fr);
-      gap: 28px;
+      gap: var(--space-7);
     }
     .hero {
       grid-template-columns: 1fr;
-      padding-block: 48px;
+      padding-block: var(--space-12);
       gap: 44px;
     }
     .hero h1 {
       font-size: clamp(37px, 8.5vw, 54px);
     }
     .hero .eyebrow {
-      font-size: 12px;
+      font-size: var(--text-xs);
       letter-spacing: 0.07em;
     }
     .hero-copy > p {
-      font-size: 15px;
+      font-size: var(--text-summary);
     }
     .byte-study {
       max-width: 460px;
@@ -526,7 +526,7 @@ const exploreHref = featured.length
     }
     .word {
       font-size: 32px;
-      padding-top: 24px;
+      padding-top: var(--space-6);
     }
     .hex-grid {
       grid-template-columns: repeat(6, 1fr);

@@ -1,0 +1,9 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+interface Props extends HTMLAttributes<'a'> {}
+const { class: className, ...attributes } = Astro.props;
+---
+
+<a {...attributes} class:list={['text-link', className]}>
+  <slot />
+</a>

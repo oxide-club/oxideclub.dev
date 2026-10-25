@@ -1,4 +1,8 @@
 ---
+import Input from './ui/Input.astro';
+import Button from './ui/Button.astro';
+import Select from './ui/Select.astro';
+import DifficultyBadge from './ui/DifficultyBadge.astro';
 import type { CollectionEntry } from 'astro:content';
 import {
   challengeSearchText,
@@ -21,7 +25,7 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
   >
     <label class="query-field">
       Buscar desafios
-      <input
+      <Input
         name="q"
         type="search"
         placeholder="Título, número ou assunto"
@@ -31,7 +35,7 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
     </label>
     <label>
       <span id="challenge-area-label">Área</span>
-      <select
+      <Select
         name="area"
         aria-labelledby="challenge-area-label"
         aria-controls="challenge-table"
@@ -40,11 +44,11 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
         {areas.map((area) => (
           <option value={area.id}>{area.title}</option>
         ))}
-      </select>
+      </Select>
     </label>
     <label>
       <span id="challenge-difficulty-label">Dificuldade</span>
-      <select
+      <Select
         name="difficulty"
         aria-labelledby="challenge-difficulty-label"
         aria-controls="challenge-table"
@@ -53,9 +57,11 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
         {Object.entries(difficultyLabels).map(([value, label]) => (
           <option value={value}>{label}</option>
         ))}
-      </select>
+      </Select>
     </label>
-    <button type="reset">Limpar filtros</button>
+    <Button type="reset" variant="quiet">
+      Limpar filtros
+    </Button>
   </form>
   <div class="results-line">
     <p role="status" aria-live="polite" aria-atomic="true" data-result-count>
@@ -64,11 +70,11 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
     <div class="mobile-sort" data-script-controls hidden>
       <label>
         Ordenar
-        <select name="sort">
+        <Select name="sort">
           <option value="number">Número</option>
           <option value="title">Título</option>
           <option value="difficulty">Dificuldade</option>
-        </select>
+        </Select>
       </label>
       <button type="button" data-sort-direction aria-label="Ordem decrescente">
         ↓
@@ -133,17 +139,15 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
                 </div>
                 <div>
                   <dt class="sr-only">Dificuldade</dt>
-                  <dd class="difficulty" data-level={data.difficulty}>
-                    {difficultyLabels[data.difficulty]}
+                  <dd>
+                    <DifficultyBadge level={data.difficulty} />
                   </dd>
                 </div>
               </dl>
             </td>
             <td class="desktop-meta area-name">{area.title}</td>
             <td class="desktop-meta">
-              <span class="difficulty" data-level={data.difficulty}>
-                {difficultyLabels[data.difficulty]}
-              </span>
+              <DifficultyBadge level={data.difficulty} />
             </td>
           </tr>
         );
@@ -153,9 +157,9 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
   <div class="empty-results" hidden>
     <h2>Nenhum desafio encontrado.</h2>
     <p>Tente outro termo ou remova os filtros.</p>
-    <button type="button" data-clear-filters>
+    <Button variant="quiet" data-clear-filters>
       Limpar filtros
-    </button>
+    </Button>
   </div>
 </div>
 <script>
@@ -170,62 +174,36 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
     grid-template-columns:
       minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.8fr)
       auto;
-    gap: 16px;
+    gap: var(--space-4);
     align-items: end;
-    padding-block: 28px 20px;
+    padding-block: var(--space-7) var(--space-5);
   }
   label {
     display: grid;
-    gap: 8px;
+    gap: var(--space-2);
     min-width: 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--color-muted);
   }
-  input,
-  select {
-    width: 100%;
-    min-width: 0;
-    min-height: 44px;
-    padding: 10px 12px;
-    color: var(--color-text);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    font: inherit;
-    font-size: 14px;
-  }
-  input::placeholder {
-    color: var(--color-muted);
-  }
-  input:focus-visible,
-  select:focus-visible {
-    outline: 3px solid var(--color-focus);
-    outline-offset: 4px;
-  }
-  button {
-    min-height: 44px;
+  button:not(.button) {
+    min-height: var(--control-height);
     color: var(--color-muted);
     background: transparent;
     border: 0;
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     cursor: pointer;
   }
-  button:hover {
+  button:not(.button):hover {
     color: var(--color-accent-text);
-  }
-  button[type='reset'] {
-    padding: 10px 0;
-    text-decoration: underline;
-    text-underline-offset: 4px;
   }
   .results-line {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    padding-block: 20px;
-    font-size: 13px;
+    gap: var(--space-3);
+    padding-block: var(--space-5);
+    font-size: var(--text-sm);
     color: var(--color-muted);
   }
   .catalogue-filters:not([hidden]) + .results-line {
@@ -233,7 +211,7 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
   }
   .pace {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
   .mobile-sort {
     display: none;
@@ -243,14 +221,14 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
     border-collapse: collapse;
     table-layout: fixed;
     text-align: left;
-    font-size: 14px;
+    font-size: var(--text-control);
   }
   th {
     font-weight: 400;
     color: var(--color-muted);
     padding: 6px 14px;
     border-block: 1px solid var(--color-border);
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
   th:first-child {
     width: 8%;
@@ -268,7 +246,7 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
   th button {
     padding: 0;
     text-align: left;
-    font-size: 12px;
+    font-size: var(--text-xs);
   }
   th button span {
     color: var(--color-accent-text);
@@ -295,16 +273,8 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
     text-decoration: underline;
   }
   .area-name {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--color-muted);
-  }
-  .difficulty {
-    font: 12px/1.6 var(--font-mono);
-    color: var(--color-muted);
-    white-space: normal;
-  }
-  .difficulty[data-level='beginner'] {
-    color: var(--color-accent-text);
   }
   tbody tr:hover {
     background: var(--color-surface);
@@ -318,44 +288,26 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
   .mobile-meta > div {
     min-width: 0;
   }
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
   .empty-results {
-    padding: 48px 16px;
+    padding: var(--space-12) var(--space-4);
     text-align: center;
     border-bottom: 1px solid var(--color-border);
   }
   .empty-results h2 {
-    font-size: 24px;
+    font-size: var(--text-card-title);
   }
   .empty-results p {
-    margin-block: 12px 20px;
-  }
-  .empty-results button {
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    padding: 10px 16px;
-    color: var(--color-text);
-    background: var(--color-surface);
+    margin-block: var(--space-3) var(--space-5);
   }
   @media (max-width: 650px) {
     .challenge-title a {
-      min-height: 44px;
+      min-height: var(--control-height);
       align-content: center;
     }
     .catalogue-filters {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 12px;
-      padding-block: 24px 16px;
+      gap: var(--space-3);
+      padding-block: var(--space-6) var(--space-4);
     }
     .query-field,
     button[type='reset'] {
@@ -364,31 +316,26 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
     button[type='reset'] {
       justify-self: end;
     }
-    input,
-    select {
-      font-size: 16px;
-      padding-inline: 8px;
-    }
     .pace {
       display: none;
     }
     .mobile-sort {
       display: flex;
       align-items: end;
-      gap: 8px;
+      gap: var(--space-2);
     }
     .mobile-sort label {
-      gap: 4px;
-      font-size: 12px;
+      gap: var(--space-1);
+      font-size: var(--text-xs);
     }
     .mobile-sort select {
       width: 110px;
-      font-size: 13px;
+      font-size: var(--text-sm);
     }
     .mobile-sort button {
       width: 44px;
       border: 1px solid var(--color-border);
-      border-radius: 4px;
+      border-radius: var(--radius-control);
       background: var(--color-surface);
     }
     th:first-child {
@@ -396,25 +343,25 @@ const areaFor = (id: string) => areas.find((area) => area.id === id)!;
     }
     th:nth-child(2) {
       width: 86%;
-      padding-left: 4px;
+      padding-left: var(--space-1);
     }
     .desktop-meta {
       display: none;
     }
     td {
-      padding: 16px 4px;
+      padding: var(--space-4) var(--space-1);
     }
     .challenge-number {
       vertical-align: top;
-      padding-top: 20px;
+      padding-top: var(--space-5);
     }
     .mobile-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px 12px;
+      gap: var(--space-1) var(--space-3);
       color: var(--color-muted);
-      font-size: 12px;
-      margin: 8px 0 0;
+      font-size: var(--text-xs);
+      margin: var(--space-2) 0 0;
     }
   }
 </style>

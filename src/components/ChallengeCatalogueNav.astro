@@ -21,19 +21,19 @@ const { active, areaCount, challengeCount } = Astro.props;
 <style>
   .catalogue-nav {
     display: flex;
-    gap: 32px;
+    gap: var(--space-8);
     border-bottom: 1px solid var(--color-border);
-    scroll-margin-top: 24px;
+    scroll-margin-top: var(--space-6);
   }
   a {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
     min-height: 52px;
-    padding: 12px 0;
+    padding: var(--space-3) 0;
     border-bottom: 2px solid transparent;
     text-decoration: none;
-    font-size: 15px;
+    font-size: var(--text-summary);
     color: var(--color-muted);
   }
   a[aria-current] {

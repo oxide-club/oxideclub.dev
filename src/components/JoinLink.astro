@@ -1,4 +1,5 @@
 ---
+import ButtonLink from './ui/ButtonLink.astro';
 import { links } from '../config/site';
 const {
   secondary = false,
@@ -8,10 +9,10 @@ const {
 ---
 
 {href ? (
-  <a class:list={['button', { secondary }]} href={href}>
+  <ButtonLink variant={secondary ? 'secondary' : 'primary'} href={href}>
     {label}
     <span aria-hidden="true">↗</span>
-  </a>
+  </ButtonLink>
 ) : (
   <p class="notice">O convite para a comunidade será disponibilizado aqui.</p>
 )}

@@ -1,0 +1,75 @@
+---
+interface Props {
+  label: string;
+  variant?: 'challenge' | 'lab';
+}
+const { label, variant = 'challenge' } = Astro.props;
+---
+
+<details class="mobile-contents">
+  <summary>{label}</summary>
+  <slot name="index" />
+</details>
+<div class:list={['article-layout', { 'lab-layout': variant === 'lab' }]}>
+  <article class="prose">
+    <slot />
+  </article>
+  <aside>
+    <div class="contents">
+      <span class="eyebrow">{label}</span>
+      <slot name="index" />
+    </div>
+  </aside>
+</div>
+<style>
+  .article-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: var(--space-18);
+    padding-bottom: var(--space-20);
+    border-top: 1px solid var(--color-border);
+  }
+  .lab-layout {
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: var(--space-14);
+    padding-bottom: 0;
+  }
+  article {
+    min-width: 0;
+  }
+  aside {
+    padding-top: var(--space-12);
+  }
+  .lab-layout aside {
+    padding-top: var(--space-10);
+  }
+  .lab-layout .contents {
+    position: sticky;
+    top: var(--space-6);
+  }
+  .contents > .eyebrow {
+    margin-bottom: var(--space-4);
+  }
+  .mobile-contents {
+    display: none;
+    border-top: 1px solid var(--color-border);
+    padding-block: var(--space-4);
+  }
+  .mobile-contents summary {
+    min-height: var(--control-height);
+    padding-block: 10px;
+    cursor: pointer;
+  }
+  @media (max-width: 800px) {
+    .article-layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    .article-layout aside {
+      display: none;
+    }
+    .mobile-contents {
+      display: block;
+    }
+  }
+</style>

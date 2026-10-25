@@ -1,4 +1,6 @@
 ---
+import TextLink from '../../components/ui/TextLink.astro';
+import ButtonLink from '../../components/ui/ButtonLink.astro';
 import { render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -78,17 +80,16 @@ const revisionDate =
         )}
         <div class="meeting-actions">
           {!data.cancelled && data.participationUrl && (
-            <a class="button" href={data.participationUrl}>
+            <ButtonLink href={data.participationUrl}>
               Acessar encontro <span aria-hidden="true">↗</span>
-            </a>
+            </ButtonLink>
           )}
-          <a
-            class="text-link"
+          <TextLink
             href={`/encontros/${id}/calendario.ics`}
             download={`${id}.ics`}
           >
             Adicionar ao calendário (.ics)
-          </a>
+          </TextLink>
         </div>
       </header>
       {(sections.length > 0 || data.materials.length > 0) && (
@@ -139,12 +140,9 @@ const revisionDate =
             Atualizado em <time datetime={data.updatedAt}>{revisionDate}</time>
           </p>
         )}
-        <a
-          class="text-link"
-          href={githubUrl('meetings', `meetings/${id}.md`, 'blob')}
-        >
+        <TextLink href={githubUrl('meetings', `meetings/${id}.md`, 'blob')}>
           Ver fonte no GitHub <span aria-hidden="true">↗</span>
-        </a>
+        </TextLink>
         <p>
           Texto disponível sob{' '}
           <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>,
@@ -152,9 +150,7 @@ const revisionDate =
           Código e materiais de terceiros podem ter licenças próprias, indicadas
           na fonte.
         </p>
-        <a class="text-link" href="/encontros/">
-          ← Todos os encontros
-        </a>
+        <TextLink href="/encontros/">← Todos os encontros</TextLink>
       </footer>
     </article>
   </div>
@@ -165,71 +161,71 @@ const revisionDate =
     margin-inline: auto;
   }
   .back-link {
-    margin-bottom: 28px;
+    margin-bottom: var(--space-7);
   }
   .metadata {
-    margin-top: 24px;
-    font-size: 13px;
+    margin-top: var(--space-6);
+    font-size: var(--text-sm);
   }
   .metadata p + p {
-    margin-top: 4px;
+    margin-top: var(--space-1);
   }
   .meeting-notice {
-    margin-top: 24px;
+    margin-top: var(--space-6);
   }
   .meeting-notice p {
     color: inherit;
   }
   .meeting-notice strong + p {
-    margin-top: 8px;
+    margin-top: var(--space-2);
   }
   .meeting-actions {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 24px;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
   }
   .contents {
-    padding-block: 24px;
+    padding-block: var(--space-6);
     border-block: 1px solid var(--color-border);
   }
   .contents ul {
     list-style: none;
     padding: 0;
-    margin: 16px 0 0;
+    margin: var(--space-4) 0 0;
   }
   .contents a {
     display: inline-block;
-    padding-block: 8px;
-    font-size: 14px;
+    padding-block: var(--space-2);
+    font-size: var(--text-control);
   }
   .meeting-body {
     max-width: none;
-    padding-top: 16px;
+    padding-top: var(--space-4);
     line-height: 1.8;
   }
   .meeting-body :global(blockquote) {
-    margin: 28px 0;
+    margin: var(--space-7) 0;
     border-left: 2px solid var(--color-accent);
-    padding-left: 24px;
+    padding-left: var(--space-6);
   }
   .meeting-body :global(figure) {
-    margin: 32px 0;
+    margin: var(--space-8) 0;
   }
   .meeting-body :global(figcaption) {
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--color-muted);
-    margin-top: 12px;
+    margin-top: var(--space-3);
   }
   .meeting-materials {
-    margin-top: 40px;
-    padding-top: 24px;
+    margin-top: var(--space-10);
+    padding-top: var(--space-6);
     border-top: 1px solid var(--color-border);
   }
   .meeting-materials h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
+    font-size: var(--text-section-title);
+    margin-bottom: var(--space-5);
   }
   .meeting-materials ul {
     list-style: none;
@@ -241,20 +237,20 @@ const revisionDate =
     align-items: baseline;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0 20px;
-    padding-block: 8px;
+    gap: 0 var(--space-5);
+    padding-block: var(--space-2);
     border-bottom: 1px solid var(--color-border);
   }
   .meeting-materials a {
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
-    gap: 12px;
+    min-height: var(--control-height);
+    gap: var(--space-3);
     color: var(--color-accent-text);
   }
   .meeting-materials a > span[aria-hidden] {
     display: inline-block;
-    transition: transform 160ms ease;
+    transition: transform var(--motion-fast) var(--motion-easing);
   }
   @media (prefers-reduced-motion: no-preference) {
     .meeting-materials a:is(:hover, :focus-visible) > span[aria-hidden] {
@@ -271,26 +267,26 @@ const revisionDate =
   }
   @keyframes section-arrive {
     from {
-      background-color: #38271e;
+      background-color: var(--color-highlight);
     }
     to {
       background-color: transparent;
     }
   }
   .material-type {
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--color-muted);
   }
   .meeting-footer {
-    margin-top: 48px;
-    padding-block: 24px 64px;
+    margin-top: var(--space-12);
+    padding-block: var(--space-6) var(--space-16);
     border-top: 1px solid var(--color-border);
   }
   .meeting-footer p {
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
   .meeting-footer .revision {
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
   .meeting-footer p a {
     display: inline-block;

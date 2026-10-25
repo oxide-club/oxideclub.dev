@@ -50,18 +50,18 @@ const groups = groupChallengesByArea(
 </BaseLayout>
 <style>
   .page-intro {
-    padding-block: 48px 32px;
+    padding-block: var(--space-12) var(--space-8);
   }
   h1 {
     font-size: clamp(34px, 5vw, 56px);
   }
   .page-intro p {
-    margin-top: 20px;
+    margin-top: var(--space-5);
     max-width: 66ch;
   }
   .participation {
-    font-size: 14px;
-    padding-block: 28px 48px;
+    font-size: var(--text-control);
+    padding-block: var(--space-7) var(--space-12);
   }
   .participation a {
     color: var(--color-accent-text);

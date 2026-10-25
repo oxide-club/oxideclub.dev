@@ -1,4 +1,5 @@
 ---
+import ButtonLink from '../components/ui/ButtonLink.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
@@ -15,12 +16,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       investigar por aqui.
     </p>
     <div class="actions">
-      <a class="button" href="/">
-        Voltar ao início →
-      </a>
-      <a class="button secondary" href="/desafios">
+      <ButtonLink href="/">Voltar ao início →</ButtonLink>
+      <ButtonLink variant="secondary" href="/desafios">
         Explorar desafios
-      </a>
+      </ButtonLink>
     </div>
   </section>
 </BaseLayout>
@@ -29,6 +28,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     padding-block: 96px 120px;
   }
   .actions {
-    margin-top: 32px;
+    margin-top: var(--space-8);
   }
 </style>

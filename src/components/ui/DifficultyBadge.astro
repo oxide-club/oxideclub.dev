@@ -1,0 +1,30 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import { difficultyLabels } from '../../lib/challenge-catalogue.mjs';
+interface Props extends HTMLAttributes<'span'> {
+  level: keyof typeof difficultyLabels;
+  variant?: 'text' | 'badge';
+  context?: string;
+}
+const {
+  level,
+  variant = 'text',
+  context,
+  class: className,
+  ...attributes
+} = Astro.props;
+---
+
+<span
+  {...attributes}
+  class:list={[
+    'difficulty',
+    'difficulty-indicator',
+    { 'difficulty-badge': variant === 'badge' },
+    className,
+  ]}
+  data-difficulty={level}
+>
+  {difficultyLabels[level]}
+  {context && ` (${context})`}
+</span>

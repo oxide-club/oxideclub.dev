@@ -1,4 +1,5 @@
 ---
+import TextLink from '../components/ui/TextLink.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import JoinLink from '../components/JoinLink.astro';
 import { publishedMeetings } from '../lib/meetings';
@@ -75,9 +76,9 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
             tentativa ou um caso de teste, mesmo sem concluir a implementação.
             Compare abordagens e volte para contar o que descobriu.
           </p>
-          <a class="text-link" href="/desafios">
+          <TextLink href="/desafios">
             Conhecer os desafios <span aria-hidden="true">→</span>
-          </a>
+          </TextLink>
         </article>
       </div>
     </section>
@@ -122,9 +123,9 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
           A implementação pode estar completa ou em desenvolvimento. Essa
           contribuição é opcional.
         </p>
-        <a class="text-link" href={contributeUrl}>
+        <TextLink href={contributeUrl}>
           Ver o guia no GitHub <span aria-hidden="true">↗</span>
-        </a>
+        </TextLink>
       </div>
     </section>
     <section class="participation-section" aria-labelledby="writing-heading">
@@ -137,12 +138,9 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
           request (uma proposta de contribuição no GitHub). A revisão acontece
           por lá, e o texto publicado recebe crédito de autoria.
         </p>
-        <a
-          class="text-link"
-          href={githubUrl('notes', 'CONTRIBUTING.md', 'blob')}
-        >
+        <TextLink href={githubUrl('notes', 'CONTRIBUTING.md', 'blob')}>
           Ver o guia de contribuição <span aria-hidden="true">↗</span>
-        </a>
+        </TextLink>
       </div>
     </section>
     <section
@@ -169,12 +167,12 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
             estiverem definidos.
           </p>
         )}
-        <a class="text-link" href="/encontros/">
+        <TextLink href="/encontros/">
           {meetings.length
             ? 'Ver os encontros'
             : 'Conheça os encontros em preparação'}{' '}
           <span aria-hidden="true">→</span>
-        </a>
+        </TextLink>
         <p>
           Uma zine também está em discussão, com formato e periodicidade em
           aberto.
@@ -199,17 +197,17 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
 
 <style>
   .participation {
-    padding-bottom: 80px;
+    padding-bottom: var(--space-20);
   }
   .page-intro .actions {
-    margin-top: 28px;
+    margin-top: var(--space-7);
   }
   .participation-section {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
+    gap: var(--space-6);
     border-top: 1px solid var(--color-border);
-    padding-block: 36px;
+    padding-block: var(--space-9);
   }
   .participation-section h2 {
     font-size: clamp(28px, 3vw, 36px);
@@ -220,15 +218,15 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
     max-width: 65ch;
   }
   .section-copy p + p {
-    margin-top: 16px;
+    margin-top: var(--space-4);
   }
   .section-copy .text-link {
-    margin-top: 16px;
+    margin-top: var(--space-4);
   }
   .options {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 28px;
+    gap: var(--space-7);
     max-width: none;
   }
   .options article {
@@ -239,7 +237,7 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
   }
   .first-step {
     background: var(--color-surface);
-    padding: 28px;
+    padding: var(--space-7);
     border-left: 2px solid var(--color-accent);
   }
   .activity-note {
@@ -253,38 +251,38 @@ const contributeUrl = `${githubUrl('solutions', 'CONTRIBUTING.md', 'blob')}#comp
   }
   .options h3 {
     font-size: 21px;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
   }
   .activity-note {
-    margin-top: 24px;
+    margin-top: var(--space-6);
   }
   .planning {
-    padding-block: 32px;
+    padding-block: var(--space-8);
   }
   .planning h2 {
     font-size: 26px;
   }
   .conduct-note {
     border-top: 1px solid var(--color-border);
-    padding-top: 32px;
+    padding-top: var(--space-8);
   }
   .conduct-note p {
-    font-size: 14px;
+    font-size: var(--text-control);
     max-width: 80ch;
   }
   .conduct-note .closing-invitation {
-    margin-block: 28px 20px;
-    font-size: 18px;
+    margin-block: var(--space-7) var(--space-5);
+    font-size: var(--text-lead);
     color: var(--color-text);
   }
   @media (max-width: 700px) {
     .participation-section {
       grid-template-columns: minmax(0, 1fr);
-      gap: 24px;
-      padding-block: 36px;
+      gap: var(--space-6);
+      padding-block: var(--space-9);
     }
     .planning {
-      padding-block: 28px;
+      padding-block: var(--space-7);
     }
   }
 </style>

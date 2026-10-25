@@ -1,4 +1,5 @@
 ---
+import ButtonLink from './ui/ButtonLink.astro';
 import type { CommunityImplementation } from '../lib/community';
 import { githubUrl } from '../config/github.mjs';
 import JoinLink from './JoinLink.astro';
@@ -66,9 +67,9 @@ const statusLabels = { completed: 'Concluída', partial: 'Parcial' };
       href={discordThreadUrl}
       label="Conversar sobre a solução no Discord"
     />
-    <a class="button secondary" href={contributeUrl}>
+    <ButtonLink variant="secondary" href={contributeUrl}>
       Compartilhe sua implementação <span aria-hidden="true">↗</span>
-    </a>
+    </ButtonLink>
   </div>
   <p class="participation-note writing-invitation">
     Encontrou algo que vale explicar? Sua investigação pode virar uma nota para
@@ -80,28 +81,28 @@ const statusLabels = { completed: 'Concluída', partial: 'Parcial' };
 </section>
 <style>
   .community-implementations {
-    margin-top: 40px;
-    padding-top: 24px;
+    margin-top: var(--space-10);
+    padding-top: var(--space-6);
     border-top: 1px solid var(--color-border);
   }
   .community-implementations h2 {
-    margin: 0 0 12px;
-    font-size: 24px;
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-card-title);
   }
   .community-context,
   .implementation-notes {
-    margin: 8px 0 0;
+    margin: var(--space-2) 0 0;
     color: var(--color-muted);
-    font-size: 14px;
+    font-size: var(--text-control);
   }
   .community-list {
     list-style: none;
     padding: 0;
-    margin: 18px 0 8px;
+    margin: 18px 0 var(--space-2);
   }
   .community-list li {
     margin: 0;
-    padding-block: 16px;
+    padding-block: var(--space-4);
     border-bottom: 1px solid var(--color-border);
     overflow-wrap: anywhere;
   }
@@ -109,8 +110,8 @@ const statusLabels = { completed: 'Concluída', partial: 'Parcial' };
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 4px 16px;
-    font-size: 14px;
+    gap: var(--space-1) var(--space-4);
+    font-size: var(--text-control);
   }
   .implementation-author {
     font-weight: 600;
@@ -123,14 +124,14 @@ const statusLabels = { completed: 'Concluída', partial: 'Parcial' };
   .community-implementations a {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    min-height: 44px;
+    gap: var(--space-2);
+    min-height: var(--control-height);
   }
   .implementation-source {
-    margin-top: 8px;
+    margin-top: var(--space-2);
   }
   .participation-note {
-    font-size: 14px;
+    font-size: var(--text-control);
   }
   .community-actions :global(.button) {
     color: var(--color-on-accent);
