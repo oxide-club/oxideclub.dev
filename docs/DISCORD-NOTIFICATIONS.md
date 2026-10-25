@@ -7,8 +7,8 @@ o conteúdo disponível no site em `#novidades`. O anúncio exige merge e
 publicação bem-sucedida, conforme confirmado pelo mantenedor.
 
 O site Astro está em `oxide-club/oxideclub.dev`. Os conteúdos são mantidos
-separadamente em `oxide-club/challenges` e `oxide-club/notes`. Ambos já
-disparam `.github/workflows/deploy.yml` do site após mudanças em `main`.
+separadamente em `oxide-club/challenges`, `oxide-club/notes` e `oxide-club/labs`.
+Os repositórios de conteúdo disparam `.github/workflows/deploy.yml` do site após mudanças em `main`.
 Soluções e encontros ficam fora deste fluxo.
 
 ## Abordagem
@@ -40,7 +40,7 @@ próprio acrescentaria infraestrutura desnecessária para este escopo.
 ## Publicações em #novidades
 
 - Gerar no build de produção um manifesto com tipo, ID, título, resumo e URL
-  de cada desafio e nota efetivamente incluído nas rotas publicadas.
+  de cada desafio, nota e laboratório efetivamente incluído nas rotas publicadas.
 - Usar o mesmo snapshot de conteúdo e o mesmo artefato implantado. Não buscar
   novamente `main` para decidir quais conteúdos foram publicados.
 - Após o deploy bem-sucedido, verificar que as páginas novas estão acessíveis
@@ -48,7 +48,8 @@ próprio acrescentaria infraestrutura desnecessária para este escopo.
 - Comparar o manifesto com o registro persistente. Anunciar cada ID publicado
   pela primeira vez e registrar o envio após confirmação do Discord.
 - URLs: `https://oxideclub.dev/desafios/<id>` e
-  `https://oxideclub.dev/notas/<id>`.
+  `https://oxideclub.dev/notas/<id>`; laboratórios usam
+  `https://oxideclub.dev/labs/<id>`.
 - O título clicável e o link principal da mensagem devem direcionar à página
   publicada no site. Essa mensagem não deve usar o PR como destino.
 - Excluir drafts. A passagem de draft para publicado conta como primeira
@@ -191,13 +192,52 @@ caso, confira as renomeações e recupere o estado com um mantenedor antes de
 retomar. Renomeações não detectadas pelo GitHub podem aparecer como novas
 páginas; mudar um ID publicado requer essa revisão editorial.
 
+## Laboratórios em #novidades
+
+O manifesto inclui laboratórios publicados com tipo `lab`, identificador
+`NNN-nome` e URL `https://oxideclub.dev/labs/<id>`. Ele usa `publishedLabs()`,
+a mesma coleção das rotas do site. Laboratórios com `draft: true` ficam de fora.
+A revisão `labs` vem de `LABS_COMMIT` ou do checkout sincronizado em `.content/labs`.
+Manifestos de produção exigem revisões válidas de challenges, notes e labs.
+
+Exemplo de aviso:
+
+> Novo laboratório no Oxide Club: https://oxideclub.dev/labs/005-cache-lab
+
+O título e o resumo acompanham o link. O webhook e os workflows existentes
+continuam os mesmos; não é necessário outro secret para `#novidades`.
+
+### Atualizar uma instalação já ativa
+
+Incorpore o suporte a labs e conclua um novo deploy de produção. Se o estado
+já inicializado não tiver revisão de labs nem registros `lab:`, o primeiro
+anúncio registra essa revisão e anuncia os laboratórios publicados ainda sem
+registro. Isso inclui laboratórios publicados antes desta atualização.
+Os registros de desafios e notas são preservados. Não execute `initialize`
+novamente e não apague a branch `discord-state`.
+
+A partir daí, alterações, reexecuções, restaurações de IDs e renomeações
+canônicas detectadas pelo GitHub seguem a prevenção de duplicatas existente.
+Uma revisão de labs inválida, ou ausente quando já há registros de labs,
+interrompe o envio para recuperação manual. Uma falha de propagação não altera
+o estado. Uma falha de envio pode deixar uma reserva pendente, como nos demais tipos.
+
+Em uma instalação nova, `initialize` continua registrando silenciosamente todo
+o catálogo atual, incluindo labs. Para recuperar anúncios após esta atualização,
+use o artefato de um deploy novo: manifestos antigos sem `revisions.labs` são recusados.
+Para `record` ou `release`, a chave de um laboratório é, por exemplo,
+`lab:005-cache-lab`. O módulo `state.mjs` do site aceita esse novo tipo para
+recuperação; cópias anteriores nos repositórios de conteúdo só precisam tratar
+chaves `pr:`. O formato persistido permanece na versão 1.
+
 ## Retomada e entregas pendentes
 
 O registro `state.json` na branch órfã `discord-state` é permanente. Não o
 apague, não expire seu histórico e não o substitua por um cache. Preserve-o
 nas configurações de limpeza de branches. Essa branch não deriva de `main` e
-não contém workflows. Cópias do notificador nos repositórios de conteúdo devem
-ser atualizadas junto com os módulos correspondentes em `oxideclub.dev`.
+não contém workflows. Ao atualizar módulos compartilhados, confira a compatibilidade com as cópias
+nos repositórios de conteúdo. O transporte e o detector de propostas mantêm
+testes de paridade; o estado do site tem suporte adicional à recuperação de labs.
 
 Antes de cada POST, o notificador grava `{url, pending: true}`. Quando o Discord
 confirma a mensagem, grava seu `messageId` e remove `pending`. Uma falha de
@@ -249,8 +289,9 @@ código do PR ou de um fork com acesso às credenciais.
 ## Verificação local
 
 No site: `node --test tests/discord-*.test.mjs`, `npm test`, `npm run check`,
-`npm run build` e `npm run test:notes`. A integração de notas verifica que o
-manifesto e as rotas expõem as mesmas notas publicadas. Os testes de paridade
+`npm run build`, `npm run test:notes` e `npm run test:labs`. A integração de notas verifica que o
+manifesto e as rotas expõem as mesmas notas publicadas. A integração de labs
+verifica o manifesto, a revisão de produção e a exclusão de rascunhos. Os testes de paridade
 entre repositórios também rodam quando os checkouts irmãos estão disponíveis;
 um clone isolado do site não depende deles.
 

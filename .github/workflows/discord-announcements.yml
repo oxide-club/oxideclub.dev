@@ -11,7 +11,7 @@ on:
         description: Production workflow run ID (required for initialize/announce)
         type: string
       key:
-        description: Pending delivery key for record/release (for example note:memoria)
+        description: Pending delivery key for record/release (for example note:memoria or lab:005-cache-lab)
         type: string
       message_id:
         description: Confirmed Discord message ID (required for record)

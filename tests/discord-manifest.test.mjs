@@ -4,7 +4,11 @@ import {
   createManifest,
   validateManifest,
 } from '../src/lib/publication-manifest.mjs';
-const revisions = { challenges: 'a'.repeat(40), notes: 'b'.repeat(40) };
+const revisions = {
+  challenges: 'a'.repeat(40),
+  notes: 'b'.repeat(40),
+  labs: 'e'.repeat(40),
+};
 const entry = (id, data = {}) => ({
   id,
   data: {

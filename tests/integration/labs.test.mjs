@@ -57,6 +57,15 @@ test('labs publish independently, distribute matching files and remove drafts on
       { cwd: root, env, encoding: 'utf8', timeout: 60000, stdio: 'pipe' },
     );
   build();
+  const publicationManifest = async () =>
+    JSON.parse(
+      await readFile(join(root, 'dist/publication-manifest.json'), 'utf8'),
+    );
+  const labEntries = async () =>
+    (await publicationManifest()).entries.filter(
+      (entry) => entry.type === 'lab',
+    );
+  assert.deepEqual(await labEntries(), []);
   const catalog = join(root, 'dist/labs/index.html');
   assert.match(
     await readFile(catalog, 'utf8'),
@@ -71,6 +80,15 @@ test('labs publish independently, distribute matching files and remove drafts on
     join(root, 'dist/labs/001-teste/index.html'),
     'utf8',
   );
+  assert.deepEqual(await labEntries(), [
+    {
+      type: 'lab',
+      id: '001-teste',
+      title: 'Laboratório de Teste',
+      summary: 'Evidências do experimento',
+      url: 'https://oxideclub.dev/labs/001-teste',
+    },
+  ]);
   assert.match(html, /Laboratório de Teste/);
   assert.match(html, /Baixar materiais/);
   assert.match(decodeURI(html), /https:\/\/oxideclub.dev\/labs\/001-teste\//);
@@ -117,4 +135,40 @@ test('labs publish independently, distribute matching files and remove drafts on
     await readFile(join(root, 'dist/sitemap-0.xml'), 'utf8'),
     /001-teste/,
   );
+  assert.deepEqual(await labEntries(), []);
+  // Exercise the production endpoint against a synchronized snapshot, without local overrides.
+  await writeFile(join(lab, 'index.md'), fixture());
+  await cp(source, join(root, '.content/labs'), { recursive: true });
+  const snapshot = join(root, '.content/labs');
+  const git = (...args) =>
+    execFileSync('git', ['-C', snapshot, ...args], {
+      encoding: 'utf8',
+      stdio: 'pipe',
+    }).trim();
+  git('init', '-b', 'main');
+  git('add', '.');
+  git(
+    '-c',
+    'user.name=Fixture',
+    '-c',
+    'user.email=fixture@example.test',
+    'commit',
+    '-m',
+    'Published lab fixture',
+  );
+  const labRevision = git('rev-parse', 'HEAD');
+  delete env.LABS_SOURCE;
+  env.SITE_RELEASE = 'production';
+  env.CHALLENGES_COMMIT = 'a'.repeat(40);
+  env.NOTES_COMMIT = 'b'.repeat(40);
+  env.LABS_COMMIT = labRevision;
+  build();
+  const production = await publicationManifest();
+  assert.equal(production.production, true);
+  assert.equal(production.revisions.labs, labRevision);
+  assert.equal(
+    (await labEntries())[0].url,
+    'https://oxideclub.dev/labs/001-teste',
+  );
+  await access(join(root, 'dist/labs/001-teste/index.html'));
 });

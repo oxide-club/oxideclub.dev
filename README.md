@@ -315,11 +315,13 @@ Os arquivos gerados são versionados junto com a fonte. Gerá-los novamente é u
 ## Notificações no Discord
 
 Propostas de desafios e notas são divulgadas em `#contribuicoes`, com link do PR.
-Após merge e publicação bem-sucedida, `#novidades` recebe o link da página no site.
+Após merge e publicação bem-sucedida, `#novidades` recebe o link da página de
+desafios, notas e laboratórios no site.
 A ativação exige os Actions Secrets `DISCORD_CONTRIBUTIONS_WEBHOOK_URL` nos
 repositórios de conteúdo e `DISCORD_ANNOUNCEMENTS_WEBHOOK_URL` neste repositório.
 Siga a [configuração, baseline e recuperação](docs/DISCORD-NOTIFICATIONS.md#ativação-pelos-mantenedores)
-antes de habilitar anúncios, para não divulgar retroativamente o catálogo atual.
+antes de habilitar anúncios. Ao adicionar labs a uma instalação já ativa,
+os laboratórios publicados ainda sem registro serão anunciados no primeiro deploy.
 
 ## Licenças
 
@@ -352,6 +354,7 @@ incluem navegação, acessibilidade, viewport estreita e downloads de laboratór
 
 Publique primeiro o repositório `oxide-club/labs`, branch `main`, com o conteúdo
 validado. Depois sincronize sem `LABS_SOURCE`, confira a revisão e integre o site.
-Não publique o consumidor enquanto a fonte remota não existir. Anúncios
-Discord de laboratórios não fazem parte desta integração. Após o deploy,
-confira acesso direto à rota acentuada, sitemap e ZIP na hospedagem.
+Não publique o consumidor enquanto a fonte remota não existir. Após o deploy,
+confira a rota `/labs/<id>`, sitemap, ZIP e `publication-manifest.json` na hospedagem.
+Os laboratórios publicados entram em `#novidades` pelo mesmo webhook de notas
+e desafios. Consulte a [ativação de labs](docs/DISCORD-NOTIFICATIONS.md#laboratórios-em-novidades).

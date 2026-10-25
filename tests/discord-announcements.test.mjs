@@ -11,7 +11,11 @@ import {
 import { createManifest } from '../src/lib/publication-manifest.mjs';
 import { memoryClient } from './helpers/discord-api.mjs';
 const repository = 'oxide-club/oxideclub.dev';
-const revisions = { challenges: 'a'.repeat(40), notes: 'b'.repeat(40) };
+const revisions = {
+  challenges: 'a'.repeat(40),
+  notes: 'b'.repeat(40),
+  labs: 'e'.repeat(40),
+};
 const manifest = (ids = ['memoria']) =>
   createManifest({
     notes: ids.map((id) => ({
@@ -222,9 +226,21 @@ test('manual recovery only accepts a trusted completed production deploy job', a
   );
 });
 test('partial send followed by a later rename preserves the verified snapshot and never repeats a confirmed publication', async () => {
-  const initial = { challenges: 'a'.repeat(40), notes: 'b'.repeat(40) };
-  const second = { challenges: 'a'.repeat(40), notes: 'c'.repeat(40) };
-  const third = { challenges: 'a'.repeat(40), notes: 'd'.repeat(40) };
+  const initial = {
+    challenges: 'a'.repeat(40),
+    notes: 'b'.repeat(40),
+    labs: 'e'.repeat(40),
+  };
+  const second = {
+    challenges: 'a'.repeat(40),
+    notes: 'c'.repeat(40),
+    labs: 'e'.repeat(40),
+  };
+  const third = {
+    challenges: 'a'.repeat(40),
+    notes: 'd'.repeat(40),
+    labs: 'e'.repeat(40),
+  };
   const api = memoryClient({ revisions: initial });
   const baseGithub = api.client.github;
   api.client.github = async (path, options) => {
