@@ -113,6 +113,10 @@
     "lab:007-compilation-lab": {
       "url": "https://oxideclub.dev/labs/007-compilation-lab",
       "messageId": "1563849640376410175"
+    },
+    "lab:008-matrix-lab": {
+      "url": "https://oxideclub.dev/labs/008-matrix-lab",
+      "pending": true
     }
   },
   "revisions": {
