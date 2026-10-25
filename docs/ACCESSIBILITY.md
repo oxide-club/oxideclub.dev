@@ -33,7 +33,7 @@ Text-spacing overrides revealed that long headings increased grid minimum widths
 
 The target-size audit initially counted unpainted links inside a closed native disclosure. The test now checks actual visibility before measuring controls.
 
-## Remaining manual release checks
+## Manual release checks pending as of 19 October 2026
 
 No screen reader is available in this environment. Browser accessibility-tree checks cannot establish spoken announcements, reading order quality or assistive-technology usability. `screenReaderReviewed` and `accessibilityReviewed` remain false. `keyboardReviewed` also remains false pending a human review; automated Tab traversal is recorded separately.
 
@@ -50,4 +50,17 @@ On 19 October 2026, the owner explicitly instructed publication without the pend
 A nova coleção usa sumário lateral no desktop e `details` no celular, cabeçalhos
 semânticos e conferências expansíveis com `summary`. A suíte `labs.spec.ts`
 verifica axe, teclado, downloads, 320/390/1280px e ampliação de texto.
-Uma revisão manual com leitor de tela da nova coleção permanece pendente.
+A revisão manual com leitor de tela da nova coleção estava pendente no registro original.
+
+## Owner confirmation — 25 October 2026
+
+The owner confirmed that manual accessibility is OK. Based on that confirmation,
+`keyboardReviewed`, `screenReaderReviewed` and `accessibilityReviewed` are now
+true, and `manualAccessibilityReviewDeferred` is false. The earlier pending
+checks and release exception above are retained as historical records.
+
+This records the owner's review, not a new assistive-technology audit performed
+by the coding agent. Browser/assistive-technology combinations and detailed
+manual results were not provided; no complete WCAG conformance is claimed.
+
+The owner also confirmed that `report@oxideclub.dev` is functional.
