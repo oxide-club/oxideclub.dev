@@ -165,6 +165,10 @@
     "lab:020-dispatch-lab": {
       "url": "https://oxideclub.dev/labs/020-dispatch-lab",
       "messageId": "1564055725276143768"
+    },
+    "lab:021-fuzzing-lab": {
+      "url": "https://oxideclub.dev/labs/021-fuzzing-lab",
+      "pending": true
     }
   },
   "revisions": {
