@@ -1,13 +1,13 @@
 import type { APIRoute } from 'astro';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { publishedLabs } from '../../../../lib/labs';
+import { availableLabs } from '../../../../lib/labs';
 import { labsDirectory } from '../../../../lib/lab-source.mjs';
 import { labFiles } from '../../../../lib/lab-files.mjs';
 export async function getStaticPaths() {
   return (
     await Promise.all(
-      (await publishedLabs()).map(async (lab) =>
+      (await availableLabs()).map(async (lab) =>
         (await labFiles(join(labsDirectory(), lab.id))).map((file) => ({
           params: { slug: lab.id, asset: file.path },
           props: { file },

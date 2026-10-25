@@ -1,9 +1,9 @@
 import type { APIRoute } from 'astro';
-import { publishedLabs } from '../../../lib/labs';
+import { availableLabs } from '../../../lib/labs';
 import { labsDirectory } from '../../../lib/lab-source.mjs';
 import { createLabPackage, labRevision } from '../../../lib/lab-package.mjs';
 export async function getStaticPaths() {
-  return (await publishedLabs()).map((lab) => ({ params: { slug: lab.id } }));
+  return (await availableLabs()).map((lab) => ({ params: { slug: lab.id } }));
 }
 export const GET: APIRoute = async ({ params }) => {
   const sourceDirectory = labsDirectory();
