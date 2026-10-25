@@ -169,6 +169,10 @@
     "lab:021-fuzzing-lab": {
       "url": "https://oxideclub.dev/labs/021-fuzzing-lab",
       "messageId": "1564055736978247721"
+    },
+    "lab:022-page-protection-lab": {
+      "url": "https://oxideclub.dev/labs/022-page-protection-lab",
+      "pending": true
     }
   },
   "revisions": {
