@@ -129,6 +129,10 @@
     "lab:011-protocol-lab": {
       "url": "https://oxideclub.dev/labs/011-protocol-lab",
       "messageId": "1563849691190534257"
+    },
+    "lab:012-abi-lab": {
+      "url": "https://oxideclub.dev/labs/012-abi-lab",
+      "pending": true
     }
   },
   "revisions": {
