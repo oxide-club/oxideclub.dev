@@ -34,10 +34,17 @@ jobs:
       - run: npm run check
       - run: npm run build
       - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - run: npm run test:community
+      - run: npm run test:notes
+      - run: npm run test:meetings
+      - run: npm run test:labs
       - run: npm run deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Verify the published site before announcements
+        run: npm run verify:deployment
       - name: Preserve the exact production publication manifest
         uses: actions/upload-artifact@v4
         with:

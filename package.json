@@ -18,6 +18,7 @@
     "prebuild:production": "node scripts/sync-content.mjs --production",
     "build:production": "node scripts/release-check.mjs && SITE_RELEASE=production astro build",
     "deploy": "npm run build:production && wrangler deploy",
+    "verify:deployment": "node scripts/verify-deployment.mjs",
     "test:notes": "node --test tests/integration/notes.test.mjs",
     "test:meetings": "node --test tests/integration/meetings.test.mjs",
     "test:community": "node --test tests/integration/community.test.mjs",
