@@ -117,6 +117,10 @@
     "lab:008-matrix-lab": {
       "url": "https://oxideclub.dev/labs/008-matrix-lab",
       "messageId": "1563849653236011129"
+    },
+    "lab:009-vm-lab": {
+      "url": "https://oxideclub.dev/labs/009-vm-lab",
+      "pending": true
     }
   },
   "revisions": {
