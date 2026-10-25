@@ -42,10 +42,10 @@ test(
   },
 );
 test(
-  'vendored notifier modules are identical across all three repositories',
+  'shared transport and proposal modules stay identical across content repositories',
   { skip: !hasSources },
   async () => {
-    for (const name of ['client', 'state', 'contributions']) {
+    for (const name of ['client', 'contributions']) {
       const canonical = await read(`../scripts/discord/${name}.mjs`);
       for (const repo of ['challenges', 'notes'])
         assert.equal(

@@ -2,13 +2,13 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { resolve } from 'node:path';
 const exec = promisify(execFile);
-/** @param {{root?: string, revisions?: {challenges?: string, notes?: string}}} [options] */
+/** @param {{root?: string, revisions?: {challenges?: string, notes?: string, labs?: string}}} [options] */
 export async function publicationRevisions({
   root = process.cwd(),
   revisions = {},
 } = {}) {
   const selected = {};
-  for (const name of ['challenges', 'notes']) {
+  for (const name of ['challenges', 'notes', 'labs']) {
     let revision = revisions[name];
     if (revision === undefined) {
       try {

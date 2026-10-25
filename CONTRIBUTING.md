@@ -27,7 +27,8 @@ A prosa e a documentação originais dos encontros seguem CC BY 4.0, na medida d
 PRs prontos para revisão que adicionam desafios ou notas são divulgados no
 Discord, em `#contribuicoes`, com link do PR. Após merge e publicação
 bem-sucedida, a primeira publicação de cada página é anunciada em `#novidades`,
-com link do site. Correções em conteúdo existente não geram novas divulgações.
+com link do site. Isso também inclui laboratórios publicados em `/labs/<id>`.
+Correções em conteúdo existente não geram novas divulgações.
 Consulte a [operação das notificações](docs/DISCORD-NOTIFICATIONS.md).
 
 ## Laboratórios

@@ -1,16 +1,15 @@
 const origin = 'https://oxideclub.dev';
 export function publicationUrl(type, id) {
-  const pattern =
-    type === 'challenge'
-      ? /^\d{3}-[a-z0-9]+(?:-[a-z0-9]+)*$/
-      : /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+  const pattern = ['challenge', 'lab'].includes(type)
+    ? /^\d{3}-[a-z0-9]+(?:-[a-z0-9]+)*$/
+    : /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
   if (
-    !['challenge', 'note'].includes(type) ||
+    !['challenge', 'note', 'lab'].includes(type) ||
     !pattern.test(id) ||
     ['templates', 'docs'].includes(id)
   )
     throw new Error('Invalid publication identifier');
-  return `${origin}/${type === 'challenge' ? 'desafios' : 'notas'}/${id}`;
+  return `${origin}/${{ challenge: 'desafios', note: 'notas', lab: 'labs' }[type]}/${id}`;
 }
 export function validateManifest(manifest, { requireProduction = true } = {}) {
   if (
@@ -25,7 +24,7 @@ export function validateManifest(manifest, { requireProduction = true } = {}) {
   if (
     !manifest.revisions ||
     (manifest.production &&
-      ['challenges', 'notes'].some(
+      ['challenges', 'notes', 'labs'].some(
         (kind) => !/^[a-f0-9]{40}$/.test(manifest.revisions[kind]),
       ))
   )
@@ -49,17 +48,19 @@ export function validateManifest(manifest, { requireProduction = true } = {}) {
 }
 /**
  * @typedef {{id: string, data: {title: string, summary: string, draft?: boolean}}} SourceEntry
- * @param {{challenges?: SourceEntry[], notes?: SourceEntry[], revisions?: {challenges?: string, notes?: string}, production?: boolean}} [options]
+ * @param {{challenges?: SourceEntry[], notes?: SourceEntry[], labs?: SourceEntry[], revisions?: {challenges?: string, notes?: string, labs?: string}, production?: boolean}} [options]
  */
 export function createManifest({
   challenges = [],
   notes = [],
+  labs = [],
   revisions = {},
   production = false,
 } = {}) {
   const entries = [
     ['challenge', challenges],
     ['note', notes],
+    ['lab', labs],
   ].flatMap(([type, collection]) =>
     collection
       .filter((entry) => !entry.data.draft)

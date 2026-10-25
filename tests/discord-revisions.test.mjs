@@ -9,7 +9,7 @@ test('local production reads synced checkout revisions without CI environment va
   const root = await mkdtemp(join(tmpdir(), 'oxide-publication-revisions-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   const expected = {};
-  for (const name of ['challenges', 'notes']) {
+  for (const name of ['challenges', 'notes', 'labs']) {
     const path = join(root, '.content', name);
     await mkdir(path, { recursive: true });
     const git = (...args) =>
@@ -26,7 +26,11 @@ test('local production reads synced checkout revisions without CI environment va
   assert.deepEqual(await publicationRevisions({ root }), expected);
 });
 test('CI snapshots are used explicitly; missing checkouts and malformed SHAs fail closed', async () => {
-  const revisions = { challenges: 'a'.repeat(40), notes: 'b'.repeat(40) };
+  const revisions = {
+    challenges: 'a'.repeat(40),
+    notes: 'b'.repeat(40),
+    labs: 'e'.repeat(40),
+  };
   assert.deepEqual(
     await publicationRevisions({ root: '/not-a-site', revisions }),
     revisions,
@@ -39,4 +43,19 @@ test('CI snapshots are used explicitly; missing checkouts and malformed SHAs fai
     publicationRevisions({ revisions: { ...revisions, notes: 'bad' } }),
     /revision/,
   );
+});
+
+test('production cannot omit or corrupt the labs snapshot', async () => {
+  for (const labs of [undefined, '', 'bad'])
+    await assert.rejects(
+      publicationRevisions({
+        root: '/not-a-site',
+        revisions: {
+          challenges: 'a'.repeat(40),
+          notes: 'b'.repeat(40),
+          labs,
+        },
+      }),
+      /labs/,
+    );
 });

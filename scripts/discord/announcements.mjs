@@ -57,7 +57,9 @@ export async function verifyPublished(
 }
 export async function findRenames({ repository, before, after, github }) {
   if (
-    !['oxide-club/challenges', 'oxide-club/notes'].includes(repository) ||
+    !['oxide-club/challenges', 'oxide-club/notes', 'oxide-club/labs'].includes(
+      repository,
+    ) ||
     !/^[a-f0-9]{40}$/.test(before) ||
     !/^[a-f0-9]{40}$/.test(after)
   )
@@ -75,7 +77,11 @@ export async function findRenames({ repository, before, after, github }) {
     throw new Error(
       'Incomplete or stale comparison history; reconcile manually before proceeding.',
     );
-  const type = repository.endsWith('/notes') ? 'note' : 'challenge';
+  const type = {
+    'oxide-club/challenges': 'challenge',
+    'oxide-club/notes': 'note',
+    'oxide-club/labs': 'lab',
+  }[repository];
   const renames = [];
   for (const file of comparison.files) {
     if (
@@ -140,7 +146,16 @@ export async function announce({
   await verifyPublished(manifest, { fetchPublished, sleep });
   if (!renames) {
     renames = [];
-    for (const collection of ['challenges', 'notes'])
+    for (const collection of ['challenges', 'notes', 'labs']) {
+      // Older baselines predate lab announcements. No lab history exists to compare;
+      // unrecorded published labs are announced and this snapshot becomes their history.
+      if (collection === 'labs' && state.revisions.labs === undefined) {
+        if (Object.keys(state.records).some((key) => key.startsWith('lab:')))
+          throw new Error(
+            'Missing labs revision with existing publication history; reconcile before proceeding.',
+          );
+        continue;
+      }
       renames.push(
         ...(await findRenames({
           repository: `oxide-club/${collection}`,
@@ -149,6 +164,7 @@ export async function announce({
           github: client.github,
         })),
       );
+    }
   }
   await updateState(client, repository, (current) => {
     for (const rename of renames) {
@@ -173,7 +189,7 @@ export async function announce({
       key: `${entry.type}:${entry.id}`,
       url: entry.url,
       payload: {
-        content: `${entry.type === 'challenge' ? 'Novo desafio' : 'Nova nota'} no Oxide Club: ${entry.url}`,
+        content: `${{ challenge: 'Novo desafio', note: 'Nova nota', lab: 'Novo laboratório' }[entry.type]} no Oxide Club: ${entry.url}`,
         embeds: [
           {
             title: entry.title.slice(0, 256),

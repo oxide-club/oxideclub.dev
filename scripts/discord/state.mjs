@@ -149,7 +149,7 @@ export async function reconcileDelivery({
   release = false,
 }) {
   if (
-    !/^(?:pr:[1-9]\d*|(?:note|challenge):[a-z0-9]+(?:-[a-z0-9]+)*)$/.test(
+    !/^(?:pr:[1-9]\d*|(?:note|challenge|lab):[a-z0-9]+(?:-[a-z0-9]+)*)$/.test(
       key,
     ) ||
     (!release && !/^\d+$/.test(messageId))
