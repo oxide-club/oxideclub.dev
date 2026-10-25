@@ -149,6 +149,10 @@
     "lab:016-isolation-lab": {
       "url": "https://oxideclub.dev/labs/016-isolation-lab",
       "messageId": "1563849755073712129"
+    },
+    "lab:017-gpu-lab": {
+      "url": "https://oxideclub.dev/labs/017-gpu-lab",
+      "pending": true
     }
   },
   "revisions": {
