@@ -141,6 +141,10 @@
     "lab:014-dynamic-linking-lab": {
       "url": "https://oxideclub.dev/labs/014-dynamic-linking-lab",
       "messageId": "1563849729002184760"
+    },
+    "lab:015-async-lab": {
+      "url": "https://oxideclub.dev/labs/015-async-lab",
+      "pending": true
     }
   },
   "revisions": {
