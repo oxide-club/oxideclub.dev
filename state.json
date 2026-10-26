@@ -181,6 +181,10 @@
     "challenge:022-typestate": {
       "url": "https://oxideclub.dev/desafios/022-typestate",
       "messageId": "1564084178608332903"
+    },
+    "challenge:023-mini-vec": {
+      "url": "https://oxideclub.dev/desafios/023-mini-vec",
+      "pending": true
     }
   },
   "revisions": {
