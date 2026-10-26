@@ -204,7 +204,7 @@
     },
     "challenge:029-minimal-debugger": {
       "url": "https://oxideclub.dev/desafios/029-minimal-debugger",
-      "pending": true
+      "messageId": "1564084261173076041"
     }
   },
   "revisions": {
