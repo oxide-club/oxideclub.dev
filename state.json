@@ -197,6 +197,10 @@
     "challenge:027-pe-inspector": {
       "url": "https://oxideclub.dev/desafios/027-pe-inspector",
       "messageId": "1564084233579003909"
+    },
+    "challenge:028-function-interposition": {
+      "url": "https://oxideclub.dev/desafios/028-function-interposition",
+      "pending": true
     }
   },
   "revisions": {
