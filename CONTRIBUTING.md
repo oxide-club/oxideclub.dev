@@ -12,6 +12,7 @@ Dúvidas, experimentos parciais e sugestões são bem-vindos. Siga o [código de
 | Notas e textos técnicos                                     | [notes](https://github.com/oxide-club/notes)           |
 | Pautas, registros e materiais de encontros                  | [meetings](https://github.com/oxide-club/meetings)     |
 | Roteiros e materiais de laboratórios                        | [labs](https://github.com/oxide-club/labs)             |
+| Trilhas de aprendizagem                                     | [roadmaps](https://github.com/oxide-club/roadmaps)     |
 
 Siga o modelo e o guia de contribuição do repositório de origem. Não inclua tokens, dados pessoais privados, conversas privadas ou material sem permissão. Não envie relatos de moderação em issues públicas. Use [report@oxideclub.dev](mailto:report@oxideclub.dev) para relatos privados.
 
@@ -22,7 +23,7 @@ No pull request, descreva o problema, a mudança e como você a verificou.
 1. Execute `npm test` e `npm run check`.
 2. Gere o site com `npm run build`.
 3. Execute `npm run test:browser`.
-4. Execute as suítes de integração relacionadas à mudança: `test:community`, `test:notes`, `test:meetings` ou `test:labs`, com `npm run`.
+4. Execute as suítes de integração relacionadas à mudança: `test:community`, `test:notes`, `test:meetings`, `test:labs` ou `test:roadmaps`, com `npm run`.
 5. Se alterar a interface, confira o uso por teclado, a apresentação em tela pequena e o contraste.
 
 Consulte os [pré-requisitos e comandos de verificação](README.md#como-executar-as-verificações), incluindo a instalação do Chromium. Não adicione eventos, destinos ou atividades sem confirmação.
@@ -87,7 +88,7 @@ Os blocos expansíveis aceitam somente `details` e `summary`, sem atributos. Man
 
 ## Como visualizar conteúdo local
 
-Antes de iniciar o desenvolvimento, os testes unitários, a validação ou o build, o site sincroniza as cinco fontes: `challenges`, `solutions`, `notes`, `meetings` e `labs`. Por padrão, usa a branch `main`; na CI, as etapas reutilizam as revisões selecionadas para o job.
+Antes de iniciar o desenvolvimento, os testes unitários, a validação ou o build, o site sincroniza as seis fontes: `challenges`, `solutions`, `notes`, `meetings`, `labs` e `roadmaps`. Por padrão, usa a branch `main`; na CI, as etapas reutilizam as revisões selecionadas para o job.
 
 Não edite os checkouts em `.content/`. Eles são cópias geradas pela sincronização. Faça as alterações no repositório de origem e indique seu caminho ao iniciar o site.
 
@@ -103,7 +104,7 @@ Para visualizar encontros locais:
 MEETINGS_SOURCE=/caminho/absoluto/para/meetings npm run dev
 ```
 
-Use `CHALLENGES_SOURCE`, `SOLUTIONS_SOURCE` ou `LABS_SOURCE` para as outras fontes. Essas variáveis são permitidas somente fora da CI e da produção.
+Use `CHALLENGES_SOURCE`, `SOLUTIONS_SOURCE`, `LABS_SOURCE` ou `ROADMAPS_SOURCE` para as outras fontes. Essas variáveis são permitidas somente fora da CI e da produção.
 
 Rascunhos são validados, mas não geram páginas, inclusive nas prévias locais. Consulte o [README](README.md#publicação-de-conteúdo) para visualizar rascunhos, incluir anexos e solicitar publicação pelo workflow existente.
 
@@ -120,3 +121,9 @@ Quando as notificações estão ativas, pull requests prontos para revisão que 
 Após o merge, a publicação e a verificação pós-deploy, a primeira publicação de cada página é anunciada em `#novidades`, com link para o site. Correções em conteúdo existente não geram novos anúncios de publicação. Os anúncios de publicação também incluem laboratórios em `/labs/<id>`.
 
 Consulte o [guia de operação das notificações](docs/DISCORD-NOTIFICATIONS.md) para configuração e recuperação de falhas.
+
+## Roadmaps
+
+As trilhas conectam desafios, laboratórios e notas técnicas. O conteúdo curricular fica em [oxide-club/roadmaps](https://github.com/oxide-club/roadmaps); o site calcula os diagramas e preserva os destinos canônicos. Consulte [a documentação de roadmaps](docs/ROADMAPS.md) para formato, prévia local, validação e ordem de ativação da fonte remota.
+
+Use `ROADMAPS_SOURCE=/caminho/absoluto/roadmaps` na prévia local. A sincronização fixa a revisão em `ROADMAPS_COMMIT` e mantém o checkout gerado em `.content/roadmaps/`. CI e produção devem usar a fonte remota.

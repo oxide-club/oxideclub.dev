@@ -22,7 +22,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Fetch latest public challenges, solutions, notes, meetings and labs for this run
+      - name: Fetch latest public challenges, solutions, notes, meetings, labs and roadmaps for this run
         run: npm run content:sync
       - run: npm test
       - run: npm run check
@@ -38,6 +38,7 @@ jobs:
       - run: npm run test:notes
       - run: npm run test:meetings
       - run: npm run test:labs
+      - run: npm run test:roadmaps
       - name: Preserve the tested production site
         if: ${{ inputs.production }}
         uses: actions/upload-artifact@v4

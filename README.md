@@ -25,6 +25,7 @@ Consulte [CONTRIBUTING.md](CONTRIBUTING.md) e siga o [código de conduta](https:
 | Notas técnicas                                                 | [notes](https://github.com/oxide-club/notes)           |
 | Pautas, registros e materiais de encontros                     | [meetings](https://github.com/oxide-club/meetings)     |
 | Roteiros, materiais e verificações de laboratórios             | [labs](https://github.com/oxide-club/labs)             |
+| Trilhas de aprendizagem                                        | [roadmaps](https://github.com/oxide-club/roadmaps)     |
 
 Não publique credenciais, conversas privadas ou dados pessoais privados em issues ou pull requests. Envie relatos sensíveis de moderação para [report@oxideclub.dev](mailto:report@oxideclub.dev).
 
@@ -32,7 +33,7 @@ Não publique credenciais, conversas privadas ou dados pessoais privados em issu
 
 Instale Node.js 24, npm e Git. A integração contínua (CI) também usa Node.js 24.
 
-Os comandos de desenvolvimento, testes unitários, validação e build sincronizam os cinco repositórios públicos de conteúdo antes de iniciar. Essa sincronização exige acesso à rede. As credenciais do Cloudflare são necessárias somente para publicar o site.
+Os comandos de desenvolvimento, testes unitários, validação e build sincronizam os seis repositórios públicos de conteúdo antes de iniciar. Essa sincronização exige acesso à rede. As credenciais do Cloudflare são necessárias somente para publicar o site.
 
 Para clonar o repositório, instalar as dependências e iniciar o servidor de desenvolvimento:
 
@@ -66,6 +67,7 @@ npm run test:community
 npm run test:notes
 npm run test:meetings
 npm run test:labs
+npm run test:roadmaps
 ```
 
 - `npm test` sincroniza o conteúdo e verifica sua seleção, as URLs, os requisitos de produção, a taxonomia dos desafios e a sincronização. O comando funciona em um clone novo, sem cache em `.content/`. A sincronização exige rede, e os testes usam Git para criar repositórios temporários. Na CI, o comando reutiliza as revisões já selecionadas para o job.
@@ -76,7 +78,7 @@ npm run test:labs
 - `npm run test:meetings` verifica páginas de encontros, anexos, calendários e acessibilidade em diferentes tamanhos de tela. Os dados sintéticos dos testes de integração ficam fora do diretório de conteúdo de trabalho.
 - `npm run test:labs` verifica a publicação de laboratórios, os arquivos distribuídos e a remoção de páginas e materiais de rascunhos.
 
-A suíte de navegador e as quatro suítes de integração exigem Chromium e conteúdo sincronizado. Execute-as depois de `npm run build`, como no exemplo acima. Para usar uma instalação existente no Linux, acrescente `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium` antes do comando.
+A suíte de navegador e as suítes de integração exigem Chromium e conteúdo sincronizado. Execute-as depois de `npm run build`, como no exemplo acima. Para usar uma instalação existente no Linux, acrescente `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium` antes do comando.
 
 Para verificar um servidor de desenvolvimento já em execução, use a URL efetivamente informada por ele:
 
@@ -354,7 +356,7 @@ Os destinos da comunidade e dos canais de relato ficam em `src/config/links.json
 
 ## Sincronização do conteúdo canônico
 
-`npm run dev`, `npm test`, `npm run check`, `npm run build` e `npm run build:production` sincronizam o conteúdo antes de executar. Por padrão, buscam a `main` mais recente de cinco repositórios públicos: `challenges`, `solutions`, `notes`, `meetings` e `labs`.
+`npm run dev`, `npm test`, `npm run check`, `npm run build` e `npm run build:production` sincronizam o conteúdo antes de executar. Por padrão, buscam a `main` mais recente de seis repositórios públicos: `challenges`, `solutions`, `notes`, `meetings`, `labs` e `roadmaps`.
 
 Há duas exceções: as fontes locais permitidas e as revisões já selecionadas para o job da CI. Cada job é uma sequência de etapas do workflow executada no mesmo ambiente.
 
@@ -373,6 +375,7 @@ O script informa o commit de cada fonte. O Git ignora os checkouts gerados:
 | `notes`      | `.content/notes/`      | `NOTES_COMMIT`                                |
 | `meetings`   | `.content/meetings/`   | `MEETINGS_COMMIT`                             |
 | `labs`       | `.content/labs/`       | `LABS_COMMIT`                                 |
+| `roadmaps`   | `.content/roadmaps/`   | `ROADMAPS_COMMIT`                             |
 
 Esses checkouts não são cópias para edição. Se a busca falhar, o comando termina com erro, sem usar silenciosamente uma versão anterior em cache. Se houver alterações locais no checkout gerado, a sincronização é interrompida para preservá-las.
 
@@ -386,6 +389,7 @@ Pushes para a `main` das fontes acionam **Deploy production** quando alteram arq
 - **notes:** `*/index.md` e `*/assets/**`, exceto `docs/**` e `templates/**`.
 - **meetings:** `meetings/*.md` e `assets/**`, sem documentação e modelos.
 - **solutions:** `*/community.yaml` e `community.schema.json`. O site lê somente os metadados; o código dos participantes permanece externo.
+- **roadmaps:** `*/index.md` e `roadmap.schema.json`, exceto modelos e documentação.
 - **labs:** roteiros, materiais, verificações, modelos de relato e licenças. Consulte `.github/workflows/deploy-website.yml` na revisão da fonte para conferir a lista de caminhos que acionam a publicação.
 
 Os filtros cobrem adições, edições, exclusões e renomeações. Documentação, testes e dados de teste dos desafios não acionam o deploy. Alterações em rascunhos de notas acionam a validação, mas não tornam esses rascunhos públicos. Pull requests e pushes para outras branches das fontes não acionam o deploy de produção.
@@ -397,7 +401,7 @@ Para permitir que os repositórios de conteúdo solicitem a publicação do site
 1. Crie um token de acesso pessoal com permissões granulares. Use uma conta com acesso a `oxide-club/oxideclub.dev`.
 2. Restrinja o token a esse repositório e conceda a permissão **Actions: read and write**.
 3. Se a organização exigir aprovação, conclua essa etapa.
-4. Salve o token como secret do Actions com o nome `WEBSITE_DEPLOY_TOKEN` em `challenges`, `solutions`, `notes`, `meetings` e `labs`. Você também pode usar um secret da organização disponível somente para esses repositórios.
+4. Salve o token como secret do Actions com o nome `WEBSITE_DEPLOY_TOKEN` em `challenges`, `solutions`, `notes`, `meetings`, `labs` e `roadmaps`. Você também pode usar um secret da organização disponível somente para esses repositórios.
 5. Renove o token antes de expirar.
 
 O `GITHUB_TOKEN` padrão das fontes não pode acionar workflows em outro repositório. Os repositórios de conteúdo não precisam de credenciais do Cloudflare.
@@ -525,3 +529,9 @@ publicados, ordena por ID e omite áreas vazias. Os cards mostram título compac
 dificuldade e pergunta; a página individual preserva os detalhes.
 Publique primeiro o registro e os metadados em labs; depois atualize o website
 que exige esse contrato. Não edite `.content/labs` manualmente.
+
+## Roadmaps
+
+As trilhas conectam desafios, laboratórios e notas técnicas. O conteúdo curricular fica em [oxide-club/roadmaps](https://github.com/oxide-club/roadmaps); o site calcula os diagramas e preserva os destinos canônicos. Consulte [a documentação de roadmaps](docs/ROADMAPS.md) para formato, prévia local, validação e ordem de ativação da fonte remota.
+
+Use `ROADMAPS_SOURCE=/caminho/absoluto/roadmaps` na prévia local. A sincronização fixa a revisão em `ROADMAPS_COMMIT` e mantém o checkout gerado em `.content/roadmaps/`. CI e produção devem usar a fonte remota.
