@@ -3,6 +3,7 @@ import { syncSolutions } from './sync-solutions.mjs';
 import { syncChallenges } from './sync-challenges.mjs';
 import { syncNotes } from './sync-notes.mjs';
 import { syncMeetings } from './sync-meetings.mjs';
+import { syncRoadmaps } from './sync-roadmaps.mjs';
 
 try {
   const production =
@@ -14,13 +15,24 @@ try {
       process.env.CHALLENGES_SOURCE !== undefined ||
       process.env.SOLUTIONS_SOURCE !== undefined ||
       process.env.NOTES_SOURCE !== undefined ||
-      process.env.MEETINGS_SOURCE !== undefined) &&
+      process.env.MEETINGS_SOURCE !== undefined ||
+      process.env.ROADMAPS_SOURCE !== undefined) &&
     (production || (process.env.CI && process.env.CI !== 'false'))
   ) {
     throw new Error(
       'Local content source overrides are forbidden in CI and production',
     );
   }
+  const roadmaps = await syncRoadmaps({
+    expectedRevision: process.env.ROADMAPS_COMMIT,
+    production,
+    githubEnv: process.env.GITHUB_ENV,
+  });
+  console.log(
+    roadmaps
+      ? `[content] oxide-club/roadmaps main @ ${roadmaps}`
+      : '[content] roadmaps local source validated',
+  );
   const labs = await syncLabs({
     expectedRevision: process.env.LABS_COMMIT,
     production,

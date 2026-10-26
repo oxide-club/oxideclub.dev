@@ -1,3 +1,4 @@
+import { emptyRoadmaps } from '../helpers/roadmaps.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -18,6 +19,7 @@ import { stringify } from 'yaml';
 
 test('community: empty/populated static builds, escaped notes, declared states, responsive accessible list and invalid-build failure', async () => {
   const root = await mkdtemp(join(tmpdir(), 'oxide-community-build-'));
+  await emptyRoadmaps(root);
   let browser;
   try {
     for (const path of [
@@ -63,6 +65,7 @@ test('community: empty/populated static builds, escaped notes, declared states, 
           timeout: 60000,
           env: {
             ...process.env,
+            ROADMAPS_SOURCE: undefined,
             LABS_SOURCE: undefined,
             SOLUTIONS_SOURCE: undefined,
             SITE_RELEASE: 'production',

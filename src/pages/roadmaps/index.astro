@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RoadmapCard from '../../components/RoadmapCard.astro';
+import { publishedRoadmaps } from '../../lib/roadmaps';
+const roadmaps = await publishedRoadmaps();
+const ordered = [
+  ...roadmaps.filter((r) => r.data.featured),
+  ...roadmaps.filter((r) => !r.data.featured),
+];
+---
+
+<BaseLayout
+  title="Roadmaps"
+  description="Explore caminhos de aprendizagem que conectam desafios, laboratórios e notas técnicas do Oxide Club."
+>
+  <div class="container">
+    <header class="page-intro">
+      <div class="eyebrow">Roadmaps · Caminhos de aprendizagem</div>
+      <h1>
+        Escolha uma pergunta.
+        <br />
+        Explore um caminho.
+      </h1>
+      <p>
+        Conecte desafios, laboratórios e notas técnicas para investigar
+        fundamentos da computação. Siga uma progressão sugerida ou comece pelo
+        que você quer compreender.
+      </p>
+      <p class="guidance">
+        As trilhas oferecem caminhos de estudo. Todos os materiais continuam
+        acessíveis, sem desbloqueio de etapas.
+      </p>
+    </header>
+    {ordered.length ? (
+      <section class="roadmaps" aria-label="Trilhas de aprendizagem">
+        {ordered.map((roadmap) => (
+          <RoadmapCard roadmap={roadmap} />
+        ))}
+      </section>
+    ) : (
+      <p class="empty">
+        Ainda não há roadmaps publicados. Novos caminhos de estudo aparecerão
+        aqui.
+      </p>
+    )}
+  </div>
+</BaseLayout>
+<style>
+  .page-intro {
+    padding-block: var(--space-12) var(--space-8);
+  }
+  h1 {
+    font-size: clamp(34px, 5vw, 56px);
+    margin-block: var(--space-5);
+    line-height: 1.15;
+  }
+  .page-intro p {
+    max-width: 70ch;
+  }
+  .guidance {
+    margin-top: var(--space-5);
+    color: var(--color-muted);
+    font-size: var(--text-control);
+  }
+  .roadmaps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    padding-bottom: var(--space-16);
+  }
+  .empty {
+    padding-bottom: var(--space-16);
+  }
+  @media (max-width: 960px) {
+    .roadmaps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 650px) {
+    .roadmaps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,395 @@
+---
+import DifficultyBadge from './ui/DifficultyBadge.astro';
+import { relationNames } from '../lib/roadmap-structure.mjs';
+import { readingOrder } from '../lib/roadmap-layout.mjs';
+interface Props {
+  roadmap: Awaited<
+    ReturnType<typeof import('../lib/roadmaps').publishedRoadmaps>
+  >[number];
+}
+const { roadmap } = Astro.props;
+const { data } = roadmap;
+const nodes = readingOrder(data.nodes, data.edges);
+const labels = {
+  challenges: 'Desafio',
+  labs: 'Laboratório',
+  notes: 'Nota técnica',
+};
+---
+
+<section
+  class="roadmap-viewer"
+  data-roadmap-viewer
+  data-graph={JSON.stringify({
+    nodes: data.nodes.map((n) => ({ ref: n.ref })),
+    edges: data.edges,
+    layout: data.layout,
+    groups: data.groups,
+  })}
+  aria-labelledby="roadmap-heading"
+>
+  <div class="map-heading">
+    <h2 id="roadmap-heading">Mapa de aprendizagem</h2>
+    <div
+      class="view-controls"
+      data-roadmap-controls
+      hidden
+      role="group"
+      aria-label="Visualização do roadmap"
+    >
+      <button type="button" data-view="diagram" aria-pressed="true">
+        Diagrama
+      </button>
+      <button type="button" data-view="list" aria-pressed="false">
+        Lista
+      </button>
+    </div>
+  </div>
+  <ul class="legend" aria-label="Relações no roadmap">
+    <li>
+      <span class="line" aria-hidden="true"></span>Progressão sugerida
+    </li>
+    <li>
+      <span class="line dashed" aria-hidden="true"></span>Preparação ou contexto
+    </li>
+    <li>Ramificação: aprofundamento opcional</li>
+    <li>Convergência: encontro de caminhos</li>
+  </ul>
+  <p class="map-hint">
+    Leia de cima para baixo. Selecione um material para abrir seu conteúdo.
+  </p>
+  <div
+    class="roadmap-map"
+    data-roadmap-diagram
+    hidden
+    aria-label="Diagrama do caminho de aprendizagem"
+  ></div>
+  <div class="roadmap-list" data-roadmap-list>
+    <ul class="materials">
+      {nodes.map((node) => {
+        const incoming = data.edges.filter((e) => e.to === node.ref);
+        const groups =
+          data.groups?.filter((g) => g.nodes.includes(node.ref)) ?? [];
+        return (
+          <li
+            data-material
+            data-ref={node.ref}
+            class:list={[
+              'material',
+              { primary: data.layout?.primaryPath?.includes(node.ref) },
+            ]}
+          >
+            <article>
+              <div class="material-meta">
+                <span class="material-kind">{labels[node.type]}</span>
+                {node.difficulty && <DifficultyBadge level={node.difficulty} />}
+              </div>
+              <h3>
+                <a href={node.url} class="material-link">
+                  {node.title}
+                  <span aria-hidden="true"> ↗</span>
+                </a>
+              </h3>
+              <p class="material-id">{node.id}</p>
+              <p class="material-summary">{node.summary}</p>
+              {groups.length > 0 && (
+                <p class="group-name">
+                  {groups.map((g) => g.title).join(' · ')}
+                </p>
+              )}
+              {node.context && <p class="material-context">{node.context}</p>}
+              {node.relatedRoadmap && (
+                <p class="related-roadmap">
+                  <a href={`/roadmaps/${node.relatedRoadmap}/`}>
+                    Conheça a trilha relacionada →
+                  </a>
+                </p>
+              )}
+              <ul class="relations" aria-label={`Conexões de ${node.title}`}>
+                {incoming.length ? (
+                  incoming.map((edge) => (
+                    <li>
+                      {relationNames[edge.type]}
+                      {edge.label ? ` (${edge.label})` : ''}:{' '}
+                      <span>
+                        {data.nodes.find((n) => n.ref === edge.from)?.title}
+                      </span>
+                    </li>
+                  ))
+                ) : (
+                  <li>Entrada possível neste caminho.</li>
+                )}
+              </ul>
+            </article>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+  <p class="layout-message" role="status" data-layout-message></p>
+</section>
+<script>
+  import '../scripts/roadmap-diagram';
+</script>
+<style is:global>
+  .roadmap-viewer {
+    min-width: 0;
+    position: relative;
+  }
+  .map-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .map-heading h2 {
+    font-size: var(--text-section-title);
+  }
+  .view-controls {
+    display: flex;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-control);
+    padding: 3px;
+  }
+  .view-controls button {
+    font: inherit;
+    font-size: var(--text-control);
+    border: 0;
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    min-height: var(--control-height);
+    color: var(--color-text);
+    background: transparent;
+    cursor: pointer;
+  }
+  .view-controls button[aria-pressed='true'] {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+  .roadmap-viewer [hidden] {
+    display: none !important;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-5);
+    list-style: none;
+    padding: 0;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+  .legend .line {
+    display: inline-block;
+    width: 24px;
+    border-top: 2px solid var(--color-accent-text);
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  .legend .dashed {
+    border-top-style: dashed;
+    border-color: var(--color-muted);
+  }
+  .map-hint {
+    font-size: var(--text-control);
+    color: var(--color-muted);
+    margin-block: var(--space-4) var(--space-5);
+  }
+  .roadmap-list .materials {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-4);
+  }
+  .material {
+    position: relative;
+    min-width: 0;
+    list-style: none;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-control);
+    padding: var(--space-5);
+    background: var(--color-surface);
+    overflow-wrap: anywhere;
+  }
+  .material.primary {
+    border-left: 3px solid var(--color-accent);
+  }
+  .material h3 {
+    font-size: var(--text-lead);
+    line-height: 1.4;
+    margin-block: var(--space-3) var(--space-2);
+  }
+  .material-link {
+    text-decoration: none;
+  }
+  .material-link:hover {
+    text-decoration: underline;
+  }
+  .material-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-control);
+  }
+  .material-link:focus-visible::after {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  .related-roadmap a {
+    position: relative;
+    z-index: 2;
+  }
+  .material-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+  .material-kind {
+    font: 12px/1.6 var(--font-mono);
+    color: var(--color-accent-text);
+  }
+  .material-id {
+    font: 11px/1.6 var(--font-mono);
+    color: var(--color-muted);
+    margin-bottom: var(--space-2);
+  }
+  .material-summary {
+    font-size: var(--text-summary);
+    color: var(--color-prose);
+  }
+  .relations {
+    padding-left: var(--space-4);
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+  .relations li + li {
+    margin-top: var(--space-2);
+  }
+  .group-name,
+  .material-context,
+  .related-roadmap {
+    font-size: var(--text-sm);
+    margin-top: var(--space-3);
+    color: var(--color-prose);
+  }
+  .group-name {
+    color: var(--color-accent-text);
+  }
+  .roadmap-map {
+    position: relative;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+    background: radial-gradient(
+        circle,
+        var(--color-border) 1px,
+        transparent 1px
+      )
+      0 0/20px 20px;
+    min-height: 160px;
+    isolation: isolate;
+  }
+  .roadmap-map .material {
+    position: absolute;
+    width: 280px;
+    margin: 0;
+    z-index: 1;
+  }
+  .roadmap-map .material-summary {
+    display: none;
+  }
+  .roadmap-map:not(.compact) .relations {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .roadmap-map.compact .relations {
+    display: block;
+  }
+  .roadmap-map svg {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .roadmap-edge {
+    stroke: var(--color-accent-text);
+    stroke-width: 1.7;
+    fill: none;
+  }
+  .roadmap-edge.preparation {
+    stroke: var(--color-muted);
+    stroke-dasharray: 5 5;
+  }
+  .roadmap-edge-label {
+    font: 11px/1.6 var(--font-mono);
+    background: var(--color-bg);
+    color: var(--color-text);
+    padding: 3px 6px;
+    position: absolute;
+    white-space: nowrap;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .layout-message {
+    font-size: var(--text-control);
+    color: var(--color-muted);
+    margin-top: var(--space-3);
+  }
+  .roadmap-map.measuring {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+    left: 0;
+    right: 0;
+  }
+  .roadmap-map.measuring .material {
+    position: relative;
+    top: 0 !important;
+    left: 0 !important;
+  }
+  .roadmap-map.compact .material {
+    width: calc(100% - 64px);
+    left: 48px !important;
+  }
+  .roadmap-map.compact .roadmap-edge-label {
+    display: none;
+  }
+  @media (max-width: 650px) {
+    .map-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .legend {
+      font-size: 12px;
+    }
+    .material {
+      padding: var(--space-4);
+    }
+  }
+  @media (forced-colors: active) {
+    .roadmap-edge {
+      stroke: CanvasText;
+    }
+    .roadmap-map {
+      background: Canvas;
+    }
+    .roadmap-edge-label {
+      color: CanvasText;
+      background: Canvas;
+    }
+    .material.primary {
+      border-left-color: Highlight;
+    }
+  }
+</style>

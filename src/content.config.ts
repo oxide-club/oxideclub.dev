@@ -7,6 +7,14 @@ import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 import { existsSync } from 'node:fs';
 import {
+  roadmapsDirectory,
+  roadmapId,
+  validateRoadmapMetadata,
+  normalizeRoadmapDates,
+} from './lib/roadmap-source.mjs';
+import { validateRoadmapGraph } from './lib/roadmap-structure.mjs';
+import type { RoadmapData } from './lib/roadmap-types';
+import {
   notesDirectory,
   noteId,
   noteSchema,
@@ -153,4 +161,46 @@ const labs = defineCollection({
   },
   schema: labSchema,
 });
-export const collections = { challenges, notes, meetings, labs };
+const roadmapBase = roadmapsDirectory();
+if (!existsSync(roadmapBase))
+  throw new Error(
+    'Roadmaps content is missing. Run content:sync or set ROADMAPS_SOURCE.',
+  );
+const roadmapGlob = glob({
+  pattern: [
+    '*/index.md',
+    '!templates/**',
+    '!docs/**',
+    '!scripts/**',
+    '!tests/**',
+    '!licenses/**',
+    '!node_modules/**',
+  ],
+  base: roadmapBase,
+  generateId: roadmapId,
+});
+const roadmaps = defineCollection({
+  loader: {
+    name: 'roadmap-definitions',
+    async load(context) {
+      if (context.meta.get('source') !== roadmapBase) {
+        context.store.clear();
+        context.meta.set('source', roadmapBase);
+      }
+      await roadmapGlob.load(context);
+      for (const [id, entry] of context.store.entries()) {
+        try {
+          validateRoadmapMetadata(entry.data, roadmapBase);
+          validateRoadmapGraph(entry.data);
+        } catch (error) {
+          throw new Error(`${id}: ${(error as Error).message}`);
+        }
+      }
+    },
+  },
+  schema: z.preprocess(
+    normalizeRoadmapDates,
+    z.custom<RoadmapData>((data) => validateRoadmapMetadata(data, roadmapBase)),
+  ),
+});
+export const collections = { challenges, notes, meetings, labs, roadmaps };

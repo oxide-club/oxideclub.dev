@@ -1,3 +1,4 @@
+import { emptyRoadmaps } from '../helpers/roadmaps.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -19,6 +20,7 @@ import AxeBuilder from '@axe-core/playwright';
 // Fixtures live only in an isolated build, never in the publication directory.
 test('notes: empty catalogue, published article, drafts and accessible reading', async () => {
   const root = await mkdtemp(join(tmpdir(), 'oxide-notes-'));
+  await emptyRoadmaps(root);
   let browser;
   try {
     for (const path of [
@@ -67,6 +69,7 @@ test('notes: empty catalogue, published article, drafts and accessible reading',
           timeout: 60000,
           env: {
             ...process.env,
+            ROADMAPS_SOURCE: undefined,
             LABS_SOURCE: undefined,
             SITE_RELEASE: 'production',
             CHALLENGES_COMMIT: process.env.CHALLENGES_COMMIT || 'a'.repeat(40),

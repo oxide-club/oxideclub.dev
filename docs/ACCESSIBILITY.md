@@ -64,3 +64,11 @@ by the coding agent. Browser/assistive-technology combinations and detailed
 manual results were not provided; no complete WCAG conformance is claimed.
 
 The owner also confirmed that `report@oxideclub.dev` is functional.
+
+## Verificações automatizadas dos roadmaps em 25 de outubro de 2026
+
+O catálogo e os diagramas foram conferidos com Playwright, Chromium e axe. Os cenários incluem lista sem JavaScript, teclado, foco na alternância de visualização, larguras de 320 a 1280 px, texto dos blocos ampliado a 200%, cores forçadas, redução de movimento e redimensionamento rápido. As dez trilhas iniciais passaram pela verificação de sobreposição de blocos e de setas que atravessassem blocos alheios.
+
+A integração usa notas sintéticas em vários papéis curriculares, sem numeração ou dificuldade. O contraste com as cores normais permanece no axe. No cenário de cores forçadas, a regra de contraste foi desativada devido à mistura de cores autorais e cores impostas descrita no [issue 3978 do axe](https://github.com/dequelabs/axe-core/issues/3978); os demais critérios continuam ativos e há captura de tela.
+
+Esses resultados não constituem revisão manual com leitor de tela ou confirmação de qualidade dos anúncios por tecnologia assistiva. As pendências e exceções de publicação já registradas neste documento permanecem sob responsabilidade dos mantenedores.

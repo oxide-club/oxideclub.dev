@@ -2,6 +2,7 @@
 export const github = {
   organization: 'oxide-club',
   repositories: {
+    roadmaps: { name: 'roadmaps', branch: 'main' },
     challenges: { name: 'challenges', branch: 'main' },
     solutions: { name: 'solutions', branch: 'main' },
     labs: { name: 'labs', branch: 'main' },

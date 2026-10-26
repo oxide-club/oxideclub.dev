@@ -1,3 +1,4 @@
+import { emptyRoadmaps } from '../helpers/roadmaps.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -25,6 +26,7 @@ const fixture = (draft = false) =>
     .join('\n\n');
 test('labs publish independently, distribute matching files and remove drafts on rebuild', async (t) => {
   const root = await mkdtemp(join(tmpdir(), 'oxide-labs-integration-'));
+  await emptyRoadmaps(root);
   t.after(() => rm(root, { recursive: true, force: true }));
   for (const path of [
     'src',
@@ -67,7 +69,13 @@ test('labs publish independently, distribute matching files and remove drafts on
   await writeFile(join(source, 'LICENSING.md'), 'Licenças');
   for (const name of ['MIT', 'CC-BY-4.0', 'CC0-1.0'])
     await writeFile(join(source, 'licenses', name + '.txt'), name);
-  const env = { ...process.env, CI: '', SITE_RELEASE: '', LABS_SOURCE: source };
+  const env = {
+    ...process.env,
+    ROADMAPS_SOURCE: undefined,
+    CI: '',
+    SITE_RELEASE: '',
+    LABS_SOURCE: source,
+  };
   const build = () =>
     execFileSync(
       process.execPath,

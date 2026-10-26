@@ -1,3 +1,4 @@
+import { emptyRoadmaps } from '../helpers/roadmaps.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -18,6 +19,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 test('meetings: static agenda, permanent articles, safe assets, calendar and responsive access', async () => {
   const root = await mkdtemp(join(tmpdir(), 'oxide-meetings-build-'));
+  await emptyRoadmaps(root);
   let browser;
   try {
     for (const path of [
@@ -64,6 +66,7 @@ test('meetings: static agenda, permanent articles, safe assets, calendar and res
           timeout: 60000,
           env: {
             ...process.env,
+            ROADMAPS_SOURCE: undefined,
             LABS_SOURCE: undefined,
             SITE_RELEASE: 'production',
             CHALLENGES_COMMIT: process.env.CHALLENGES_COMMIT || 'a'.repeat(40),
