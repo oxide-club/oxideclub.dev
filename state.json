@@ -205,6 +205,10 @@
     "challenge:029-minimal-debugger": {
       "url": "https://oxideclub.dev/desafios/029-minimal-debugger",
       "messageId": "1564084261173076041"
+    },
+    "challenge:031-ipc-snapshots": {
+      "url": "https://oxideclub.dev/desafios/031-ipc-snapshots",
+      "pending": true
     }
   },
   "revisions": {
