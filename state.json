@@ -185,6 +185,10 @@
     "challenge:023-mini-vec": {
       "url": "https://oxideclub.dev/desafios/023-mini-vec",
       "messageId": "1564084191795347457"
+    },
+    "challenge:024-mini-refcell": {
+      "url": "https://oxideclub.dev/desafios/024-mini-refcell",
+      "pending": true
     }
   },
   "revisions": {
