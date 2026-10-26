@@ -192,7 +192,7 @@
     },
     "challenge:025-rust-c-ffi": {
       "url": "https://oxideclub.dev/desafios/025-rust-c-ffi",
-      "pending": true
+      "messageId": "1564084220505096223"
     }
   },
   "revisions": {
