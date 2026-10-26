@@ -111,3 +111,41 @@ test('a roadmap with only one note is drawable', async () => {
   assert.equal(r.nodes.length, 1);
   assert.ok(r.width >= 300);
 });
+test('default relationship labels receive real positions without overlapping each other', async () => {
+  const result = await layoutRoadmap({
+    nodes: [{ ref: 'a' }, { ref: 'b' }, { ref: 'c' }],
+    edges: [edge('a', 'b', 'branch'), edge('a', 'c', 'convergence')],
+    sizes: {
+      a: { width: 280, height: 120 },
+      b: { width: 280, height: 120 },
+      c: { width: 280, height: 120 },
+    },
+    labelSizes: {
+      'edge-0': { width: 180, height: 24 },
+      'edge-1': { width: 120, height: 24 },
+    },
+  });
+  const labels = result.edges.flatMap((e) => e.labels);
+  assert.equal(labels.length, 2);
+  assert.equal(labels[0].text, 'Aprofundamento opcional');
+  assert.equal(labels[1].text, 'Convergência');
+  for (const a of labels)
+    for (const b of labels)
+      if (a !== b)
+        assert.equal(
+          a.x < b.x + b.width &&
+            a.x + a.width > b.x &&
+            a.y < b.y + b.height &&
+            a.y + a.height > b.y,
+          false,
+        );
+  for (const a of labels)
+    for (const b of result.nodes)
+      assert.equal(
+        a.x < b.x + b.width &&
+          a.x + a.width > b.x &&
+          a.y < b.y + b.height &&
+          a.y + a.height > b.y,
+        false,
+      );
+});

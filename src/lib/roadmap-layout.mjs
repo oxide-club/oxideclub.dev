@@ -1,3 +1,4 @@
+import { relationLabel } from './roadmap-relations.mjs';
 let engine;
 /** @template {{ref:string}} T @param {T[]} nodes @param {{from:string,to:string}[]} edges @returns {T[]} */
 export function readingOrder(nodes, edges) {
@@ -72,7 +73,7 @@ export async function layoutRoadmap({
         ? [
             {
               id: `label-${i}`,
-              text: e.label ?? '',
+              text: relationLabel(e),
               ...labelSizes[`edge-${i}`],
             },
           ]

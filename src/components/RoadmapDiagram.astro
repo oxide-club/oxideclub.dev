@@ -202,6 +202,7 @@ const labels = {
     gap: var(--space-4);
   }
   .material {
+    position: relative;
     min-width: 0;
     list-style: none;
     border: 1px solid var(--color-border-strong);
@@ -223,6 +224,20 @@ const labels = {
   }
   .material-link:hover {
     text-decoration: underline;
+  }
+  .material-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-control);
+  }
+  .material-link:focus-visible::after {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  .related-roadmap a {
+    position: relative;
+    z-index: 2;
   }
   .material-meta {
     display: flex;

@@ -46,6 +46,12 @@ export interface RoadmapLayout {
     type: string;
     label?: string;
     sections: { startPoint: Point; endPoint: Point; bendPoints?: Point[] }[];
-    labels: { x: number; y: number; width: number; height: number }[];
+    labels: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      text?: string;
+    }[];
   }[];
 }

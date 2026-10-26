@@ -4,3 +4,9 @@ export const relationNames = {
   branch: 'Aprofundamento opcional',
   convergence: 'Convergência',
 };
+export function relationLabel(edge) {
+  return (
+    edge.label ??
+    (edge.type === 'recommended_next' ? '' : relationNames[edge.type])
+  );
+}

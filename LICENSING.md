@@ -39,6 +39,12 @@ Dependências, fontes e outros materiais de terceiros mantêm suas próprias lic
 
 O campo `license` de `package.json` identifica a licença do código original do site; não substitui as distinções descritas neste documento.
 
+O organizador de diagramas `elkjs` 0.12.0 é distribuído ao navegador nas páginas de roadmaps. Seu pacote declara `EPL-2.0 OR GPL-3.0-or-later`. O site usa essa dependência sob EPL 2.0, preserva o [aviso fornecido pelo pacote](public/licenses/elkjs-0.12.0.txt) e identifica o [código-fonte original](https://github.com/kieler/elkjs). Não há alterações no código dessa dependência.
+
+## Roadmaps
+
+A prosa e a organização curricular originais vêm de `oxide-club/roadmaps`, sob CC BY 4.0, conforme o `LICENSING.md` da fonte. As páginas identificam o Oxide Club, a licença e o arquivo canônico. Os materiais vinculados mantêm suas próprias licenças e atribuições; o roadmap não altera esses termos.
+
 ## Laboratórios
 
 A fonte `oxide-club/labs` declara CC BY 4.0 para roteiros originais, MIT para

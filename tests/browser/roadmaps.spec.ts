@@ -23,6 +23,42 @@ test('catalogue and diagram lead to canonical materials and retain the alternate
   await link.click();
   await expect(page).toHaveURL(/\/labs\/010-concurrency-lab\/$/);
 });
+test('the whole material block supports native link activation', async ({
+  page,
+}) => {
+  await page.goto(route);
+  const graph = page.locator('[data-roadmap-diagram]');
+  await expect(graph).toHaveAttribute('data-ready', 'true');
+  const card = graph.locator('[data-ref="labs:010-concurrency-lab"]');
+  await card.click({ position: { x: 12, y: 12 } });
+  await expect(page).toHaveURL(/\/labs\/010-concurrency-lab\/$/);
+});
+test('finishing a delayed diagram does not hide the focused static list', async ({
+  page,
+}) => {
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route('**/elk.bundled*.js', async (request) => {
+    await gate;
+    await request.continue();
+  });
+  await page.goto(route);
+  const list = page.locator('[data-roadmap-list]');
+  const link = list.locator('.material-link').first();
+  await link.focus();
+  release();
+  await expect(page.locator('[data-roadmap-diagram]')).toHaveAttribute(
+    'data-ready',
+    'true',
+  );
+  await expect(list).toBeVisible();
+  await expect(link).toBeFocused();
+  await expect(
+    page.getByRole('button', { name: 'Lista', exact: true }),
+  ).toHaveAttribute('aria-pressed', 'true');
+});
 for (const width of [320, 390, 768, 1280])
   test(`roadmaps remain accessible at ${width}px and 200% text`, async ({
     page,

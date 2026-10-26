@@ -1,5 +1,5 @@
 import { layoutRoadmap } from '../lib/roadmap-layout.mjs';
-import { relationNames } from '../lib/roadmap-relations.mjs';
+import { relationLabel } from '../lib/roadmap-relations.mjs';
 import type { RoadmapData } from '../lib/roadmap-types';
 
 const svgNS = 'http://www.w3.org/2000/svg';
@@ -51,9 +51,7 @@ function initialize(viewer: HTMLElement, index: number) {
       if (mode === 'diagram') schedule();
     }),
   );
-  const edgeText = (edge: RoadmapData['edges'][number]) =>
-    edge.label ??
-    (edge.type === 'recommended_next' ? '' : relationNames[edge.type]);
+  const edgeText = relationLabel;
   function makeSvg(paths: { d: string; preparation: boolean }[]) {
     const svg = document.createElementNS(svgNS, 'svg');
     svg.setAttribute('aria-hidden', 'true');
@@ -215,6 +213,7 @@ function initialize(viewer: HTMLElement, index: number) {
       graph.classList.remove('measuring');
       graph.dataset.ready = 'true';
       controls.hidden = false;
+      if (!ready && list.contains(document.activeElement)) mode = 'list';
       ready = true;
       message.textContent = '';
       activate();
