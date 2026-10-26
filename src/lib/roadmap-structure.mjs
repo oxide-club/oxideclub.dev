@@ -30,4 +30,4 @@ function resolveNodes(data, sources) {
 }
 /** @param {import('./roadmap-types').RoadmapData} data */
 export function resolveRoadmap(data,sources) {validateRoadmapGraph(data);return {...data,nodes:resolveNodes(data,sources)}}
-export const relationNames={recommended_next:'Progressão sugerida',suggested_preparation:'Preparação ou contexto',branch:'Aprofundamento opcional',convergence:'Convergência'};
+export {relationNames} from './roadmap-relations.mjs';
