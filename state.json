@@ -177,6 +177,10 @@
     "lab:023-elf-hardening-lab": {
       "url": "https://oxideclub.dev/labs/023-elf-hardening-lab",
       "messageId": "1564055757899563079"
+    },
+    "challenge:022-typestate": {
+      "url": "https://oxideclub.dev/desafios/022-typestate",
+      "pending": true
     }
   },
   "revisions": {
