@@ -23,8 +23,16 @@ try {
       'Local content source overrides are forbidden in CI and production',
     );
   }
-  const roadmaps = await syncRoadmaps({ expectedRevision: process.env.ROADMAPS_COMMIT, production, githubEnv: process.env.GITHUB_ENV });
-  console.log(roadmaps ? `[content] oxide-club/roadmaps main @ ${roadmaps}` : "[content] roadmaps local source validated");
+  const roadmaps = await syncRoadmaps({
+    expectedRevision: process.env.ROADMAPS_COMMIT,
+    production,
+    githubEnv: process.env.GITHUB_ENV,
+  });
+  console.log(
+    roadmaps
+      ? `[content] oxide-club/roadmaps main @ ${roadmaps}`
+      : '[content] roadmaps local source validated',
+  );
   const labs = await syncLabs({
     expectedRevision: process.env.LABS_COMMIT,
     production,

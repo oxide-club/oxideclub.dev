@@ -2,22 +2,134 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TextLink from '../../components/ui/TextLink.astro';
 import RoadmapDiagram from '../../components/RoadmapDiagram.astro';
-import {publishedRoadmaps} from '../../lib/roadmaps';
-import {render} from 'astro:content';
-export async function getStaticPaths(){return(await publishedRoadmaps()).map(roadmap=>({params:{slug:roadmap.id},props:{roadmap}}))}
-interface Props {roadmap:Awaited<ReturnType<typeof publishedRoadmaps>>[number]}
-const {roadmap}=Astro.props;const {data}=roadmap;const {Content}=await render(roadmap);
+import { publishedRoadmaps } from '../../lib/roadmaps';
+import { render } from 'astro:content';
+export async function getStaticPaths() {
+  return (await publishedRoadmaps()).map((roadmap) => ({
+    params: { slug: roadmap.id },
+    props: { roadmap },
+  }));
+}
+interface Props {
+  roadmap: Awaited<ReturnType<typeof publishedRoadmaps>>[number];
+}
+const { roadmap } = Astro.props;
+const { data } = roadmap;
+const { Content } = await render(roadmap);
 ---
+
 <BaseLayout title={data.title} description={data.summary}>
- <div class="container">
-  <header class="page-intro"><TextLink href="/roadmaps/">← Todos os roadmaps</TextLink><div class="eyebrow">Roadmap · {data.nodes.length} materiais</div><h1>{data.title}</h1><p class="question">{data.question}</p></header>
-  <section class="preparation" aria-label="Antes de começar"><div><h2>Para quem</h2><p>{data.audience}</p><h2>Conhecimentos de entrada</h2>{data.prerequisites.length?<ul>{data.prerequisites.map(p=><li>{p}</li>)}</ul>:<p>Nenhum conhecimento prévio declarado.</p>}</div><div><h2>Como percorrer</h2><p>As setas sugerem caminhos de estudo. Você pode acessar qualquer material e escolher quais aprofundamentos investigar. Posição no mapa não indica dificuldade.</p></div></section>
-  <RoadmapDiagram roadmap={roadmap}/>
-  <section class="learning"><h2>Objetivos de aprendizagem</h2><ul>{data.learningGoals.map(goal=><li>{goal}</li>)}</ul></section>
-  <article class="prose roadmap-prose"><Content/></article>
-  <div class="return"><TextLink href="/roadmaps/">← Explorar outros roadmaps</TextLink></div>
- </div>
+  <div class="container">
+    <header class="page-intro">
+      <TextLink href="/roadmaps/">← Todos os roadmaps</TextLink>
+      <div class="eyebrow">Roadmap · {data.nodes.length} materiais</div>
+      <h1>{data.title}</h1>
+      <p class="question">{data.question}</p>
+    </header>
+    <section class="preparation" aria-label="Antes de começar">
+      <div>
+        <h2>Para quem</h2>
+        <p>{data.audience}</p>
+        <h2>Conhecimentos de entrada</h2>
+        {data.prerequisites.length ? (
+          <ul>
+            {data.prerequisites.map((p) => (
+              <li>{p}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>Nenhum conhecimento prévio declarado.</p>
+        )}
+      </div>
+      <div>
+        <h2>Como percorrer</h2>
+        <p>
+          As setas sugerem caminhos de estudo. Você pode acessar qualquer
+          material e escolher quais aprofundamentos investigar. Posição no mapa
+          não indica dificuldade.
+        </p>
+      </div>
+    </section>
+    <RoadmapDiagram roadmap={roadmap} />
+    <section class="learning">
+      <h2>Objetivos de aprendizagem</h2>
+      <ul>
+        {data.learningGoals.map((goal) => (
+          <li>{goal}</li>
+        ))}
+      </ul>
+    </section>
+    <article class="prose roadmap-prose">
+      <Content />
+    </article>
+    <div class="return">
+      <TextLink href="/roadmaps/">← Explorar outros roadmaps</TextLink>
+    </div>
+  </div>
 </BaseLayout>
 <style>
- .page-intro{padding-block:var(--space-8)}.page-intro :global(.text-link){margin-bottom:var(--space-7)}h1{font-size:clamp(32px,4.8vw,52px);line-height:1.15;max-width:900px;margin-block:var(--space-4) var(--space-5)}.question{font-size:var(--text-lead);color:var(--color-prose);max-width:75ch}.preparation{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-8);border-block:1px solid var(--color-border);padding-block:var(--space-6);margin-bottom:var(--space-8)}.preparation h2{font-size:var(--text-control);color:var(--color-accent-text);margin-bottom:var(--space-2)}.preparation h2:not(:first-child){margin-top:var(--space-5)}.preparation p,.preparation li{font-size:var(--text-summary);color:var(--color-prose)}ul{padding-left:var(--space-5)}.learning{border-top:1px solid var(--color-border);padding-block:var(--space-7);margin-top:var(--space-8)}.learning h2{font-size:var(--text-section-title);margin-bottom:var(--space-4)}.learning li{max-width:75ch}.roadmap-prose{max-width:var(--reading-width)}.return{padding-block:var(--space-8) var(--space-16)}@media(max-width:650px){.preparation{grid-template-columns:1fr}}
+  .page-intro {
+    padding-block: var(--space-8);
+  }
+  .page-intro :global(.text-link) {
+    margin-bottom: var(--space-7);
+  }
+  h1 {
+    font-size: clamp(32px, 4.8vw, 52px);
+    line-height: 1.15;
+    max-width: 900px;
+    margin-block: var(--space-4) var(--space-5);
+  }
+  .question {
+    font-size: var(--text-lead);
+    color: var(--color-prose);
+    max-width: 75ch;
+  }
+  .preparation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+    border-block: 1px solid var(--color-border);
+    padding-block: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+  .preparation h2 {
+    font-size: var(--text-control);
+    color: var(--color-accent-text);
+    margin-bottom: var(--space-2);
+  }
+  .preparation h2:not(:first-child) {
+    margin-top: var(--space-5);
+  }
+  .preparation p,
+  .preparation li {
+    font-size: var(--text-summary);
+    color: var(--color-prose);
+  }
+  ul {
+    padding-left: var(--space-5);
+  }
+  .learning {
+    border-top: 1px solid var(--color-border);
+    padding-block: var(--space-7);
+    margin-top: var(--space-8);
+  }
+  .learning h2 {
+    font-size: var(--text-section-title);
+    margin-bottom: var(--space-4);
+  }
+  .learning li {
+    max-width: 75ch;
+  }
+  .roadmap-prose {
+    max-width: var(--reading-width);
+  }
+  .return {
+    padding-block: var(--space-8) var(--space-16);
+  }
+  @media (max-width: 650px) {
+    .preparation {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

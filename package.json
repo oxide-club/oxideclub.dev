@@ -22,7 +22,8 @@
     "test:notes": "node --test tests/integration/notes.test.mjs",
     "test:meetings": "node --test tests/integration/meetings.test.mjs",
     "test:community": "node --test tests/integration/community.test.mjs",
-    "test:labs": "node --test tests/integration/labs.test.mjs"
+    "test:labs": "node --test tests/integration/labs.test.mjs",
+    "test:roadmaps": "node --test tests/integration/roadmaps.test.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
