@@ -201,6 +201,10 @@
     "challenge:028-function-interposition": {
       "url": "https://oxideclub.dev/desafios/028-function-interposition",
       "messageId": "1564084247256629382"
+    },
+    "challenge:029-minimal-debugger": {
+      "url": "https://oxideclub.dev/desafios/029-minimal-debugger",
+      "pending": true
     }
   },
   "revisions": {
