@@ -193,6 +193,10 @@
     "challenge:025-rust-c-ffi": {
       "url": "https://oxideclub.dev/desafios/025-rust-c-ffi",
       "messageId": "1564084220505096223"
+    },
+    "challenge:027-pe-inspector": {
+      "url": "https://oxideclub.dev/desafios/027-pe-inspector",
+      "pending": true
     }
   },
   "revisions": {
