@@ -189,6 +189,10 @@
     "challenge:024-mini-refcell": {
       "url": "https://oxideclub.dev/desafios/024-mini-refcell",
       "messageId": "1564084207762931777"
+    },
+    "challenge:025-rust-c-ffi": {
+      "url": "https://oxideclub.dev/desafios/025-rust-c-ffi",
+      "pending": true
     }
   },
   "revisions": {
